@@ -45,14 +45,14 @@ export default function LoadingScreen({ onLoadingComplete }: LoadingScreenProps)
           />
         </div>
 
-        <div className="w-full max-w-2xl space-y-4 relative z-10">
-          <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
+        <div className="w-full max-w-4xl space-y-6 relative z-10">
+          <div className="w-full h-6 bg-muted rounded-full overflow-hidden">
             <div 
               className="h-full bg-gradient-to-r from-primary via-secondary to-primary rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="text-lg text-center text-muted-foreground">
+          <p className="text-2xl text-center text-muted-foreground font-medium">
             Страница загружается...
           </p>
         </div>
