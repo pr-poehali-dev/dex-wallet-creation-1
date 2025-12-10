@@ -97,13 +97,7 @@ export default function Landing() {
     <div className="min-h-screen bg-background relative">
       <AnimatedBackground />
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 relative z-10">
-        <header className="flex items-center justify-between mb-16">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-muted/30 flex items-center justify-center">
-              <Icon name="Wallet" className="text-foreground" size={24} />
-            </div>
-            <span className="text-xl font-bold">DEXXX Wallet</span>
-          </div>
+        <header className="mb-16">
         </header>
 
         <div className="mb-20 relative overflow-hidden">
