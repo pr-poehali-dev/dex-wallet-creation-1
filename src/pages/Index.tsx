@@ -12,9 +12,9 @@ import QRCode from 'qrcode';
 import WalletSetup from '@/components/WalletSetup';
 
 const mockAssets = [
-  { name: 'Bitcoin', symbol: 'BTC', balance: 0, price: 43250.00, icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png', network: 'BTC' },
-  { name: 'Ethereum', symbol: 'ETH', balance: 0, price: 2280.50, icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png', network: 'ETH' },
-  { name: 'Binance Coin', symbol: 'BNB', balance: 0, price: 312.75, icon: 'https://cryptologos.cc/logos/bnb-bnb-logo.png', network: 'BNB' },
+  { name: 'Bitcoin', symbol: 'BTC', balance: 0, price: 43250.00, icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png' },
+  { name: 'Ethereum', symbol: 'ETH', balance: 0, price: 2280.50, icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png' },
+  { name: 'Binance Coin', symbol: 'BNB', balance: 0, price: 312.75, icon: 'https://cryptologos.cc/logos/bnb-bnb-logo.png' },
   
   { name: 'Tether (Ethereum)', symbol: 'USDT', balance: 100.00, price: 1.00, icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'ETH' },
   { name: 'Tether (Tron)', symbol: 'USDT', balance: 50.00, price: 1.00, icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'TRX' },
