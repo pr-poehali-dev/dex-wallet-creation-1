@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 
 interface WalletSetupProps {
   open: boolean;
-  onComplete: () => void;
+  onComplete: (userId: string) => void;
   initialMode?: 'create' | 'restore';
 }
 
@@ -71,7 +71,7 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
       localStorage.setItem('userId', userId);
       setStep('success');
       setTimeout(() => {
-        onComplete();
+        onComplete(userId);
       }, 2000);
     } else {
       toast({
@@ -113,7 +113,7 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
       description: "Доступ к вашему кошельку успешно восстановлен",
     });
     setTimeout(() => {
-      onComplete();
+      onComplete(userId);
     }, 2000);
   };
 

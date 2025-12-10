@@ -110,10 +110,11 @@ export default function Index() {
     }
   }, [searchParams]);
 
-  const handleWalletComplete = () => {
+  const handleWalletComplete = (userId: string) => {
     localStorage.setItem('walletCreated', 'true');
     setWalletCreated(true);
     setShowSetup(false);
+    setUserId(userId);
   };
 
   const handleLogout = () => {
