@@ -12,7 +12,7 @@ import QRCode from 'qrcode';
 import WalletSetup from '@/components/WalletSetup';
 import { useToast } from '@/hooks/use-toast';
 
-const mockAssets = [
+const initialAssets = [
   { name: 'Bitcoin', symbol: 'BTC', balance: 0, price: 43250.00, icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png' },
   { name: 'Ethereum', symbol: 'ETH', balance: 0, price: 2280.50, icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png' },
   { name: 'Binance Coin', symbol: 'BNB', balance: 0, price: 312.75, icon: 'https://cryptologos.cc/logos/bnb-bnb-logo.png' },
@@ -61,6 +61,7 @@ export default function Index() {
   const [searchParams] = useSearchParams();
   const [walletCreated, setWalletCreated] = useState(false);
   const [showSetup, setShowSetup] = useState(false);
+  const [assets, setAssets] = useState(initialAssets);
   const [setupMode, setSetupMode] = useState<'create' | 'restore'>('create');
   const [userId, setUserId] = useState<string>('');
   const [selectedTab, setSelectedTab] = useState('portfolio');
@@ -148,18 +149,18 @@ export default function Index() {
     }
   }, [currentReceiveAddress, selectedReceiveAsset]);
 
-  const totalBalance = mockAssets.reduce((sum, asset) => sum + (asset.balance * asset.price), 0);
+  const totalBalance = assets.reduce((sum, asset) => sum + (asset.balance * asset.price), 0);
 
   const getAssetsBySymbol = (symbol: string) => {
-    return mockAssets.filter(a => a.symbol === symbol);
+    return assets.filter(a => a.symbol === symbol);
   };
 
   const getSelectedAsset = (symbol: string, network: string) => {
     if (!network) {
-      const assets = getAssetsBySymbol(symbol);
-      return assets[0];
+      const assetsBySymbol = getAssetsBySymbol(symbol);
+      return assetsBySymbol[0];
     }
-    return mockAssets.find(a => a.symbol === symbol && (a.network || a.symbol) === network);
+    return assets.find(a => a.symbol === symbol && (a.network || a.symbol) === network);
   };
 
   const calculateSwapOutput = () => {
@@ -172,6 +173,23 @@ export default function Index() {
   };
 
   const handleSwapConfirm = () => {
+    const fromAsset = getSelectedAsset(fromToken, fromNetwork);
+    const toAsset = getSelectedAsset(toToken, toNetwork);
+    const swapAmountNum = parseFloat(swapAmount);
+    const outputAmount = parseFloat(calculateSwapOutput());
+
+    if (fromAsset && toAsset && swapAmountNum > 0) {
+      setAssets(prevAssets => prevAssets.map(asset => {
+        if (asset.symbol === fromAsset.symbol && (asset.network || asset.symbol) === (fromAsset.network || fromAsset.symbol)) {
+          return { ...asset, balance: asset.balance - swapAmountNum };
+        }
+        if (asset.symbol === toAsset.symbol && (asset.network || asset.symbol) === (toAsset.network || toAsset.symbol)) {
+          return { ...asset, balance: asset.balance + outputAmount };
+        }
+        return asset;
+      }));
+    }
+
     setShowSwapConfirmation(false);
     toast({
       title: "Обмен выполнен!",
@@ -246,7 +264,7 @@ export default function Index() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {mockAssets.map(asset => (
+                          {assets.map(asset => (
                             <SelectItem key={asset.symbol} value={asset.symbol}>
                               <div className="flex items-center gap-2">
                                 <img src={asset.icon} alt={asset.symbol} className="w-4 h-4 object-contain" />
@@ -286,7 +304,7 @@ export default function Index() {
                   
                   {!selectedReceiveAsset ? (
                     <div className="space-y-2 mt-4">
-                      {mockAssets.map((asset, index) => {
+                      {assets.map((asset, index) => {
                         const getNetworkIcon = (network: string) => {
                           const icons: { [key: string]: string } = {
                             'ETH': 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
@@ -443,7 +461,7 @@ export default function Index() {
 
           <TabsContent value="portfolio" className="space-y-4">
             <div className="grid gap-4">
-              {mockAssets.map((asset, index) => {
+              {assets.map((asset, index) => {
                 const getNetworkIcon = (network: string) => {
                   const icons: { [key: string]: string } = {
                     'ETH': 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
@@ -509,10 +527,10 @@ export default function Index() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {Array.from(new Set(mockAssets.map(a => a.symbol))).map(symbol => (
+                          {Array.from(new Set(assets.map(a => a.symbol))).map(symbol => (
                             <SelectItem key={symbol} value={symbol}>
                               <div className="flex items-center gap-2">
-                                <img src={mockAssets.find(a => a.symbol === symbol)!.icon} alt={symbol} className="w-4 h-4 object-contain" />
+                                <img src={assets.find(a => a.symbol === symbol)!.icon} alt={symbol} className="w-4 h-4 object-contain" />
                                 {symbol}
                               </div>
                             </SelectItem>
@@ -571,10 +589,10 @@ export default function Index() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {Array.from(new Set(mockAssets.map(a => a.symbol))).map(symbol => (
+                          {Array.from(new Set(assets.map(a => a.symbol))).map(symbol => (
                             <SelectItem key={symbol} value={symbol}>
                               <div className="flex items-center gap-2">
-                                <img src={mockAssets.find(a => a.symbol === symbol)!.icon} alt={symbol} className="w-4 h-4 object-contain" />
+                                <img src={assets.find(a => a.symbol === symbol)!.icon} alt={symbol} className="w-4 h-4 object-contain" />
                                 {symbol}
                               </div>
                             </SelectItem>
