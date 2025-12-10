@@ -8,7 +8,7 @@ export default function AnimatedBackground() {
     <div className="w-full h-full absolute inset-0 overflow-hidden">
       <MeshGradient
         className="w-full h-full absolute inset-0"
-        colors={["#000000", "#1a1a1a", "#333333", "#ffffff"]}
+        colors={["#000000", "#1a1a1a", "#2a2a2a", "#4a4a4a"]}
         speed={speed}
         backgroundColor="#000000"
       />
