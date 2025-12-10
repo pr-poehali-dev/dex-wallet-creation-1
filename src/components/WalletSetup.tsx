@@ -28,12 +28,15 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
       const mnemonic = bip39.generateMnemonic();
       setSeedPhrase(mnemonic.split(' '));
     }
-    if (step === 'confirm') {
+  }, [step]);
+
+  useEffect(() => {
+    if (step === 'confirm' && seedPhrase.length > 0) {
       const allWords = [...seedPhrase];
       const shuffled = allWords.sort(() => Math.random() - 0.5);
       setShuffledWords(shuffled);
     }
-  }, [step, seedPhrase]);
+  }, [step]);
 
   const handleCopySeed = () => {
     navigator.clipboard.writeText(seedPhrase.join(' '));
