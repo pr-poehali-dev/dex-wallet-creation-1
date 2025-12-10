@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import * as bip39 from 'bip39';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface WalletSetupProps {
   open: boolean;
@@ -14,6 +15,7 @@ interface WalletSetupProps {
 }
 
 export default function WalletSetup({ open, onComplete, initialMode = 'create' }: WalletSetupProps) {
+  const navigate = useNavigate();
   const [step, setStep] = useState<'intro' | 'generate' | 'confirm' | 'success' | 'restore'>(initialMode === 'restore' ? 'restore' : 'intro');
   const [seedPhrase, setSeedPhrase] = useState<string[]>([]);
   const [confirmedWords, setConfirmedWords] = useState<{ [key: number]: string }>({});
@@ -122,6 +124,14 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
           <>
             <DialogHeader>
               <DialogTitle className="text-2xl flex items-center gap-3">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="mr-2"
+                  onClick={() => navigate('/')}
+                >
+                  <Icon name="ArrowLeft" size={24} />
+                </Button>
                 <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
                   <Icon name="Wallet" className="text-primary" size={28} />
                 </div>

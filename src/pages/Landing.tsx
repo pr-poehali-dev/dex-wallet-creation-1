@@ -60,9 +60,6 @@ export default function Landing() {
             </div>
             <span className="text-xl font-bold">DEX Wallet</span>
           </div>
-          <GradientButton onClick={() => navigate('/app')} variant="variant">
-            Войти
-          </GradientButton>
         </header>
 
         <Card className="mb-20 bg-card/80 backdrop-blur-sm relative overflow-hidden border-border">

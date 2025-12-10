@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -57,6 +57,7 @@ const mockTransactions = [
 
 export default function Index() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [walletCreated, setWalletCreated] = useState(false);
   const [showSetup, setShowSetup] = useState(false);
@@ -113,6 +114,13 @@ export default function Index() {
     localStorage.setItem('walletCreated', 'true');
     setWalletCreated(true);
     setShowSetup(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('walletCreated');
+    localStorage.removeItem('walletSeed');
+    localStorage.removeItem('userId');
+    navigate('/');
   };
 
   useEffect(() => {
@@ -193,6 +201,14 @@ export default function Index() {
             </Button>
             <Button variant="outline" size="icon" className="hover-scale">
               <Icon name="Settings" size={20} />
+            </Button>
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="hover-scale text-destructive hover:text-destructive"
+              onClick={handleLogout}
+            >
+              <Icon name="LogOut" size={20} />
             </Button>
           </div>
         </header>
