@@ -55,8 +55,8 @@ export default function Landing() {
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 relative z-10">
         <header className="flex items-center justify-between mb-16">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
-              <Icon name="Wallet" className="text-primary" size={24} />
+            <div className="w-10 h-10 rounded-xl bg-muted/30 flex items-center justify-center">
+              <Icon name="Wallet" className="text-foreground" size={24} />
             </div>
             <span className="text-xl font-bold">DEX Wallet</span>
           </div>
@@ -65,23 +65,23 @@ export default function Landing() {
           </Button>
         </header>
 
-        <Card className="mb-20 bg-black/[0.96] relative overflow-hidden border-primary/20">
+        <Card className="mb-20 bg-card/80 backdrop-blur-sm relative overflow-hidden border-border">
           <Spotlight
             className="-top-40 left-0 md:left-60 md:-top-20"
-            fill="white"
+            fill="gray"
           />
           
           <div className="flex flex-col md:flex-row h-[600px]">
             <div className="flex-1 p-8 md:p-12 relative z-10 flex flex-col justify-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 w-fit">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/30 text-foreground text-sm font-medium mb-6 w-fit">
                 <Icon name="Sparkles" size={16} />
                 <span>Децентрализованный кошелек нового поколения</span>
               </div>
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400">
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-foreground">
                 Ваши криптоактивы<br />
                 под полным контролем
               </h1>
-              <p className="text-xl text-neutral-300 mb-8 max-w-xl">
+              <p className="text-xl text-muted-foreground mb-8 max-w-xl">
                 Безопасное хранение, мгновенные переводы и обмен криптовалюты в одном приложении
               </p>
               <div className="flex gap-4">
@@ -106,7 +106,7 @@ export default function Landing() {
         </Card>
 
         <section className="mb-20">
-          <Card className="p-8 md:p-12 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+          <Card className="p-8 md:p-12 bg-card/60 backdrop-blur-sm border-border">
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <h2 className="text-3xl font-bold mb-4">Поддерживаемые токены</h2>
@@ -126,8 +126,8 @@ export default function Landing() {
                 </div>
               </div>
               <div className="relative">
-                <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full"></div>
-                <div className="relative bg-background/80 backdrop-blur-sm rounded-2xl p-6 border">
+                <div className="absolute inset-0 bg-muted/20 blur-3xl rounded-full"></div>
+                <div className="relative bg-card backdrop-blur-sm rounded-2xl p-6 border-border border">
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">Общий баланс</span>
@@ -161,9 +161,9 @@ export default function Landing() {
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {features.map((feature, index) => (
-              <Card key={index} className="p-6 hover-scale cursor-pointer transition-all hover:border-primary/50">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                  <Icon name={feature.icon as any} className="text-primary" size={24} />
+              <Card key={index} className="p-6 cursor-pointer transition-all hover:border-foreground/30 bg-card/60 backdrop-blur-sm">
+                <div className="w-12 h-12 rounded-xl bg-muted/30 flex items-center justify-center mb-4">
+                  <Icon name={feature.icon as any} className="text-foreground" size={24} />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
                 <p className="text-muted-foreground">{feature.description}</p>
@@ -173,7 +173,7 @@ export default function Landing() {
         </section>
 
         <section className="mb-20">
-          <Card className="p-12 text-center bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+          <Card className="p-12 text-center bg-card/60 backdrop-blur-sm border-border">
             <h2 className="text-3xl font-bold mb-4">Готовы начать?</h2>
             <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
               Создайте свой безопасный кошелек прямо сейчас. Это займет меньше минуты.
@@ -189,8 +189,8 @@ export default function Landing() {
           <div className="grid md:grid-cols-3 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                  <Icon name="Wallet" className="text-primary" size={18} />
+                <div className="w-8 h-8 rounded-lg bg-muted/30 flex items-center justify-center">
+                  <Icon name="Wallet" className="text-foreground" size={18} />
                 </div>
                 <span className="font-bold">DEX Wallet</span>
               </div>
