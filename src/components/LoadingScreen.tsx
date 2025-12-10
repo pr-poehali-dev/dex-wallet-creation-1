@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Icon from '@/components/ui/icon';
 import { ParticleTextEffect } from '@/components/ui/interactive-text-particle';
 
@@ -11,25 +11,26 @@ export default function LoadingScreen({ onLoadingComplete }: LoadingScreenProps)
 
   useEffect(() => {
     const duration = 10000;
-    const interval = 50;
-    const increment = (interval / duration) * 100;
+    const startTime = Date.now();
 
     const timer = setInterval(() => {
-      setProgress((prev) => {
-        const next = prev + increment;
-        if (next >= 100) {
-          clearInterval(timer);
-          setTimeout(() => {
-            onLoadingComplete();
-          }, 200);
-          return 100;
-        }
-        return next;
-      });
-    }, interval);
+      const elapsed = Date.now() - startTime;
+      const newProgress = Math.min((elapsed / duration) * 100, 100);
+      
+      setProgress(newProgress);
+      
+      if (newProgress >= 100) {
+        clearInterval(timer);
+        setTimeout(() => {
+          onLoadingComplete();
+        }, 200);
+      }
+    }, 100);
 
     return () => clearInterval(timer);
   }, [onLoadingComplete]);
+
+  const particleColors = useMemo(() => ['ffad70', 'f7d297', 'edb9a1', 'e697ac', 'b38dca', '9c76db', '705cb5', '43428e', '2c2142'], []);
 
   return (
     <div className="fixed inset-0 bg-background z-50 flex flex-col items-center justify-center px-4 overflow-hidden">
@@ -37,14 +38,14 @@ export default function LoadingScreen({ onLoadingComplete }: LoadingScreenProps)
         <div className="relative w-full flex-1 flex items-center justify-center">
           <ParticleTextEffect
             text="DEXXX WALLET"
-            colors={['ffad70', 'f7d297', 'edb9a1', 'e697ac', 'b38dca', '9c76db', '705cb5', '43428e', '2c2142']}
+            colors={particleColors}
             animationForce={80}
             particleDensity={4}
             className="absolute inset-0"
           />
         </div>
 
-        <div className="w-full max-w-2xl space-y-4">
+        <div className="w-full max-w-2xl space-y-4 relative z-10">
           <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
             <div 
               className="h-full bg-gradient-to-r from-primary via-secondary to-primary rounded-full transition-all duration-300 ease-out"
