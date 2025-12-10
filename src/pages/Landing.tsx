@@ -6,6 +6,7 @@ import { Spotlight } from '@/components/ui/spotlight';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { LiquidButton } from '@/components/ui/liquid-glass-button';
+import { ParticleTextEffect } from '@/components/ui/interactive-text-particle';
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -120,14 +121,18 @@ export default function Landing() {
           
           <div className="flex flex-col md:flex-row h-[600px]">
             <div className="flex-1 p-8 md:p-12 relative z-10 flex flex-col justify-center">
+              <div className="relative h-32 md:h-40 mb-8 overflow-hidden max-w-3xl">
+                <ParticleTextEffect
+                  text="DEXXXWALLET"
+                  colors={['3b82f6', '8b5cf6', 'a855f7', 'ec4899', 'f43f5e', '06b6d4', '14b8a6']}
+                  animationForce={70}
+                  particleDensity={2}
+                />
+              </div>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/30 text-foreground text-sm font-medium mb-6 w-fit">
                 <Icon name="Sparkles" size={16} />
                 <span>Децентрализованный кошелек нового поколения</span>
               </div>
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-foreground">
-                Ваши криптоактивы<br />
-                под полным контролем
-              </h1>
               <p className="text-xl text-muted-foreground mb-8 max-w-xl">
                 Безопасное хранение, мгновенные переводы и обмен криптовалюты в одном приложении
               </p>
