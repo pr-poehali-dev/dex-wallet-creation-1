@@ -121,7 +121,7 @@ export default function Landing() {
           
           <div className="flex flex-col md:flex-row h-[600px]">
             <div className="flex-1 p-8 md:p-12 relative z-10 flex flex-col justify-center">
-              <div className="relative h-80 md:h-96 mb-8 overflow-hidden max-w-6xl">
+              <div className="relative h-[640px] md:h-[768px] mb-8 overflow-hidden w-full">
                 <ParticleTextEffect
                   text="DEXXXWALLET"
                   colors={['3b82f6', '8b5cf6', 'a855f7', 'ec4899', 'f43f5e', '06b6d4', '14b8a6']}
