@@ -6,8 +6,6 @@ import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import * as bip39 from 'bip39';
 import { useToast } from '@/hooks/use-toast';
-import { DotScreenShader } from '@/components/ui/dot-shader-background';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface WalletSetupProps {
   open: boolean;
@@ -110,28 +108,18 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="bg-card/95 backdrop-blur-sm max-w-2xl relative overflow-hidden" hideClose={step !== 'success'}>
-        <div className="absolute inset-0 -z-10">
-          <DotScreenShader />
-        </div>
-        <AnimatePresence mode="wait">
-          {step === 'intro' && (
-            <motion.div
-              key="intro"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <DialogHeader>
-                <DialogTitle className="text-2xl flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-                    <Icon name="Wallet" className="text-primary" size={28} />
-                  </div>
-                  Создание кошелька
-                </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-6 mt-4">
+      <DialogContent className="bg-card max-w-2xl" hideClose={step !== 'success'}>
+        {step === 'intro' && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-2xl flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                  <Icon name="Wallet" className="text-primary" size={28} />
+                </div>
+                Создание кошелька
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6 mt-4">
               <div className="space-y-4">
                 <div className="flex items-start gap-3 p-4 bg-primary/10 rounded-lg border border-primary/20">
                   <Icon name="Shield" className="text-primary mt-1" size={24} />
@@ -186,39 +174,24 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                 </Button>
               </div>
             </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </>
+        )}
 
-        <AnimatePresence mode="wait">
-          {step === 'generate' && (
-            <motion.div
-              key="generate"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <DialogHeader>
-                <DialogTitle className="text-2xl">Ваша Seed-фраза</DialogTitle>
-                <p className="text-muted-foreground">
-                  Запишите эти 12 слов в правильном порядке
-                </p>
-              </DialogHeader>
-              <div className="space-y-6 mt-4">
+        {step === 'generate' && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-2xl">Ваша Seed-фраза</DialogTitle>
+              <p className="text-muted-foreground">
+                Запишите эти 12 слов в правильном порядке
+              </p>
+            </DialogHeader>
+            <div className="space-y-6 mt-4">
               <div className="grid grid-cols-3 gap-3">
                 {seedPhrase.map((word, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.05, duration: 0.2 }}
-                  >
-                    <Card className="p-3 bg-muted/50 hover:bg-muted transition-colors">
-                      <div className="text-xs text-muted-foreground mb-1">#{index + 1}</div>
-                      <div className="font-mono font-semibold">{word}</div>
-                    </Card>
-                  </motion.div>
+                  <Card key={index} className="p-3 bg-muted/50 hover:bg-muted transition-colors">
+                    <div className="text-xs text-muted-foreground mb-1">#{index + 1}</div>
+                    <div className="font-mono font-semibold">{word}</div>
+                  </Card>
                 ))}
               </div>
 
@@ -251,26 +224,18 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                 <Icon name="ArrowRight" className="ml-2" size={18} />
               </Button>
             </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </>
+        )}
 
-        <AnimatePresence mode="wait">
-          {step === 'confirm' && (
-            <motion.div
-              key="confirm"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <DialogHeader>
-                <DialogTitle className="text-2xl">Подтверждение seed-фразы</DialogTitle>
-                <p className="text-muted-foreground">
-                  Введите указанные слова для проверки
-                </p>
-              </DialogHeader>
-              <div className="space-y-6 mt-4">
+        {step === 'confirm' && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-2xl">Подтверждение seed-фразы</DialogTitle>
+              <p className="text-muted-foreground">
+                Введите указанные слова для проверки
+              </p>
+            </DialogHeader>
+            <div className="space-y-6 mt-4">
               <div className="space-y-4">
                 {verificationIndexes.map((wordIndex) => (
                   <div key={wordIndex}>
@@ -311,31 +276,23 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                 </Button>
               </div>
             </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </>
+        )}
 
-        <AnimatePresence mode="wait">
-          {step === 'restore' && (
-            <motion.div
-              key="restore"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <DialogHeader>
-                <DialogTitle className="text-2xl flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-                    <Icon name="RotateCcw" className="text-primary" size={28} />
-                  </div>
-                  Восстановление кошелька
-                </DialogTitle>
-                <p className="text-muted-foreground">
-                  Введите вашу seed-фразу из 12 слов
-                </p>
-              </DialogHeader>
-              <div className="space-y-6 mt-4">
+        {step === 'restore' && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-2xl flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                  <Icon name="RotateCcw" className="text-primary" size={28} />
+                </div>
+                Восстановление кошелька
+              </DialogTitle>
+              <p className="text-muted-foreground">
+                Введите вашу seed-фразу из 12 слов
+              </p>
+            </DialogHeader>
+            <div className="space-y-6 mt-4">
               <div className="space-y-3">
                 <label className="text-sm font-medium">
                   Seed-фраза (12 слов через пробел)
@@ -379,47 +336,29 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                 </Button>
               </div>
             </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </>
+        )}
 
-        <AnimatePresence mode="wait">
-          {step === 'success' && (
-            <motion.div
-              key="success"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
-            >
-              <DialogHeader>
-                <DialogTitle className="text-2xl text-center">Кошелек создан!</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-6 mt-4 text-center py-8">
-                <motion.div 
-                  className="flex justify-center"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                >
-                  <div className="w-20 h-20 rounded-full bg-success/20 flex items-center justify-center">
-                    <Icon name="CheckCircle" className="text-success" size={48} />
-                  </div>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                >
-                  <p className="text-lg font-semibold mb-2">Всё готово!</p>
-                  <p className="text-muted-foreground">
-                    Ваш кошелек успешно создан и защищён
-                  </p>
-                </motion.div>
+        {step === 'success' && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-2xl text-center">Кошелек создан!</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6 mt-4 text-center py-8">
+              <div className="flex justify-center">
+                <div className="w-20 h-20 rounded-full bg-success/20 flex items-center justify-center">
+                  <Icon name="CheckCircle" className="text-success" size={48} />
+                </div>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <div>
+                <p className="text-lg font-semibold mb-2">Всё готово!</p>
+                <p className="text-muted-foreground">
+                  Ваш кошелек успешно создан и защищён
+                </p>
+              </div>
+            </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );
