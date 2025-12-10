@@ -185,24 +185,53 @@ const ParticleTextEffect: React.FC<ParticleTextEffectProps> = ({
     if (!canvas || !ctx) return;
 
     textBox.str = text;
-    textBox.h = Math.floor(canvas.height * 0.23);
-
-    interactionRadiusRef.current = Math.max(50, textBox.h * 1.5);
-
-    ctx.font = `900 ${textBox.h}px Verdana, sans-serif`;
+    
+    // Начинаем с максимально возможного размера
+    let fontSize = Math.floor(canvas.height * 0.8);
+    ctx.font = `900 ${fontSize}px Verdana, sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
     const lines = textBox.str.split('\n');
-    const lineHeight = textBox.h * 1.1;
-    const totalHeight = lineHeight * lines.length;
-    const startY = 0.5 * canvas.height - (totalHeight / 2) + (textBox.h / 2);
-
+    
+    // Подбираем размер шрифта так, чтобы текст помещался по ширине с отступами
     let maxWidth = 0;
     lines.forEach(line => {
       const lineWidth = ctx.measureText(line).width;
       if (lineWidth > maxWidth) maxWidth = lineWidth;
     });
+    
+    // Уменьшаем размер, если текст не помещается по ширине (оставляем 10% отступы)
+    const maxAllowedWidth = canvas.width * 0.9;
+    if (maxWidth > maxAllowedWidth) {
+      fontSize = Math.floor(fontSize * (maxAllowedWidth / maxWidth));
+      ctx.font = `900 ${fontSize}px Verdana, sans-serif`;
+      
+      // Пересчитываем ширину с новым размером
+      maxWidth = 0;
+      lines.forEach(line => {
+        const lineWidth = ctx.measureText(line).width;
+        if (lineWidth > maxWidth) maxWidth = lineWidth;
+      });
+    }
+    
+    textBox.h = fontSize;
+    const lineHeight = textBox.h * 1.1;
+    const totalHeight = lineHeight * lines.length;
+    
+    // Проверяем, помещается ли по высоте (оставляем 10% отступы)
+    const maxAllowedHeight = canvas.height * 0.9;
+    if (totalHeight > maxAllowedHeight) {
+      fontSize = Math.floor(fontSize * (maxAllowedHeight / totalHeight));
+      ctx.font = `900 ${fontSize}px Verdana, sans-serif`;
+      textBox.h = fontSize;
+    }
+    
+    const finalLineHeight = textBox.h * 1.1;
+    const finalTotalHeight = finalLineHeight * lines.length;
+    const startY = 0.5 * canvas.height - (finalTotalHeight / 2) + (textBox.h / 2);
+
+    interactionRadiusRef.current = Math.max(50, textBox.h * 1.5);
 
     textBox.w = Math.round(maxWidth);
     textBox.x = 0.5 * (canvas.width - textBox.w);
@@ -219,7 +248,7 @@ const ParticleTextEffect: React.FC<ParticleTextEffectProps> = ({
     ctx.fillStyle = gradient;
 
     lines.forEach((line, i) => {
-      ctx.fillText(line, 0.5 * canvas.width, startY + i * lineHeight);
+      ctx.fillText(line, 0.5 * canvas.width, startY + i * finalLineHeight);
     });
 
     dottify();
