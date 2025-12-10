@@ -33,7 +33,7 @@ export default function LoadingScreen({ onLoadingComplete }: LoadingScreenProps)
   return (
     <div className="fixed inset-0 bg-background z-50 flex flex-col items-center justify-center px-4">
       <div className="flex flex-col items-center gap-16 w-full max-w-4xl">
-        <h1 className="text-6xl md:text-8xl lg:text-9xl font-black text-center bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent animate-pulse">
+        <h1 className="text-[12rem] md:text-[16rem] lg:text-[20rem] font-black text-center bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent animate-pulse leading-none">
           DEXXX WALLET
         </h1>
 
