@@ -30,6 +30,7 @@ export default function Index() {
   const [walletCreated, setWalletCreated] = useState(false);
   const [showSetup, setShowSetup] = useState(false);
   const [setupMode, setSetupMode] = useState<'create' | 'restore'>('create');
+  const [userId, setUserId] = useState<string>('');
   const [selectedTab, setSelectedTab] = useState('portfolio');
   const [fromToken, setFromToken] = useState('BTC');
   const [toToken, setToToken] = useState('ETH');
@@ -40,6 +41,7 @@ export default function Index() {
   useEffect(() => {
     const hasWallet = localStorage.getItem('walletCreated');
     const mode = searchParams.get('mode');
+    const storedUserId = localStorage.getItem('userId');
     
     if (!hasWallet) {
       setShowSetup(true);
@@ -48,6 +50,9 @@ export default function Index() {
       }
     } else {
       setWalletCreated(true);
+      if (storedUserId) {
+        setUserId(storedUserId);
+      }
     }
   }, [searchParams]);
 
@@ -94,7 +99,7 @@ export default function Index() {
             </div>
             <div>
               <h1 className="text-2xl font-bold">DEX Wallet</h1>
-              <p className="text-sm text-muted-foreground">Безопасный криптокошелек</p>
+              <p className="text-xs text-muted-foreground font-mono">ID: {userId}</p>
             </div>
           </div>
           <div className="flex gap-2">

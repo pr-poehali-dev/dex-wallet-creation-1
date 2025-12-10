@@ -39,13 +39,25 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleConfirm = () => {
+  const generateUserId = async (seed: string) => {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(seed);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex.substring(0, 16);
+  };
+
+  const handleConfirm = async () => {
     const isValid = verificationIndexes.every(
       index => confirmedWords[index]?.toLowerCase().trim() === seedPhrase[index]?.toLowerCase()
     );
 
     if (isValid) {
-      localStorage.setItem('walletSeed', seedPhrase.join(' '));
+      const seed = seedPhrase.join(' ');
+      const userId = await generateUserId(seed);
+      localStorage.setItem('walletSeed', seed);
+      localStorage.setItem('userId', userId);
       setStep('success');
       setTimeout(() => {
         onComplete();
@@ -59,7 +71,7 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
     }
   };
 
-  const handleRestore = () => {
+  const handleRestore = async () => {
     const words = restoreSeed.trim().toLowerCase().split(/\s+/);
     
     if (words.length !== 12) {
@@ -80,7 +92,10 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
       return;
     }
 
-    localStorage.setItem('walletSeed', words.join(' '));
+    const seed = words.join(' ');
+    const userId = await generateUserId(seed);
+    localStorage.setItem('walletSeed', seed);
+    localStorage.setItem('userId', userId);
     setStep('success');
     toast({
       title: "Кошелек восстановлен!",
