@@ -131,14 +131,34 @@ const ParticleTextEffect: React.FC<ParticleTextEffectProps> = ({
   const dottify = () => {
     const ctx = ctxRef.current;
     const canvas = canvasRef.current;
-    if (!ctx || !canvas || !textBox.x || !textBox.y || !textBox.w || !textBox.h) return;
+    if (!ctx || !canvas) return;
 
-    const data = ctx.getImageData(textBox.x, textBox.y, textBox.w, textBox.h).data;
+    const lines = textBox.str.split('\n');
+    const lineHeight = textBox.h! * 1.1;
+    const totalHeight = Math.ceil(lineHeight * lines.length);
+    
+    let maxWidth = 0;
+    lines.forEach(line => {
+      const lineWidth = ctx.measureText(line).width;
+      if (lineWidth > maxWidth) maxWidth = lineWidth;
+    });
+
+    const captureX = Math.floor(0.5 * (canvas.width - maxWidth));
+    const captureY = Math.floor(0.5 * canvas.height - (totalHeight / 2));
+    const captureW = Math.ceil(maxWidth);
+    const captureH = totalHeight;
+
+    textBox.x = captureX;
+    textBox.y = captureY;
+    textBox.w = captureW;
+    textBox.h = captureH;
+
+    const data = ctx.getImageData(captureX, captureY, captureW, captureH).data;
     const pixels = data.reduce((arr: any[], _, i, d) => {
       if (i % 4 === 0) {
         arr.push({
-          x: (i / 4) % textBox.w!,
-          y: Math.floor((i / 4) / textBox.w!),
+          x: (i / 4) % captureW,
+          y: Math.floor((i / 4) / captureW),
           rgb: d.slice(i, i + 4),
         });
       }
@@ -149,8 +169,8 @@ const ParticleTextEffect: React.FC<ParticleTextEffectProps> = ({
 
     pixels.forEach((p, i) => {
       particlesRef.current[i] = new ParticleClass(
-        textBox.x! + p.x,
-        textBox.y! + p.y,
+        captureX + p.x,
+        captureY + p.y,
         p.rgb.slice(0, 3)
       );
       particlesRef.current[i].draw();
