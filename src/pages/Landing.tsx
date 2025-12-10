@@ -1,10 +1,10 @@
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import { useNavigate } from 'react-router-dom';
 import { SplineScene } from '@/components/ui/splite';
 import { Spotlight } from '@/components/ui/spotlight';
 import AnimatedBackground from '@/components/AnimatedBackground';
+import { GradientButton } from '@/components/ui/gradient-button';
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -60,9 +60,9 @@ export default function Landing() {
             </div>
             <span className="text-xl font-bold">DEX Wallet</span>
           </div>
-          <Button onClick={() => navigate('/app')} variant="outline">
+          <GradientButton onClick={() => navigate('/app')} variant="variant">
             Войти
-          </Button>
+          </GradientButton>
         </header>
 
         <Card className="mb-20 bg-card/80 backdrop-blur-sm relative overflow-hidden border-border">
@@ -85,14 +85,14 @@ export default function Landing() {
                 Безопасное хранение, мгновенные переводы и обмен криптовалюты в одном приложении
               </p>
               <div className="flex gap-4">
-                <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8">
+                <GradientButton onClick={() => navigate('/app')}>
                   Создать кошелек
                   <Icon name="ArrowRight" size={20} className="ml-2" />
-                </Button>
-                <Button variant="outline" size="lg" className="text-lg px-8">
+                </GradientButton>
+                <GradientButton variant="variant">
                   <Icon name="Play" size={20} className="mr-2" />
                   Как работает
-                </Button>
+                </GradientButton>
               </div>
             </div>
 
@@ -136,14 +136,14 @@ export default function Landing() {
                     <div className="text-4xl font-bold">$48,729.15</div>
                     <div className="text-success text-sm">+12.5% за месяц</div>
                     <div className="grid grid-cols-2 gap-3 pt-4">
-                      <Button className="w-full" size="sm">
+                      <GradientButton className="w-full min-w-0 px-4">
                         <Icon name="ArrowDownLeft" size={16} className="mr-2" />
                         Получить
-                      </Button>
-                      <Button variant="outline" className="w-full" size="sm">
+                      </GradientButton>
+                      <GradientButton variant="variant" className="w-full min-w-0 px-4">
                         <Icon name="ArrowUpRight" size={16} className="mr-2" />
                         Отправить
-                      </Button>
+                      </GradientButton>
                     </div>
                   </div>
                 </div>
@@ -178,10 +178,10 @@ export default function Landing() {
             <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
               Создайте свой безопасный кошелек прямо сейчас. Это займет меньше минуты.
             </p>
-            <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-12">
+            <GradientButton onClick={() => navigate('/app')}>
               Создать кошелек бесплатно
               <Icon name="Rocket" size={20} className="ml-2" />
-            </Button>
+            </GradientButton>
           </Card>
         </section>
 
