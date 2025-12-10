@@ -5,6 +5,7 @@ import { SplineScene } from '@/components/ui/splite';
 import { Spotlight } from '@/components/ui/spotlight';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { GradientButton } from '@/components/ui/gradient-button';
+import { LiquidButton } from '@/components/ui/liquid-glass-button';
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -62,7 +63,14 @@ export default function Landing() {
           </div>
         </header>
 
-        <Card className="mb-20 bg-card/80 backdrop-blur-sm relative overflow-hidden border-border">
+        <div className="mb-20 relative overflow-hidden">
+          <div className="absolute top-0 left-0 z-0 h-full w-full rounded-xl 
+            shadow-[0_0_6px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3px_rgba(0,0,0,0.9),inset_-3px_-3px_0.5px_-3px_rgba(0,0,0,0.85),inset_1px_1px_1px_-0.5px_rgba(0,0,0,0.6),inset_-1px_-1px_1px_-0.5px_rgba(0,0,0,0.6),inset_0_0_6px_6px_rgba(0,0,0,0.12),inset_0_0_2px_2px_rgba(0,0,0,0.06),0_0_12px_rgba(255,255,255,0.15)] 
+            dark:shadow-[0_0_8px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3.5px_rgba(255,255,255,0.09),inset_-3px_-3px_0.5px_-3.5px_rgba(255,255,255,0.85),inset_1px_1px_1px_-0.5px_rgba(255,255,255,0.6),inset_-1px_-1px_1px_-0.5px_rgba(255,255,255,0.6),inset_0_0_6px_6px_rgba(255,255,255,0.12),inset_0_0_2px_2px_rgba(255,255,255,0.06),0_0_12px_rgba(0,0,0,0.15)]" />
+          <div
+            className="absolute top-0 left-0 isolate -z-10 h-full w-full overflow-hidden rounded-xl"
+            style={{ backdropFilter: 'url("#hero-glass")' }}
+          />
           <Spotlight
             className="-top-40 left-0 md:left-60 md:-top-20"
             fill="gray"
@@ -100,10 +108,48 @@ export default function Landing() {
               />
             </div>
           </div>
-        </Card>
+          <svg className="hidden">
+            <defs>
+              <filter
+                id="hero-glass"
+                x="0%"
+                y="0%"
+                width="100%"
+                height="100%"
+                colorInterpolationFilters="sRGB"
+              >
+                <feTurbulence
+                  type="fractalNoise"
+                  baseFrequency="0.05 0.05"
+                  numOctaves="1"
+                  seed="1"
+                  result="turbulence"
+                />
+                <feGaussianBlur in="turbulence" stdDeviation="2" result="blurredNoise" />
+                <feDisplacementMap
+                  in="SourceGraphic"
+                  in2="blurredNoise"
+                  scale="70"
+                  xChannelSelector="R"
+                  yChannelSelector="B"
+                  result="displaced"
+                />
+                <feGaussianBlur in="displaced" stdDeviation="4" result="finalBlur" />
+                <feComposite in="finalBlur" in2="finalBlur" operator="over" />
+              </filter>
+            </defs>
+          </svg>
+        </div>
 
-        <section className="mb-20">
-          <Card className="p-8 md:p-12 bg-card/60 backdrop-blur-sm border-border">
+        <section className="mb-20 relative">
+          <div className="absolute top-0 left-0 z-0 h-full w-full rounded-xl 
+            shadow-[0_0_6px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3px_rgba(0,0,0,0.9),inset_-3px_-3px_0.5px_-3px_rgba(0,0,0,0.85),inset_1px_1px_1px_-0.5px_rgba(0,0,0,0.6),inset_-1px_-1px_1px_-0.5px_rgba(0,0,0,0.6),inset_0_0_6px_6px_rgba(0,0,0,0.12),inset_0_0_2px_2px_rgba(0,0,0,0.06),0_0_12px_rgba(255,255,255,0.15)] 
+            dark:shadow-[0_0_8px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3.5px_rgba(255,255,255,0.09),inset_-3px_-3px_0.5px_-3.5px_rgba(255,255,255,0.85),inset_1px_1px_1px_-0.5px_rgba(255,255,255,0.6),inset_-1px_-1px_1px_-0.5px_rgba(255,255,255,0.6),inset_0_0_6px_6px_rgba(255,255,255,0.12),inset_0_0_2px_2px_rgba(255,255,255,0.06),0_0_12px_rgba(0,0,0,0.15)]" />
+          <div
+            className="absolute top-0 left-0 isolate -z-10 h-full w-full overflow-hidden rounded-xl"
+            style={{ backdropFilter: 'url("#tokens-glass")' }}
+          />
+          <div className="p-8 md:p-12 relative z-10">
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <h2 className="text-3xl font-bold mb-4">Поддерживаемые токены</h2>
@@ -148,7 +194,18 @@ export default function Landing() {
                 </div>
               </div>
             </div>
-          </Card>
+          </div>
+          <svg className="hidden">
+            <defs>
+              <filter id="tokens-glass" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+                <feTurbulence type="fractalNoise" baseFrequency="0.05 0.05" numOctaves="1" seed="2" result="turbulence" />
+                <feGaussianBlur in="turbulence" stdDeviation="2" result="blurredNoise" />
+                <feDisplacementMap in="SourceGraphic" in2="blurredNoise" scale="70" xChannelSelector="R" yChannelSelector="B" result="displaced" />
+                <feGaussianBlur in="displaced" stdDeviation="4" result="finalBlur" />
+                <feComposite in="finalBlur" in2="finalBlur" operator="over" />
+              </filter>
+            </defs>
+          </svg>
         </section>
 
         <section className="mb-20">
@@ -160,19 +217,47 @@ export default function Landing() {
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {features.map((feature, index) => (
-              <Card key={index} className="p-6 cursor-pointer transition-all hover:border-foreground/30 bg-card/60 backdrop-blur-sm">
-                <div className="w-12 h-12 rounded-xl bg-muted/30 flex items-center justify-center mb-4">
-                  <Icon name={feature.icon as any} className="text-foreground" size={24} />
+              <div key={index} className="relative group cursor-pointer">
+                <div className="absolute top-0 left-0 z-0 h-full w-full rounded-xl 
+                  shadow-[0_0_6px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3px_rgba(0,0,0,0.9),inset_-3px_-3px_0.5px_-3px_rgba(0,0,0,0.85),inset_1px_1px_1px_-0.5px_rgba(0,0,0,0.6),inset_-1px_-1px_1px_-0.5px_rgba(0,0,0,0.6),inset_0_0_6px_6px_rgba(0,0,0,0.12),inset_0_0_2px_2px_rgba(0,0,0,0.06),0_0_12px_rgba(255,255,255,0.15)] 
+                  dark:shadow-[0_0_8px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3.5px_rgba(255,255,255,0.09),inset_-3px_-3px_0.5px_-3.5px_rgba(255,255,255,0.85),inset_1px_1px_1px_-0.5px_rgba(255,255,255,0.6),inset_-1px_-1px_1px_-0.5px_rgba(255,255,255,0.6),inset_0_0_6px_6px_rgba(255,255,255,0.12),inset_0_0_2px_2px_rgba(255,255,255,0.06),0_0_12px_rgba(0,0,0,0.15)] 
+                  transition-all group-hover:scale-105" />
+                <div
+                  className="absolute top-0 left-0 isolate -z-10 h-full w-full overflow-hidden rounded-xl"
+                  style={{ backdropFilter: `url(#feature-glass-${index})` }}
+                />
+                <div className="p-6 relative z-10">
+                  <div className="w-12 h-12 rounded-xl bg-muted/30 flex items-center justify-center mb-4">
+                    <Icon name={feature.icon as any} className="text-foreground" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                  <p className="text-muted-foreground">{feature.description}</p>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground">{feature.description}</p>
-              </Card>
+                <svg className="hidden">
+                  <defs>
+                    <filter id={`feature-glass-${index}`} x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+                      <feTurbulence type="fractalNoise" baseFrequency="0.05 0.05" numOctaves="1" seed={index + 3} result="turbulence" />
+                      <feGaussianBlur in="turbulence" stdDeviation="2" result="blurredNoise" />
+                      <feDisplacementMap in="SourceGraphic" in2="blurredNoise" scale="70" xChannelSelector="R" yChannelSelector="B" result="displaced" />
+                      <feGaussianBlur in="displaced" stdDeviation="4" result="finalBlur" />
+                      <feComposite in="finalBlur" in2="finalBlur" operator="over" />
+                    </filter>
+                  </defs>
+                </svg>
+              </div>
             ))}
           </div>
         </section>
 
-        <section className="mb-20">
-          <Card className="p-12 text-center bg-card/60 backdrop-blur-sm border-border">
+        <section className="mb-20 relative">
+          <div className="absolute top-0 left-0 z-0 h-full w-full rounded-xl 
+            shadow-[0_0_6px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3px_rgba(0,0,0,0.9),inset_-3px_-3px_0.5px_-3px_rgba(0,0,0,0.85),inset_1px_1px_1px_-0.5px_rgba(0,0,0,0.6),inset_-1px_-1px_1px_-0.5px_rgba(0,0,0,0.6),inset_0_0_6px_6px_rgba(0,0,0,0.12),inset_0_0_2px_2px_rgba(0,0,0,0.06),0_0_12px_rgba(255,255,255,0.15)] 
+            dark:shadow-[0_0_8px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3.5px_rgba(255,255,255,0.09),inset_-3px_-3px_0.5px_-3.5px_rgba(255,255,255,0.85),inset_1px_1px_1px_-0.5px_rgba(255,255,255,0.6),inset_-1px_-1px_1px_-0.5px_rgba(255,255,255,0.6),inset_0_0_6px_6px_rgba(255,255,255,0.12),inset_0_0_2px_2px_rgba(255,255,255,0.06),0_0_12px_rgba(0,0,0,0.15)]" />
+          <div
+            className="absolute top-0 left-0 isolate -z-10 h-full w-full overflow-hidden rounded-xl"
+            style={{ backdropFilter: 'url("#cta-glass")' }}
+          />
+          <div className="p-12 text-center relative z-10">
             <h2 className="text-3xl font-bold mb-4">Готовы начать?</h2>
             <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
               Создайте свой безопасный кошелек прямо сейчас. Это займет меньше минуты.
@@ -181,7 +266,18 @@ export default function Landing() {
               Создать кошелек бесплатно
               <Icon name="Rocket" size={20} className="ml-2" />
             </GradientButton>
-          </Card>
+          </div>
+          <svg className="hidden">
+            <defs>
+              <filter id="cta-glass" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+                <feTurbulence type="fractalNoise" baseFrequency="0.05 0.05" numOctaves="1" seed="10" result="turbulence" />
+                <feGaussianBlur in="turbulence" stdDeviation="2" result="blurredNoise" />
+                <feDisplacementMap in="SourceGraphic" in2="blurredNoise" scale="70" xChannelSelector="R" yChannelSelector="B" result="displaced" />
+                <feGaussianBlur in="displaced" stdDeviation="4" result="finalBlur" />
+                <feComposite in="finalBlur" in2="finalBlur" operator="over" />
+              </filter>
+            </defs>
+          </svg>
         </section>
 
         <footer className="border-t pt-8 pb-12">
