@@ -12,10 +12,39 @@ import QRCode from 'qrcode';
 import WalletSetup from '@/components/WalletSetup';
 
 const mockAssets = [
-  { name: 'Bitcoin', symbol: 'BTC', balance: 0, price: 43250.00, icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png' },
-  { name: 'Ethereum', symbol: 'ETH', balance: 0, price: 2280.50, icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png' },
-  { name: 'Tether TRC20', symbol: 'USDT', balance: 100.00, price: 1.00, icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'TRC20' },
-  { name: 'Binance Coin', symbol: 'BNB', balance: 0, price: 312.75, icon: 'https://cryptologos.cc/logos/bnb-bnb-logo.png' },
+  { name: 'Bitcoin', symbol: 'BTC', balance: 0, price: 43250.00, icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png', network: 'BTC' },
+  { name: 'Ethereum', symbol: 'ETH', balance: 0, price: 2280.50, icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png', network: 'ETH' },
+  { name: 'Binance Coin', symbol: 'BNB', balance: 0, price: 312.75, icon: 'https://cryptologos.cc/logos/bnb-bnb-logo.png', network: 'BNB' },
+  
+  { name: 'Tether (Ethereum)', symbol: 'USDT', balance: 100.00, price: 1.00, icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'ETH' },
+  { name: 'Tether (Tron)', symbol: 'USDT', balance: 50.00, price: 1.00, icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'TRX' },
+  { name: 'Tether (BSC)', symbol: 'USDT', balance: 75.00, price: 1.00, icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'BSC' },
+  { name: 'Tether (Polygon)', symbol: 'USDT', balance: 25.00, price: 1.00, icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'MATIC' },
+  { name: 'Tether (Arbitrum)', symbol: 'USDT', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'ARB' },
+  
+  { name: 'USD Coin (Ethereum)', symbol: 'USDC', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png', network: 'ETH' },
+  { name: 'USD Coin (BSC)', symbol: 'USDC', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png', network: 'BSC' },
+  { name: 'USD Coin (Polygon)', symbol: 'USDC', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png', network: 'MATIC' },
+  { name: 'USD Coin (Arbitrum)', symbol: 'USDC', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png', network: 'ARB' },
+  { name: 'USD Coin (Optimism)', symbol: 'USDC', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png', network: 'OP' },
+  
+  { name: 'Binance USD (BSC)', symbol: 'BUSD', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/binance-usd-busd-logo.png', network: 'BSC' },
+  { name: 'Binance USD (Ethereum)', symbol: 'BUSD', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/binance-usd-busd-logo.png', network: 'ETH' },
+  
+  { name: 'Dai (Ethereum)', symbol: 'DAI', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png', network: 'ETH' },
+  { name: 'Dai (BSC)', symbol: 'DAI', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png', network: 'BSC' },
+  { name: 'Dai (Polygon)', symbol: 'DAI', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png', network: 'MATIC' },
+  
+  { name: 'TrueUSD (Ethereum)', symbol: 'TUSD', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/trueusd-tusd-logo.png', network: 'ETH' },
+  { name: 'TrueUSD (Tron)', symbol: 'TUSD', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/trueusd-tusd-logo.png', network: 'TRX' },
+  
+  { name: 'Pax Dollar (Ethereum)', symbol: 'USDP', balance: 0, price: 1.00, icon: 'https://assets.coingecko.com/coins/images/6013/small/Pax_Dollar.png', network: 'ETH' },
+  
+  { name: 'Frax (Ethereum)', symbol: 'FRAX', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/frax-frax-logo.png', network: 'ETH' },
+  { name: 'Frax (BSC)', symbol: 'FRAX', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/frax-frax-logo.png', network: 'BSC' },
+  
+  { name: 'USDD (Tron)', symbol: 'USDD', balance: 0, price: 1.00, icon: 'https://assets.coingecko.com/coins/images/25380/small/USDD.png', network: 'TRX' },
+  { name: 'USDD (Ethereum)', symbol: 'USDD', balance: 0, price: 1.00, icon: 'https://assets.coingecko.com/coins/images/25380/small/USDD.png', network: 'ETH' },
 ];
 
 const mockTransactions = [
@@ -238,16 +267,30 @@ export default function Index() {
 
           <TabsContent value="portfolio" className="space-y-4">
             <div className="grid gap-4">
-              {mockAssets.map((asset) => (
-                <Card key={asset.symbol} className="p-5 hover-scale cursor-pointer transition-all hover:border-primary/50">
+              {mockAssets.map((asset, index) => (
+                <Card key={`${asset.symbol}-${asset.network}-${index}`} className="p-5 hover-scale cursor-pointer transition-all hover:border-primary/50">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-background/50 flex items-center justify-center overflow-hidden">
+                      <div className="relative w-12 h-12 rounded-full bg-background/50 flex items-center justify-center overflow-hidden">
                         <img src={asset.icon} alt={asset.name} className="w-8 h-8 object-contain" />
+                        {asset.network && (
+                          <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-card border-2 border-card flex items-center justify-center">
+                            <span className="text-[8px] font-bold text-foreground">
+                              {asset.network === 'ETH' && '⟠'}
+                              {asset.network === 'BSC' && '🔶'}
+                              {asset.network === 'TRX' && '●'}
+                              {asset.network === 'BTC' && '₿'}
+                              {asset.network === 'MATIC' && '⬡'}
+                              {asset.network === 'ARB' && '🔵'}
+                              {asset.network === 'OP' && '🔴'}
+                              {asset.network === 'BNB' && '🔶'}
+                            </span>
+                          </div>
+                        )}
                       </div>
                       <div>
                         <h4 className="font-semibold">{asset.name}</h4>
-                        <p className="text-sm text-muted-foreground">{asset.symbol}{(asset as any).network ? ` (${(asset as any).network})` : ''}</p>
+                        <p className="text-sm text-muted-foreground">{asset.symbol}</p>
                       </div>
                     </div>
                     <div className="text-right">
