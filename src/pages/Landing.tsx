@@ -7,14 +7,6 @@ import { Spotlight } from '@/components/ui/spotlight';
 
 export default function Landing() {
   const navigate = useNavigate();
-  
-  const playSound = () => {
-    const utterance = new SpeechSynthesisUtterance('Ермек ты че ахуел?');
-    utterance.lang = 'ru-RU';
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-    window.speechSynthesis.speak(utterance);
-  };
 
   const features = [
     {
@@ -102,7 +94,7 @@ export default function Landing() {
               </div>
             </div>
 
-            <div className="flex-1 relative cursor-pointer" onClick={playSound}>
+            <div className="flex-1 relative">
               <SplineScene 
                 scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
                 className="w-full h-full"
