@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
 import QRCode from 'qrcode';
-import { useEffect, useRef } from 'react';
+import WalletSetup from '@/components/WalletSetup';
 
 const mockAssets = [
   { name: 'Bitcoin', symbol: 'BTC', balance: 0.5234, price: 43250.00, icon: '₿' },
@@ -25,12 +25,29 @@ const mockTransactions = [
 ];
 
 export default function Index() {
+  const [walletCreated, setWalletCreated] = useState(false);
+  const [showSetup, setShowSetup] = useState(false);
   const [selectedTab, setSelectedTab] = useState('portfolio');
   const [fromToken, setFromToken] = useState('BTC');
   const [toToken, setToToken] = useState('ETH');
   const [swapAmount, setSwapAmount] = useState('');
   const [receiveAddress] = useState('0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb');
   const qrCanvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const hasWallet = localStorage.getItem('walletCreated');
+    if (!hasWallet) {
+      setShowSetup(true);
+    } else {
+      setWalletCreated(true);
+    }
+  }, []);
+
+  const handleWalletComplete = () => {
+    localStorage.setItem('walletCreated', 'true');
+    setWalletCreated(true);
+    setShowSetup(false);
+  };
 
   useEffect(() => {
     if (qrCanvasRef.current && receiveAddress) {
@@ -55,6 +72,10 @@ export default function Index() {
     const usdValue = parseFloat(swapAmount) * fromAsset.price;
     return (usdValue / toAsset.price * 0.997).toFixed(4);
   };
+
+  if (!walletCreated) {
+    return <WalletSetup open={showSetup} onComplete={handleWalletComplete} />;
+  }
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-6">
