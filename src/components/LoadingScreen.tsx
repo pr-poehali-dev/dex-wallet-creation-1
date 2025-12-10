@@ -30,7 +30,7 @@ export default function LoadingScreen({ onLoadingComplete }: LoadingScreenProps)
     return () => clearInterval(timer);
   }, [onLoadingComplete]);
 
-  const particleColors = useMemo(() => ['ffad70', 'f7d297', 'edb9a1', 'e697ac', 'b38dca', '9c76db', '705cb5', '43428e', '2c2142'], []);
+  const particleColors = useMemo(() => ['d9d9d9', 'bfbfbf', '999999', '808080', '737373', '666666', '525252', '404040', '333333'], []);
 
   return (
     <div className="fixed inset-0 bg-background z-50 flex flex-col items-center justify-center px-4 overflow-hidden">
