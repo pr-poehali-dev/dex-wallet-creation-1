@@ -267,41 +267,52 @@ export default function Index() {
 
           <TabsContent value="portfolio" className="space-y-4">
             <div className="grid gap-4">
-              {mockAssets.map((asset, index) => (
-                <Card key={`${asset.symbol}-${asset.network}-${index}`} className="p-5 hover-scale cursor-pointer transition-all hover:border-primary/50">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="relative w-12 h-12 rounded-full bg-background/50 flex items-center justify-center overflow-hidden">
-                        <img src={asset.icon} alt={asset.name} className="w-8 h-8 object-contain" />
-                        {asset.network && (
-                          <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-card border-2 border-card flex items-center justify-center">
-                            <span className="text-[8px] font-bold text-foreground">
-                              {asset.network === 'ETH' && '⟠'}
-                              {asset.network === 'BSC' && '🔶'}
-                              {asset.network === 'TRX' && '●'}
-                              {asset.network === 'BTC' && '₿'}
-                              {asset.network === 'MATIC' && '⬡'}
-                              {asset.network === 'ARB' && '🔵'}
-                              {asset.network === 'OP' && '🔴'}
-                              {asset.network === 'BNB' && '🔶'}
-                            </span>
-                          </div>
-                        )}
+              {mockAssets.map((asset, index) => {
+                const getNetworkIcon = (network: string) => {
+                  const icons: { [key: string]: string } = {
+                    'ETH': 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+                    'BSC': 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
+                    'BNB': 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
+                    'TRX': 'https://cryptologos.cc/logos/tron-trx-logo.png',
+                    'BTC': 'https://cryptologos.cc/logos/bitcoin-btc-logo.png',
+                    'MATIC': 'https://cryptologos.cc/logos/polygon-matic-logo.png',
+                    'ARB': 'https://assets.coingecko.com/coins/images/16547/small/photo_2023-03-29_21.47.00.jpeg',
+                    'OP': 'https://assets.coingecko.com/coins/images/25244/small/Optimism.png',
+                  };
+                  return icons[network] || '';
+                };
+                
+                return (
+                  <Card key={`${asset.symbol}-${asset.network}-${index}`} className="p-5 hover-scale cursor-pointer transition-all hover:border-primary/50">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="relative w-12 h-12 rounded-full bg-background/50 flex items-center justify-center">
+                          <img src={asset.icon} alt={asset.name} className="w-8 h-8 object-contain" />
+                          {asset.network && (
+                            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden shadow-lg">
+                              <img 
+                                src={getNetworkIcon(asset.network)} 
+                                alt={asset.network} 
+                                className="w-4 h-4 object-contain"
+                              />
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <h4 className="font-semibold">{asset.name}</h4>
+                          <p className="text-sm text-muted-foreground">{asset.symbol}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-semibold">{asset.name}</h4>
-                        <p className="text-sm text-muted-foreground">{asset.symbol}</p>
+                      <div className="text-right">
+                        <p className="font-semibold">{asset.balance} {asset.symbol}</p>
+                        <p className="text-sm text-muted-foreground">
+                          ${(asset.balance * asset.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        </p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-semibold">{asset.balance} {asset.symbol}</p>
-                      <p className="text-sm text-muted-foreground">
-                        ${(asset.balance * asset.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              ))}
+                  </Card>
+                );
+              })}
             </div>
           </TabsContent>
 
