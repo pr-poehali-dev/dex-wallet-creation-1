@@ -65,6 +65,7 @@ export default function Index() {
   const [toToken, setToToken] = useState('ETH');
   const [swapAmount, setSwapAmount] = useState('');
   const [receiveAddress] = useState('0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb');
+  const [selectedReceiveAsset, setSelectedReceiveAsset] = useState<typeof mockAssets[0] | null>(null);
   const qrCanvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -92,7 +93,7 @@ export default function Index() {
   };
 
   useEffect(() => {
-    if (qrCanvasRef.current && receiveAddress) {
+    if (qrCanvasRef.current && receiveAddress && selectedReceiveAsset) {
       QRCode.toCanvas(qrCanvasRef.current, receiveAddress, {
         width: 200,
         margin: 2,
@@ -102,7 +103,7 @@ export default function Index() {
         }
       });
     }
-  }, [receiveAddress]);
+  }, [receiveAddress, selectedReceiveAsset]);
 
   const totalBalance = mockAssets.reduce((sum, asset) => sum + (asset.balance * asset.price), 0);
 
@@ -197,32 +198,134 @@ export default function Index() {
                 </DialogContent>
               </Dialog>
               
-              <Dialog>
+              <Dialog onOpenChange={(open) => { if (!open) setSelectedReceiveAsset(null); }}>
                 <DialogTrigger asChild>
                   <Button variant="outline" className="flex-1 gap-2">
                     <Icon name="Download" size={18} />
                     Получить
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-card">
+                <DialogContent className="bg-card max-h-[80vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle>Получить криптовалюту</DialogTitle>
+                    <DialogTitle>
+                      {selectedReceiveAsset ? `Получить ${selectedReceiveAsset.name}` : 'Выберите актив'}
+                    </DialogTitle>
                   </DialogHeader>
-                  <div className="space-y-4 mt-4 text-center">
-                    <div className="flex justify-center">
-                      <canvas ref={qrCanvasRef} className="rounded-lg" />
+                  
+                  {!selectedReceiveAsset ? (
+                    <div className="space-y-2 mt-4">
+                      {mockAssets.map((asset, index) => {
+                        const getNetworkIcon = (network: string) => {
+                          const icons: { [key: string]: string } = {
+                            'ETH': 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+                            'BSC': 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
+                            'BNB': 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
+                            'TRX': 'https://cryptologos.cc/logos/tron-trx-logo.png',
+                            'BTC': 'https://cryptologos.cc/logos/bitcoin-btc-logo.png',
+                            'MATIC': 'https://cryptologos.cc/logos/polygon-matic-logo.png',
+                            'ARB': 'https://assets.coingecko.com/coins/images/16547/small/photo_2023-03-29_21.47.00.jpeg',
+                            'OP': 'https://assets.coingecko.com/coins/images/25244/small/Optimism.png',
+                          };
+                          return icons[network] || '';
+                        };
+                        
+                        return (
+                          <Button
+                            key={`${asset.symbol}-${asset.network || 'native'}-${index}`}
+                            variant="outline"
+                            className="w-full justify-start h-auto py-3 px-4 hover:bg-muted"
+                            onClick={() => setSelectedReceiveAsset(asset)}
+                          >
+                            <div className="flex items-center gap-3 w-full">
+                              <div className="relative w-10 h-10 rounded-full bg-background/50 flex items-center justify-center flex-shrink-0">
+                                <img src={asset.icon} alt={asset.name} className="w-7 h-7 object-contain" />
+                                {asset.network && (
+                                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden">
+                                    <img 
+                                      src={getNetworkIcon(asset.network)} 
+                                      alt={asset.network} 
+                                      className="w-3 h-3 object-contain"
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                              <div className="text-left flex-1">
+                                <div className="font-semibold">{asset.name}</div>
+                                <div className="text-sm text-muted-foreground">{asset.symbol}</div>
+                              </div>
+                              <Icon name="ChevronRight" size={20} className="text-muted-foreground" />
+                            </div>
+                          </Button>
+                        );
+                      })}
                     </div>
-                    <div>
-                      <Label>Ваш адрес</Label>
-                      <div className="mt-2 p-3 bg-muted rounded-lg font-mono text-sm break-all">
-                        {receiveAddress}
+                  ) : (
+                    <div className="space-y-4 mt-4">
+                      <div className="flex justify-center items-center gap-3 p-4 bg-muted/50 rounded-lg">
+                        <div className="relative w-12 h-12 rounded-full bg-background/50 flex items-center justify-center">
+                          <img src={selectedReceiveAsset.icon} alt={selectedReceiveAsset.name} className="w-8 h-8 object-contain" />
+                          {selectedReceiveAsset.network && (() => {
+                            const getNetworkIcon = (network: string) => {
+                              const icons: { [key: string]: string } = {
+                                'ETH': 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+                                'BSC': 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
+                                'BNB': 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
+                                'TRX': 'https://cryptologos.cc/logos/tron-trx-logo.png',
+                                'BTC': 'https://cryptologos.cc/logos/bitcoin-btc-logo.png',
+                                'MATIC': 'https://cryptologos.cc/logos/polygon-matic-logo.png',
+                                'ARB': 'https://assets.coingecko.com/coins/images/16547/small/photo_2023-03-29_21.47.00.jpeg',
+                                'OP': 'https://assets.coingecko.com/coins/images/25244/small/Optimism.png',
+                              };
+                              return icons[network] || '';
+                            };
+                            return (
+                              <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden">
+                                <img 
+                                  src={getNetworkIcon(selectedReceiveAsset.network)} 
+                                  alt={selectedReceiveAsset.network} 
+                                  className="w-4 h-4 object-contain"
+                                />
+                              </div>
+                            );
+                          })()}
+                        </div>
+                        <div className="text-left">
+                          <div className="font-semibold">{selectedReceiveAsset.name}</div>
+                          <div className="text-sm text-muted-foreground">{selectedReceiveAsset.symbol}</div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex justify-center">
+                        <canvas ref={qrCanvasRef} className="rounded-lg" />
+                      </div>
+                      
+                      <div>
+                        <Label>Ваш адрес</Label>
+                        <div className="mt-2 p-3 bg-muted rounded-lg font-mono text-sm break-all">
+                          {receiveAddress}
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          className="flex-1 gap-2"
+                          onClick={() => setSelectedReceiveAsset(null)}
+                        >
+                          <Icon name="ArrowLeft" size={16} />
+                          Назад
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          className="flex-1 gap-2"
+                          onClick={() => navigator.clipboard.writeText(receiveAddress)}
+                        >
+                          <Icon name="Copy" size={16} />
+                          Копировать
+                        </Button>
                       </div>
                     </div>
-                    <Button variant="outline" className="w-full gap-2">
-                      <Icon name="Copy" size={16} />
-                      Копировать адрес
-                    </Button>
-                  </div>
+                  )}
                 </DialogContent>
               </Dialog>
               
