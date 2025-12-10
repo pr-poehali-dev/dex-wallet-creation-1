@@ -44,11 +44,53 @@ export default function Landing() {
   ];
 
   const supportedTokens = [
-    { symbol: 'BTC', name: 'Bitcoin', icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png' },
-    { symbol: 'ETH', name: 'Ethereum', icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png' },
-    { symbol: 'USDT', name: 'Tether TRC20', icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png' },
-    { symbol: 'BNB', name: 'Binance Coin', icon: 'https://cryptologos.cc/logos/bnb-bnb-logo.png' },
+    { symbol: 'BTC', name: 'Bitcoin', icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png', network: null },
+    { symbol: 'ETH', name: 'Ethereum', icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png', network: null },
+    { symbol: 'BNB', name: 'Binance Coin', icon: 'https://cryptologos.cc/logos/bnb-bnb-logo.png', network: null },
+    
+    { symbol: 'USDT', name: 'Tether (Ethereum)', icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'ETH' },
+    { symbol: 'USDT', name: 'Tether (Tron)', icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'TRX' },
+    { symbol: 'USDT', name: 'Tether (BSC)', icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'BSC' },
+    { symbol: 'USDT', name: 'Tether (Polygon)', icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'MATIC' },
+    { symbol: 'USDT', name: 'Tether (Arbitrum)', icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'ARB' },
+    
+    { symbol: 'USDC', name: 'USD Coin (Ethereum)', icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png', network: 'ETH' },
+    { symbol: 'USDC', name: 'USD Coin (BSC)', icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png', network: 'BSC' },
+    { symbol: 'USDC', name: 'USD Coin (Polygon)', icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png', network: 'MATIC' },
+    { symbol: 'USDC', name: 'USD Coin (Arbitrum)', icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png', network: 'ARB' },
+    { symbol: 'USDC', name: 'USD Coin (Optimism)', icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png', network: 'OP' },
+    
+    { symbol: 'BUSD', name: 'Binance USD (BSC)', icon: 'https://cryptologos.cc/logos/binance-usd-busd-logo.png', network: 'BSC' },
+    { symbol: 'BUSD', name: 'Binance USD (Ethereum)', icon: 'https://cryptologos.cc/logos/binance-usd-busd-logo.png', network: 'ETH' },
+    
+    { symbol: 'DAI', name: 'Dai (Ethereum)', icon: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png', network: 'ETH' },
+    { symbol: 'DAI', name: 'Dai (BSC)', icon: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png', network: 'BSC' },
+    { symbol: 'DAI', name: 'Dai (Polygon)', icon: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png', network: 'MATIC' },
+    
+    { symbol: 'TUSD', name: 'TrueUSD (Ethereum)', icon: 'https://cryptologos.cc/logos/trueusd-tusd-logo.png', network: 'ETH' },
+    { symbol: 'TUSD', name: 'TrueUSD (Tron)', icon: 'https://cryptologos.cc/logos/trueusd-tusd-logo.png', network: 'TRX' },
+    
+    { symbol: 'USDP', name: 'Pax Dollar (Ethereum)', icon: 'https://assets.coingecko.com/coins/images/6013/small/Pax_Dollar.png', network: 'ETH' },
+    
+    { symbol: 'FRAX', name: 'Frax (Ethereum)', icon: 'https://cryptologos.cc/logos/frax-frax-logo.png', network: 'ETH' },
+    { symbol: 'FRAX', name: 'Frax (BSC)', icon: 'https://cryptologos.cc/logos/frax-frax-logo.png', network: 'BSC' },
+    
+    { symbol: 'USDD', name: 'USDD (Tron)', icon: 'https://assets.coingecko.com/coins/images/25380/small/USDD.png', network: 'TRX' },
+    { symbol: 'USDD', name: 'USDD (Ethereum)', icon: 'https://assets.coingecko.com/coins/images/25380/small/USDD.png', network: 'ETH' },
   ];
+
+  const getNetworkIcon = (network: string | null) => {
+    if (!network) return null;
+    const icons: { [key: string]: string } = {
+      'ETH': 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+      'BSC': 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
+      'TRX': 'https://cryptologos.cc/logos/tron-trx-logo.png',
+      'MATIC': 'https://cryptologos.cc/logos/polygon-matic-logo.png',
+      'ARB': 'https://assets.coingecko.com/coins/images/16547/small/photo_2023-03-29_21.47.00.jpeg',
+      'OP': 'https://assets.coingecko.com/coins/images/25244/small/Optimism.png',
+    };
+    return icons[network] || null;
+  };
 
   return (
     <div className="min-h-screen bg-background relative">
@@ -150,49 +192,33 @@ export default function Landing() {
             style={{ backdropFilter: 'url("#tokens-glass")' }}
           />
           <div className="p-8 md:p-12 relative z-10">
-            <div className="grid md:grid-cols-2 gap-8 items-center">
-              <div>
-                <h2 className="text-3xl font-bold mb-4">Поддерживаемые токены</h2>
-                <p className="text-muted-foreground mb-6">
-                  Храните и управляйте популярными криптовалютами в одном месте
-                </p>
-                <div className="grid grid-cols-2 gap-4">
-                  {supportedTokens.map((token) => (
-                    <div key={token.symbol} className="flex items-center gap-3 p-3 rounded-lg bg-background/50">
-                      <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center overflow-hidden">
-                        <img src={token.icon} alt={token.name} className="w-6 h-6 object-contain" />
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold mb-4">Поддерживаемые токены</h2>
+              <p className="text-muted-foreground text-lg">
+                Храните и управляйте популярными криптовалютами в одном месте
+              </p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {supportedTokens.map((token, index) => (
+                <div key={`${token.symbol}-${token.network || 'native'}-${index}`} className="flex items-center gap-3 p-3 rounded-lg bg-background/50 hover:bg-background/70 transition-colors">
+                  <div className="relative w-10 h-10 rounded-full bg-background flex items-center justify-center overflow-hidden flex-shrink-0">
+                    <img src={token.icon} alt={token.name} className="w-6 h-6 object-contain" />
+                    {token.network && (
+                      <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-background border border-card flex items-center justify-center overflow-hidden">
+                        <img 
+                          src={getNetworkIcon(token.network)!} 
+                          alt={token.network} 
+                          className="w-2.5 h-2.5 object-contain"
+                        />
                       </div>
-                      <div>
-                        <div className="font-semibold">{token.symbol}</div>
-                        <div className="text-sm text-muted-foreground">{token.name}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="relative">
-                <div className="absolute inset-0 bg-muted/20 blur-3xl rounded-full"></div>
-                <div className="relative bg-card backdrop-blur-sm rounded-2xl p-6 border-border border">
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Общий баланс</span>
-                      <Icon name="TrendingUp" size={16} className="text-success" />
-                    </div>
-                    <div className="text-4xl font-bold">$48,729.15</div>
-                    <div className="text-success text-sm">+12.5% за месяц</div>
-                    <div className="grid grid-cols-2 gap-3 pt-4">
-                      <GradientButton className="w-full min-w-0 px-4">
-                        <Icon name="ArrowDownLeft" size={16} className="mr-2" />
-                        Получить
-                      </GradientButton>
-                      <GradientButton variant="variant" className="w-full min-w-0 px-4">
-                        <Icon name="ArrowUpRight" size={16} className="mr-2" />
-                        Отправить
-                      </GradientButton>
-                    </div>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-semibold truncate">{token.symbol}</div>
+                    <div className="text-xs text-muted-foreground truncate">{token.network || 'Native'}</div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
           <svg className="hidden">
