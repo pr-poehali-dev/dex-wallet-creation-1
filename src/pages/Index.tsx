@@ -64,9 +64,27 @@ export default function Index() {
   const [fromToken, setFromToken] = useState('BTC');
   const [toToken, setToToken] = useState('ETH');
   const [swapAmount, setSwapAmount] = useState('');
-  const [receiveAddress] = useState('0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb');
   const [selectedReceiveAsset, setSelectedReceiveAsset] = useState<typeof mockAssets[0] | null>(null);
   const qrCanvasRef = useRef<HTMLCanvasElement>(null);
+
+  const generateAddressForNetwork = async (userId: string, network: string, symbol: string): Promise<string> => {
+    const input = `${userId}-${network}-${symbol}`;
+    const encoder = new TextEncoder();
+    const data = encoder.encode(input);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+    if (network === 'TRX') {
+      return 'T' + hashHex.substring(0, 33).toUpperCase();
+    } else if (network === 'BTC') {
+      return '1' + hashHex.substring(0, 33);
+    } else {
+      return '0x' + hashHex.substring(0, 40);
+    }
+  };
+
+  const [currentReceiveAddress, setCurrentReceiveAddress] = useState<string>('');
 
   useEffect(() => {
     const hasWallet = localStorage.getItem('walletCreated');
@@ -93,8 +111,19 @@ export default function Index() {
   };
 
   useEffect(() => {
-    if (qrCanvasRef.current && receiveAddress && selectedReceiveAsset) {
-      QRCode.toCanvas(qrCanvasRef.current, receiveAddress, {
+    const generateAddress = async () => {
+      if (selectedReceiveAsset && userId) {
+        const network = selectedReceiveAsset.network || selectedReceiveAsset.symbol;
+        const address = await generateAddressForNetwork(userId, network, selectedReceiveAsset.symbol);
+        setCurrentReceiveAddress(address);
+      }
+    };
+    generateAddress();
+  }, [selectedReceiveAsset, userId]);
+
+  useEffect(() => {
+    if (qrCanvasRef.current && currentReceiveAddress && selectedReceiveAsset) {
+      QRCode.toCanvas(qrCanvasRef.current, currentReceiveAddress, {
         width: 200,
         margin: 2,
         color: {
@@ -103,7 +132,7 @@ export default function Index() {
         }
       });
     }
-  }, [receiveAddress, selectedReceiveAsset]);
+  }, [currentReceiveAddress, selectedReceiveAsset]);
 
   const totalBalance = mockAssets.reduce((sum, asset) => sum + (asset.balance * asset.price), 0);
 
@@ -302,7 +331,7 @@ export default function Index() {
                       <div>
                         <Label>Ваш адрес</Label>
                         <div className="mt-2 p-3 bg-muted rounded-lg font-mono text-sm break-all">
-                          {receiveAddress}
+                          {currentReceiveAddress || 'Генерация адреса...'}
                         </div>
                       </div>
                       
@@ -318,7 +347,8 @@ export default function Index() {
                         <Button 
                           variant="outline" 
                           className="flex-1 gap-2"
-                          onClick={() => navigator.clipboard.writeText(receiveAddress)}
+                          onClick={() => navigator.clipboard.writeText(currentReceiveAddress)}
+                          disabled={!currentReceiveAddress}
                         >
                           <Icon name="Copy" size={16} />
                           Копировать
