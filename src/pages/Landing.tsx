@@ -201,14 +201,14 @@ export default function Landing() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {supportedTokens.map((token, index) => (
                 <div key={`${token.symbol}-${token.network || 'native'}-${index}`} className="flex items-center gap-3 p-3 rounded-lg bg-background/50 hover:bg-background/70 transition-colors">
-                  <div className="relative w-10 h-10 rounded-full bg-background flex items-center justify-center overflow-hidden flex-shrink-0">
+                  <div className="relative w-10 h-10 rounded-full bg-background flex items-center justify-center flex-shrink-0">
                     <img src={token.icon} alt={token.name} className="w-6 h-6 object-contain" />
                     {token.network && (
-                      <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-background border border-card flex items-center justify-center overflow-hidden">
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden shadow-md">
                         <img 
                           src={getNetworkIcon(token.network)!} 
                           alt={token.network} 
-                          className="w-2.5 h-2.5 object-contain"
+                          className="w-4 h-4 object-contain"
                         />
                       </div>
                     )}

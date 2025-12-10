@@ -311,11 +311,11 @@ export default function Index() {
                               <div className="relative w-10 h-10 rounded-full bg-background/50 flex items-center justify-center flex-shrink-0">
                                 <img src={asset.icon} alt={asset.name} className="w-7 h-7 object-contain" />
                                 {asset.network && (
-                                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden">
+                                  <div className="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden shadow-md">
                                     <img 
                                       src={getNetworkIcon(asset.network)} 
                                       alt={asset.network} 
-                                      className="w-3 h-3 object-contain"
+                                      className="w-4 h-4 object-contain"
                                     />
                                   </div>
                                 )}
@@ -350,11 +350,11 @@ export default function Index() {
                               return icons[network] || '';
                             };
                             return (
-                              <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden">
+                              <div className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden shadow-md">
                                 <img 
                                   src={getNetworkIcon(selectedReceiveAsset.network)} 
                                   alt={selectedReceiveAsset.network} 
-                                  className="w-4 h-4 object-contain"
+                                  className="w-5 h-5 object-contain"
                                 />
                               </div>
                             );
@@ -464,11 +464,11 @@ export default function Index() {
                         <div className="relative w-12 h-12 rounded-full bg-background/50 flex items-center justify-center">
                           <img src={asset.icon} alt={asset.name} className="w-8 h-8 object-contain" />
                           {asset.network && (
-                            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden">
+                            <div className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden shadow-md">
                               <img 
                                 src={getNetworkIcon(asset.network)} 
                                 alt={asset.network} 
-                                className="w-4 h-4 object-contain"
+                                className="w-5 h-5 object-contain"
                               />
                             </div>
                           )}
