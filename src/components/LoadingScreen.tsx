@@ -38,8 +38,8 @@ export default function LoadingScreen({ onLoadingComplete }: LoadingScreenProps)
           <ParticleTextEffect
             text="DEXXX WALLET"
             colors={['6b7280', '9ca3af', 'a1a1aa', '71717a', '52525b']}
-            animationForce={70}
-            particleDensity={2}
+            animationForce={40}
+            particleDensity={5}
             className="absolute inset-0"
           />
         </div>
