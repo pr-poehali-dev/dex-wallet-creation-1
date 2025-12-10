@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Icon from '@/components/ui/icon';
+import { ParticleTextEffect } from '@/components/ui/interactive-text-particle';
 
 interface LoadingScreenProps {
   onLoadingComplete: () => void;
@@ -31,11 +32,17 @@ export default function LoadingScreen({ onLoadingComplete }: LoadingScreenProps)
   }, [onLoadingComplete]);
 
   return (
-    <div className="fixed inset-0 bg-background z-50 flex flex-col items-center justify-center px-4">
-      <div className="flex flex-col items-center gap-16 w-full max-w-4xl">
-        <h1 className="text-[12rem] md:text-[16rem] lg:text-[20rem] font-black text-center bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent animate-pulse leading-none">
-          DEXXX WALLET
-        </h1>
+    <div className="fixed inset-0 bg-background z-50 flex flex-col items-center justify-center px-4 overflow-hidden">
+      <div className="flex flex-col items-center gap-16 w-full h-full">
+        <div className="relative w-full h-[60vh] flex items-center justify-center">
+          <ParticleTextEffect
+            text="DEXXX WALLET"
+            colors={['6b7280', '9ca3af', 'a1a1aa', '71717a', '52525b']}
+            animationForce={70}
+            particleDensity={2}
+            className="absolute inset-0"
+          />
+        </div>
 
         <div className="w-full max-w-2xl space-y-4">
           <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
