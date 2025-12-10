@@ -165,7 +165,7 @@ const ParticleTextEffect: React.FC<ParticleTextEffectProps> = ({
     if (!canvas || !ctx) return;
 
     textBox.str = text;
-    textBox.h = Math.floor(canvas.height * 0.115);
+    textBox.h = Math.floor(canvas.height * 0.23);
 
     interactionRadiusRef.current = Math.max(50, textBox.h * 1.5);
 
@@ -173,16 +173,35 @@ const ParticleTextEffect: React.FC<ParticleTextEffectProps> = ({
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    textBox.w = Math.round(ctx.measureText(textBox.str).width);
-    textBox.x = 0.5 * (canvas.width - textBox.w);
-    textBox.y = 0.5 * (canvas.height - textBox.h);
+    const lines = textBox.str.split('\n');
+    const lineHeight = textBox.h * 1.1;
+    const totalHeight = lineHeight * lines.length;
+    const startY = 0.5 * canvas.height - (totalHeight / 2) + (textBox.h / 2);
 
-    const gradient = ctx.createLinearGradient(textBox.x, textBox.y, textBox.x + textBox.w, textBox.y + textBox.h);
+    let maxWidth = 0;
+    lines.forEach(line => {
+      const lineWidth = ctx.measureText(line).width;
+      if (lineWidth > maxWidth) maxWidth = lineWidth;
+    });
+
+    textBox.w = Math.round(maxWidth);
+    textBox.x = 0.5 * (canvas.width - textBox.w);
+    textBox.y = startY - (textBox.h / 2);
+
+    const gradient = ctx.createLinearGradient(
+      0.5 * canvas.width - maxWidth / 2,
+      startY - textBox.h / 2,
+      0.5 * canvas.width + maxWidth / 2,
+      startY + totalHeight - textBox.h / 2
+    );
     const N = colors.length - 1;
     colors.forEach((c, i) => gradient.addColorStop(i / N, `#${c}`));
     ctx.fillStyle = gradient;
 
-    ctx.fillText(textBox.str, 0.5 * canvas.width, 0.5 * canvas.height);
+    lines.forEach((line, i) => {
+      ctx.fillText(line, 0.5 * canvas.width, startY + i * lineHeight);
+    });
+
     dottify();
   };
 

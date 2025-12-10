@@ -37,7 +37,7 @@ export default function LoadingScreen({ onLoadingComplete }: LoadingScreenProps)
       <div className="flex flex-col items-center gap-8 w-full h-full">
         <div className="relative w-full flex-1 flex items-center justify-center">
           <ParticleTextEffect
-            text="DEXXX WALLET"
+            text="DEXXX\nWALLET"
             colors={particleColors}
             animationForce={80}
             particleDensity={4}
