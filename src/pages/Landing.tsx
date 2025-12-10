@@ -6,7 +6,6 @@ import { Spotlight } from '@/components/ui/spotlight';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { LiquidButton } from '@/components/ui/liquid-glass-button';
-import { ParticleTextEffect } from '@/components/ui/interactive-text-particle';
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -125,18 +124,10 @@ export default function Landing() {
                 <Icon name="Sparkles" size={16} />
                 <span>Децентрализованный кошелек нового поколения</span>
               </div>
-              <div className="relative h-32 md:h-40 mb-6 overflow-hidden">
-                <ParticleTextEffect
-                  text="CRYPTO WALLET"
-                  colors={['3b82f6', '8b5cf6', 'a855f7', 'ec4899', 'f43f5e']}
-                  className="absolute inset-0"
-                  animationForce={60}
-                  particleDensity={3}
-                />
-              </div>
-              <p className="text-lg md:text-xl text-muted-foreground mb-2">
-                Ваши криптоактивы под полным контролем
-              </p>
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-foreground">
+                Ваши криптоактивы<br />
+                под полным контролем
+              </h1>
               <p className="text-xl text-muted-foreground mb-8 max-w-xl">
                 Безопасное хранение, мгновенные переводы и обмен криптовалюты в одном приложении
               </p>
@@ -202,15 +193,7 @@ export default function Landing() {
           />
           <div className="p-8 md:p-12 relative z-10">
             <div className="text-center mb-8">
-              <div className="relative h-20 mb-4 overflow-hidden mx-auto max-w-2xl">
-                <ParticleTextEffect
-                  text="TOKENS"
-                  colors={['10b981', '14b8a6', '06b6d4', '0ea5e9']}
-                  className="absolute inset-0"
-                  animationForce={50}
-                  particleDensity={3}
-                />
-              </div>
+              <h2 className="text-3xl font-bold mb-4">Поддерживаемые токены</h2>
               <p className="text-muted-foreground text-lg">
                 Храните и управляйте популярными криптовалютами в одном месте
               </p>
@@ -253,15 +236,7 @@ export default function Landing() {
 
         <section className="mb-20">
           <div className="text-center mb-12">
-            <div className="relative h-24 mb-4 overflow-hidden mx-auto max-w-3xl">
-              <ParticleTextEffect
-                text="WHY US"
-                colors={['f59e0b', 'f97316', 'ef4444', 'dc2626']}
-                className="absolute inset-0"
-                animationForce={55}
-                particleDensity={3}
-              />
-            </div>
+            <h2 className="text-4xl font-bold mb-4">Почему выбирают нас</h2>
             <p className="text-muted-foreground text-lg">
               Современные технологии для безопасного управления криптовалютой
             </p>
@@ -309,15 +284,7 @@ export default function Landing() {
             style={{ backdropFilter: 'url("#cta-glass")' }}
           />
           <div className="p-12 text-center relative z-10">
-            <div className="relative h-20 mb-4 overflow-hidden mx-auto max-w-2xl">
-              <ParticleTextEffect
-                text="START NOW"
-                colors={['8b5cf6', 'a855f7', 'd946ef', 'e879f9']}
-                className="absolute inset-0"
-                animationForce={50}
-                particleDensity={3}
-              />
-            </div>
+            <h2 className="text-3xl font-bold mb-4">Готовы начать?</h2>
             <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
               Создайте свой безопасный кошелек прямо сейчас. Это займет меньше минуты.
             </p>
