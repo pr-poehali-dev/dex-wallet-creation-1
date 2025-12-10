@@ -10,14 +10,16 @@ import { useToast } from '@/hooks/use-toast';
 interface WalletSetupProps {
   open: boolean;
   onComplete: () => void;
+  initialMode?: 'create' | 'restore';
 }
 
-export default function WalletSetup({ open, onComplete }: WalletSetupProps) {
-  const [step, setStep] = useState<'intro' | 'generate' | 'confirm' | 'success'>('intro');
+export default function WalletSetup({ open, onComplete, initialMode = 'create' }: WalletSetupProps) {
+  const [step, setStep] = useState<'intro' | 'generate' | 'confirm' | 'success' | 'restore'>(initialMode === 'restore' ? 'restore' : 'intro');
   const [seedPhrase, setSeedPhrase] = useState<string[]>([]);
   const [confirmedWords, setConfirmedWords] = useState<{ [key: number]: string }>({});
   const [verificationIndexes] = useState<number[]>([2, 5, 8]);
   const [copied, setCopied] = useState(false);
+  const [restoreSeed, setRestoreSeed] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -43,6 +45,7 @@ export default function WalletSetup({ open, onComplete }: WalletSetupProps) {
     );
 
     if (isValid) {
+      localStorage.setItem('walletSeed', seedPhrase.join(' '));
       setStep('success');
       setTimeout(() => {
         onComplete();
@@ -54,6 +57,38 @@ export default function WalletSetup({ open, onComplete }: WalletSetupProps) {
         description: "Введенные слова не совпадают с seed-фразой",
       });
     }
+  };
+
+  const handleRestore = () => {
+    const words = restoreSeed.trim().toLowerCase().split(/\s+/);
+    
+    if (words.length !== 12) {
+      toast({
+        variant: "destructive",
+        title: "Неверный формат",
+        description: "Seed-фраза должна содержать ровно 12 слов",
+      });
+      return;
+    }
+
+    if (!bip39.validateMnemonic(words.join(' '))) {
+      toast({
+        variant: "destructive",
+        title: "Неверная seed-фраза",
+        description: "Введенная фраза не является корректной BIP39 мнемоникой",
+      });
+      return;
+    }
+
+    localStorage.setItem('walletSeed', words.join(' '));
+    setStep('success');
+    toast({
+      title: "Кошелек восстановлен!",
+      description: "Доступ к вашему кошельку успешно восстановлен",
+    });
+    setTimeout(() => {
+      onComplete();
+    }, 2000);
   };
 
   return (
@@ -104,14 +139,25 @@ export default function WalletSetup({ open, onComplete }: WalletSetupProps) {
                 </div>
               </div>
 
-              <Button 
-                onClick={() => setStep('generate')} 
-                className="w-full" 
-                size="lg"
-              >
-                Создать новый кошелек
-                <Icon name="ArrowRight" className="ml-2" size={18} />
-              </Button>
+              <div className="flex gap-3">
+                <Button 
+                  onClick={() => setStep('generate')} 
+                  className="flex-1" 
+                  size="lg"
+                >
+                  Создать новый кошелек
+                  <Icon name="Plus" className="ml-2" size={18} />
+                </Button>
+                <Button 
+                  onClick={() => setStep('restore')} 
+                  variant="outline"
+                  className="flex-1" 
+                  size="lg"
+                >
+                  Восстановить кошелек
+                  <Icon name="RotateCcw" className="ml-2" size={18} />
+                </Button>
+              </div>
             </div>
           </>
         )}
@@ -211,6 +257,66 @@ export default function WalletSetup({ open, onComplete }: WalletSetupProps) {
                   disabled={!verificationIndexes.every(i => confirmedWords[i]?.trim())}
                 >
                   Подтвердить
+                  <Icon name="Check" className="ml-2" size={18} />
+                </Button>
+              </div>
+            </div>
+          </>
+        )}
+
+        {step === 'restore' && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-2xl flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                  <Icon name="RotateCcw" className="text-primary" size={28} />
+                </div>
+                Восстановление кошелька
+              </DialogTitle>
+              <p className="text-muted-foreground">
+                Введите вашу seed-фразу из 12 слов
+              </p>
+            </DialogHeader>
+            <div className="space-y-6 mt-4">
+              <div className="space-y-3">
+                <label className="text-sm font-medium">
+                  Seed-фраза (12 слов через пробел)
+                </label>
+                <textarea
+                  value={restoreSeed}
+                  onChange={(e) => setRestoreSeed(e.target.value)}
+                  placeholder="word1 word2 word3 word4 word5 word6 word7 word8 word9 word10 word11 word12"
+                  className="w-full min-h-[120px] p-3 rounded-lg border bg-background font-mono text-sm resize-none"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Введите 12 слов в правильном порядке, разделяя их пробелами
+                </p>
+              </div>
+
+              <div className="p-4 bg-primary/10 rounded-lg border border-primary/20">
+                <div className="flex items-start gap-2">
+                  <Icon name="Info" className="text-primary mt-0.5" size={20} />
+                  <p className="text-sm text-muted-foreground">
+                    Ваша seed-фраза никуда не отправляется. Восстановление происходит локально в вашем браузере.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Button 
+                  onClick={() => setStep('intro')} 
+                  variant="outline" 
+                  className="flex-1"
+                >
+                  <Icon name="ArrowLeft" className="mr-2" size={18} />
+                  Назад
+                </Button>
+                <Button 
+                  onClick={handleRestore} 
+                  className="flex-1"
+                  disabled={!restoreSeed.trim()}
+                >
+                  Восстановить
                   <Icon name="Check" className="ml-2" size={18} />
                 </Button>
               </div>

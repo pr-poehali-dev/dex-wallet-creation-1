@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -25,8 +26,10 @@ const mockTransactions = [
 ];
 
 export default function Index() {
+  const [searchParams] = useSearchParams();
   const [walletCreated, setWalletCreated] = useState(false);
   const [showSetup, setShowSetup] = useState(false);
+  const [setupMode, setSetupMode] = useState<'create' | 'restore'>('create');
   const [selectedTab, setSelectedTab] = useState('portfolio');
   const [fromToken, setFromToken] = useState('BTC');
   const [toToken, setToToken] = useState('ETH');
@@ -36,12 +39,17 @@ export default function Index() {
 
   useEffect(() => {
     const hasWallet = localStorage.getItem('walletCreated');
+    const mode = searchParams.get('mode');
+    
     if (!hasWallet) {
       setShowSetup(true);
+      if (mode === 'restore') {
+        setSetupMode('restore');
+      }
     } else {
       setWalletCreated(true);
     }
-  }, []);
+  }, [searchParams]);
 
   const handleWalletComplete = () => {
     localStorage.setItem('walletCreated', 'true');
@@ -75,7 +83,7 @@ export default function Index() {
 
   return (
     <>
-      {!walletCreated && <WalletSetup open={showSetup} onComplete={handleWalletComplete} />}
+      {!walletCreated && <WalletSetup open={showSetup} onComplete={handleWalletComplete} initialMode={setupMode} />}
       {!walletCreated ? null : (
     <div className="min-h-screen bg-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto">

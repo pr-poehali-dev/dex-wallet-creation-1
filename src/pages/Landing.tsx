@@ -84,14 +84,14 @@ export default function Landing() {
               <p className="text-xl text-muted-foreground mb-8 max-w-xl">
                 Безопасное хранение, мгновенные переводы и обмен криптовалюты в одном приложении
               </p>
-              <div className="flex gap-4">
-                <GradientButton onClick={() => navigate('/app')}>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <GradientButton onClick={() => navigate('/app?mode=create')} className="flex-1 sm:flex-none">
                   Создать кошелек
-                  <Icon name="ArrowRight" size={20} className="ml-2" />
+                  <Icon name="Plus" size={20} className="ml-2" />
                 </GradientButton>
-                <GradientButton variant="variant">
-                  <Icon name="Play" size={20} className="mr-2" />
-                  Как работает
+                <GradientButton onClick={() => navigate('/app?mode=restore')} variant="variant" className="flex-1 sm:flex-none">
+                  <Icon name="RotateCcw" size={20} className="mr-2" />
+                  Восстановить кошелек
                 </GradientButton>
               </div>
             </div>
