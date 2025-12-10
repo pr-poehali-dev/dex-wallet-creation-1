@@ -102,7 +102,7 @@ export default function Landing() {
             <div className="w-10 h-10 rounded-xl bg-muted/30 flex items-center justify-center">
               <Icon name="Wallet" className="text-foreground" size={24} />
             </div>
-            <span className="text-xl font-bold">DEX Wallet</span>
+            <span className="text-xl font-bold">DEXXX Wallet</span>
           </div>
         </header>
 
@@ -318,7 +318,7 @@ export default function Landing() {
                 <div className="w-8 h-8 rounded-lg bg-muted/30 flex items-center justify-center">
                   <Icon name="Wallet" className="text-foreground" size={18} />
                 </div>
-                <span className="font-bold">DEX Wallet</span>
+                <span className="font-bold">DEXXX Wallet</span>
               </div>
               <p className="text-sm text-muted-foreground">
                 Безопасный децентрализованный кошелек для управления криптоактивами
@@ -342,7 +342,7 @@ export default function Landing() {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-            © 2024 DEX Wallet. Все права защищены.
+            © 2024 DEXXX Wallet. Все права защищены.
           </div>
         </footer>
       </div>

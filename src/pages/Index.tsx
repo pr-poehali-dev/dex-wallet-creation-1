@@ -191,7 +191,7 @@ export default function Index() {
               <Icon name="Wallet" className="text-primary" size={24} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">DEX Wallet</h1>
+              <h1 className="text-2xl font-bold">DEXXX Wallet</h1>
               <p className="text-xs text-muted-foreground font-mono">ID: {userId}</p>
             </div>
           </div>
