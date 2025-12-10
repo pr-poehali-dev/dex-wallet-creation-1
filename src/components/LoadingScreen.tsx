@@ -37,9 +37,9 @@ export default function LoadingScreen({ onLoadingComplete }: LoadingScreenProps)
         <div className="relative w-full flex-1 flex items-center justify-center">
           <ParticleTextEffect
             text="DEXXX WALLET"
-            colors={['6b7280', '9ca3af', 'd1d5db', 'e5e7eb', 'f3f4f6']}
-            animationForce={50}
-            particleDensity={6}
+            colors={['ffad70', 'f7d297', 'edb9a1', 'e697ac', 'b38dca', '9c76db', '705cb5', '43428e', '2c2142']}
+            animationForce={80}
+            particleDensity={4}
             className="absolute inset-0"
           />
         </div>
