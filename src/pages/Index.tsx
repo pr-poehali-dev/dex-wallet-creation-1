@@ -73,11 +73,10 @@ export default function Index() {
     return (usdValue / toAsset.price * 0.997).toFixed(4);
   };
 
-  if (!walletCreated) {
-    return <WalletSetup open={showSetup} onComplete={handleWalletComplete} />;
-  }
-
   return (
+    <>
+      {!walletCreated && <WalletSetup open={showSetup} onComplete={handleWalletComplete} />}
+      {!walletCreated ? null : (
     <div className="min-h-screen bg-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         <header className="mb-8 flex items-center justify-between">
@@ -391,5 +390,7 @@ export default function Index() {
         </Tabs>
       </div>
     </div>
+      )}
+    </>
   );
 }
