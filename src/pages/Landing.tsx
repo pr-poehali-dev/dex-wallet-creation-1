@@ -43,10 +43,10 @@ export default function Landing() {
   ];
 
   const supportedTokens = [
-    { symbol: 'BTC', name: 'Bitcoin', icon: '₿' },
-    { symbol: 'ETH', name: 'Ethereum', icon: 'Ξ' },
-    { symbol: 'USDT', name: 'Tether', icon: '₮' },
-    { symbol: 'BNB', name: 'Binance', icon: '🔶' },
+    { symbol: 'BTC', name: 'Bitcoin', icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png' },
+    { symbol: 'ETH', name: 'Ethereum', icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png' },
+    { symbol: 'USDT', name: 'Tether TRC20', icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png' },
+    { symbol: 'BNB', name: 'Binance Coin', icon: 'https://cryptologos.cc/logos/bnb-bnb-logo.png' },
   ];
 
   return (
@@ -116,7 +116,9 @@ export default function Landing() {
                 <div className="grid grid-cols-2 gap-4">
                   {supportedTokens.map((token) => (
                     <div key={token.symbol} className="flex items-center gap-3 p-3 rounded-lg bg-background/50">
-                      <span className="text-2xl">{token.icon}</span>
+                      <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center overflow-hidden">
+                        <img src={token.icon} alt={token.name} className="w-6 h-6 object-contain" />
+                      </div>
                       <div>
                         <div className="font-semibold">{token.symbol}</div>
                         <div className="text-sm text-muted-foreground">{token.name}</div>

@@ -11,10 +11,10 @@ import QRCode from 'qrcode';
 import WalletSetup from '@/components/WalletSetup';
 
 const mockAssets = [
-  { name: 'Bitcoin', symbol: 'BTC', balance: 0.5234, price: 43250.00, icon: '₿' },
-  { name: 'Ethereum', symbol: 'ETH', balance: 2.4567, price: 2280.50, icon: 'Ξ' },
-  { name: 'Tether', symbol: 'USDT', balance: 1250.00, price: 1.00, icon: '₮' },
-  { name: 'Binance Coin', symbol: 'BNB', balance: 5.234, price: 312.75, icon: '🔶' },
+  { name: 'Bitcoin', symbol: 'BTC', balance: 0, price: 43250.00, icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png' },
+  { name: 'Ethereum', symbol: 'ETH', balance: 0, price: 2280.50, icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png' },
+  { name: 'Tether TRC20', symbol: 'USDT', balance: 100.00, price: 1.00, icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'TRC20' },
+  { name: 'Binance Coin', symbol: 'BNB', balance: 0, price: 312.75, icon: 'https://cryptologos.cc/logos/bnb-bnb-logo.png' },
 ];
 
 const mockTransactions = [
@@ -133,7 +133,10 @@ export default function Index() {
                         <SelectContent>
                           {mockAssets.map(asset => (
                             <SelectItem key={asset.symbol} value={asset.symbol}>
-                              {asset.icon} {asset.symbol}
+                              <div className="flex items-center gap-2">
+                                <img src={asset.icon} alt={asset.symbol} className="w-4 h-4 object-contain" />
+                                {asset.symbol}
+                              </div>
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -226,12 +229,12 @@ export default function Index() {
                 <Card key={asset.symbol} className="p-5 hover-scale cursor-pointer transition-all hover:border-primary/50">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-2xl">
-                        {asset.icon}
+                      <div className="w-12 h-12 rounded-full bg-background/50 flex items-center justify-center overflow-hidden">
+                        <img src={asset.icon} alt={asset.name} className="w-8 h-8 object-contain" />
                       </div>
                       <div>
                         <h4 className="font-semibold">{asset.name}</h4>
-                        <p className="text-sm text-muted-foreground">{asset.symbol}</p>
+                        <p className="text-sm text-muted-foreground">{asset.symbol}{(asset as any).network ? ` (${(asset as any).network})` : ''}</p>
                       </div>
                     </div>
                     <div className="text-right">
@@ -264,7 +267,10 @@ export default function Index() {
                       <SelectContent>
                         {mockAssets.map(asset => (
                           <SelectItem key={asset.symbol} value={asset.symbol}>
-                            {asset.icon} {asset.symbol}
+                            <div className="flex items-center gap-2">
+                              <img src={asset.icon} alt={asset.symbol} className="w-4 h-4 object-contain" />
+                              {asset.symbol}
+                            </div>
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -307,7 +313,10 @@ export default function Index() {
                       <SelectContent>
                         {mockAssets.map(asset => (
                           <SelectItem key={asset.symbol} value={asset.symbol}>
-                            {asset.icon} {asset.symbol}
+                            <div className="flex items-center gap-2">
+                              <img src={asset.icon} alt={asset.symbol} className="w-4 h-4 object-contain" />
+                              {asset.symbol}
+                            </div>
                           </SelectItem>
                         ))}
                       </SelectContent>
