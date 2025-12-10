@@ -289,7 +289,7 @@ export default function Index() {
                         <div className="relative w-12 h-12 rounded-full bg-background/50 flex items-center justify-center">
                           <img src={asset.icon} alt={asset.name} className="w-8 h-8 object-contain" />
                           {asset.network && (
-                            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden shadow-lg">
+                            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden">
                               <img 
                                 src={getNetworkIcon(asset.network)} 
                                 alt={asset.network} 
