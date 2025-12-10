@@ -2,6 +2,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import { useNavigate } from 'react-router-dom';
+import { SplineScene } from '@/components/ui/splite';
+import { Spotlight } from '@/components/ui/spotlight';
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -61,29 +63,45 @@ export default function Landing() {
           </Button>
         </header>
 
-        <section className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-            <Icon name="Sparkles" size={16} />
-            <span>Децентрализованный кошелек нового поколения</span>
+        <Card className="mb-20 bg-black/[0.96] relative overflow-hidden border-primary/20">
+          <Spotlight
+            className="-top-40 left-0 md:left-60 md:-top-20"
+            fill="white"
+          />
+          
+          <div className="flex flex-col md:flex-row h-[600px]">
+            <div className="flex-1 p-8 md:p-12 relative z-10 flex flex-col justify-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 w-fit">
+                <Icon name="Sparkles" size={16} />
+                <span>Децентрализованный кошелек нового поколения</span>
+              </div>
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400">
+                Ваши криптоактивы<br />
+                под полным контролем
+              </h1>
+              <p className="text-xl text-neutral-300 mb-8 max-w-xl">
+                Безопасное хранение, мгновенные переводы и обмен криптовалюты в одном приложении
+              </p>
+              <div className="flex gap-4">
+                <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8">
+                  Создать кошелек
+                  <Icon name="ArrowRight" size={20} className="ml-2" />
+                </Button>
+                <Button variant="outline" size="lg" className="text-lg px-8">
+                  <Icon name="Play" size={20} className="mr-2" />
+                  Как работает
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex-1 relative">
+              <SplineScene 
+                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                className="w-full h-full"
+              />
+            </div>
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-            Ваши криптоактивы<br />
-            под полным контролем
-          </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Безопасное хранение, мгновенные переводы и обмен криптовалюты в одном приложении
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Button onClick={() => navigate('/app')} size="lg" className="text-lg px-8">
-              Создать кошелек
-              <Icon name="ArrowRight" size={20} className="ml-2" />
-            </Button>
-            <Button variant="outline" size="lg" className="text-lg px-8">
-              <Icon name="Play" size={20} className="mr-2" />
-              Как это работает
-            </Button>
-          </div>
-        </section>
+        </Card>
 
         <section className="mb-20">
           <Card className="p-8 md:p-12 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
