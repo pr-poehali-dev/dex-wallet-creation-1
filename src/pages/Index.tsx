@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import Icon from '@/components/ui/icon';
 import QRCode from 'qrcode';
 import WalletSetup from '@/components/WalletSetup';
+import { useToast } from '@/hooks/use-toast';
 
 const mockAssets = [
   { name: 'Bitcoin', symbol: 'BTC', balance: 0, price: 43250.00, icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png' },
@@ -55,6 +56,7 @@ const mockTransactions = [
 ];
 
 export default function Index() {
+  const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const [walletCreated, setWalletCreated] = useState(false);
   const [showSetup, setShowSetup] = useState(false);
@@ -65,6 +67,9 @@ export default function Index() {
   const [toToken, setToToken] = useState('ETH');
   const [swapAmount, setSwapAmount] = useState('');
   const [selectedReceiveAsset, setSelectedReceiveAsset] = useState<typeof mockAssets[0] | null>(null);
+  const [showSwapConfirmation, setShowSwapConfirmation] = useState(false);
+  const [fromNetwork, setFromNetwork] = useState<string>('');
+  const [toNetwork, setToNetwork] = useState<string>('');
   const qrCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const generateAddressForNetwork = async (userId: string, network: string, symbol: string): Promise<string> => {
@@ -136,13 +141,34 @@ export default function Index() {
 
   const totalBalance = mockAssets.reduce((sum, asset) => sum + (asset.balance * asset.price), 0);
 
+  const getAssetsBySymbol = (symbol: string) => {
+    return mockAssets.filter(a => a.symbol === symbol);
+  };
+
+  const getSelectedAsset = (symbol: string, network: string) => {
+    if (!network) {
+      const assets = getAssetsBySymbol(symbol);
+      return assets[0];
+    }
+    return mockAssets.find(a => a.symbol === symbol && (a.network || a.symbol) === network);
+  };
+
   const calculateSwapOutput = () => {
     if (!swapAmount) return '0.00';
-    const fromAsset = mockAssets.find(a => a.symbol === fromToken);
-    const toAsset = mockAssets.find(a => a.symbol === toToken);
+    const fromAsset = getSelectedAsset(fromToken, fromNetwork);
+    const toAsset = getSelectedAsset(toToken, toNetwork);
     if (!fromAsset || !toAsset) return '0.00';
     const usdValue = parseFloat(swapAmount) * fromAsset.price;
     return (usdValue / toAsset.price * 0.997).toFixed(4);
+  };
+
+  const handleSwapConfirm = () => {
+    setShowSwapConfirmation(false);
+    toast({
+      title: "Обмен выполнен!",
+      description: `Обменяно ${swapAmount} ${fromToken} на ${calculateSwapOutput()} ${toToken}`,
+    });
+    setSwapAmount('');
   };
 
   return (
@@ -460,21 +486,37 @@ export default function Index() {
                 <div className="space-y-2">
                   <Label>Отдаете</Label>
                   <div className="flex gap-2">
-                    <Select value={fromToken} onValueChange={setFromToken}>
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {mockAssets.map(asset => (
-                          <SelectItem key={asset.symbol} value={asset.symbol}>
-                            <div className="flex items-center gap-2">
-                              <img src={asset.icon} alt={asset.symbol} className="w-4 h-4 object-contain" />
-                              {asset.symbol}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="flex flex-col gap-1">
+                      <Select value={fromToken} onValueChange={(val) => { setFromToken(val); setFromNetwork(''); }}>
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from(new Set(mockAssets.map(a => a.symbol))).map(symbol => (
+                            <SelectItem key={symbol} value={symbol}>
+                              <div className="flex items-center gap-2">
+                                <img src={mockAssets.find(a => a.symbol === symbol)!.icon} alt={symbol} className="w-4 h-4 object-contain" />
+                                {symbol}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {getAssetsBySymbol(fromToken).length > 1 && (
+                        <Select value={fromNetwork} onValueChange={setFromNetwork}>
+                          <SelectTrigger className="w-32 h-8 text-xs">
+                            <SelectValue placeholder="Сеть" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {getAssetsBySymbol(fromToken).map((asset, idx) => (
+                              <SelectItem key={idx} value={asset.network || asset.symbol}>
+                                {asset.network || 'Native'}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </div>
                     <Input 
                       type="number" 
                       placeholder="0.00" 
@@ -484,7 +526,7 @@ export default function Index() {
                     />
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Доступно: {mockAssets.find(a => a.symbol === fromToken)?.balance} {fromToken}
+                    Доступно: {getSelectedAsset(fromToken, fromNetwork)?.balance || 0} {fromToken}
                   </p>
                 </div>
 
@@ -506,21 +548,37 @@ export default function Index() {
                 <div className="space-y-2">
                   <Label>Получаете</Label>
                   <div className="flex gap-2">
-                    <Select value={toToken} onValueChange={setToToken}>
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {mockAssets.map(asset => (
-                          <SelectItem key={asset.symbol} value={asset.symbol}>
-                            <div className="flex items-center gap-2">
-                              <img src={asset.icon} alt={asset.symbol} className="w-4 h-4 object-contain" />
-                              {asset.symbol}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="flex flex-col gap-1">
+                      <Select value={toToken} onValueChange={(val) => { setToToken(val); setToNetwork(''); }}>
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from(new Set(mockAssets.map(a => a.symbol))).map(symbol => (
+                            <SelectItem key={symbol} value={symbol}>
+                              <div className="flex items-center gap-2">
+                                <img src={mockAssets.find(a => a.symbol === symbol)!.icon} alt={symbol} className="w-4 h-4 object-contain" />
+                                {symbol}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {getAssetsBySymbol(toToken).length > 1 && (
+                        <Select value={toNetwork} onValueChange={setToNetwork}>
+                          <SelectTrigger className="w-32 h-8 text-xs">
+                            <SelectValue placeholder="Сеть" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {getAssetsBySymbol(toToken).map((asset, idx) => (
+                              <SelectItem key={idx} value={asset.network || asset.symbol}>
+                                {asset.network || 'Native'}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </div>
                     <Input 
                       type="number" 
                       placeholder="0.00"
@@ -534,7 +592,12 @@ export default function Index() {
                 <div className="p-4 bg-muted/50 rounded-lg space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Курс обмена</span>
-                    <span>1 {fromToken} = {(mockAssets.find(a => a.symbol === fromToken)!.price / mockAssets.find(a => a.symbol === toToken)!.price).toFixed(4)} {toToken}</span>
+                    <span>1 {fromToken} ≈ {(() => {
+                      const fromAsset = getSelectedAsset(fromToken, fromNetwork);
+                      const toAsset = getSelectedAsset(toToken, toNetwork);
+                      if (!fromAsset || !toAsset) return '0.00';
+                      return (fromAsset.price / toAsset.price).toFixed(6);
+                    })()} {toToken}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Комиссия сети</span>
@@ -546,12 +609,114 @@ export default function Index() {
                   </div>
                 </div>
 
-                <Button className="w-full" size="lg" disabled={!swapAmount}>
+                <Button 
+                  className="w-full" 
+                  size="lg" 
+                  disabled={!swapAmount || parseFloat(swapAmount) <= 0 || parseFloat(swapAmount) > (getSelectedAsset(fromToken, fromNetwork)?.balance || 0)}
+                  onClick={() => setShowSwapConfirmation(true)}
+                >
                   Обменять
                 </Button>
               </div>
             </Card>
           </TabsContent>
+
+          <Dialog open={showSwapConfirmation} onOpenChange={setShowSwapConfirmation}>
+            <DialogContent className="bg-card">
+              <DialogHeader>
+                <DialogTitle>Подтверждение обмена</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 mt-4">
+                <div className="p-4 bg-muted/50 rounded-lg space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Вы отдаете</span>
+                    <div className="flex items-center gap-2">
+                      <img src={getSelectedAsset(fromToken, fromNetwork)?.icon} alt={fromToken} className="w-5 h-5 object-contain" />
+                      <span className="font-semibold">{swapAmount} {fromToken}</span>
+                    </div>
+                  </div>
+                  {fromNetwork && getAssetsBySymbol(fromToken).length > 1 && (
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Сеть</span>
+                      <span>{fromNetwork}</span>
+                    </div>
+                  )}
+                  
+                  <div className="flex justify-center">
+                    <Icon name="ArrowDown" className="text-primary" size={24} />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Вы получите</span>
+                    <div className="flex items-center gap-2">
+                      <img src={getSelectedAsset(toToken, toNetwork)?.icon} alt={toToken} className="w-5 h-5 object-contain" />
+                      <span className="font-semibold">{calculateSwapOutput()} {toToken}</span>
+                    </div>
+                  </div>
+                  {toNetwork && getAssetsBySymbol(toToken).length > 1 && (
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Сеть</span>
+                      <span>{toNetwork}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-4 bg-muted/50 rounded-lg space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Курс обмена</span>
+                    <span className="font-mono">1 {fromToken} = {(() => {
+                      const fromAsset = getSelectedAsset(fromToken, fromNetwork);
+                      const toAsset = getSelectedAsset(toToken, toNetwork);
+                      if (!fromAsset || !toAsset) return '0.00';
+                      return (fromAsset.price / toAsset.price).toFixed(6);
+                    })()} {toToken}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Комиссия</span>
+                    <span>~$2.50</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Проскальзывание</span>
+                    <span className="text-success">0.3%</span>
+                  </div>
+                  <div className="flex justify-between pt-2 border-t border-border">
+                    <span className="text-muted-foreground font-semibold">Итоговая сумма</span>
+                    <span className="font-semibold">${(() => {
+                      const toAsset = getSelectedAsset(toToken, toNetwork);
+                      if (!toAsset) return '0.00';
+                      return (parseFloat(calculateSwapOutput()) * toAsset.price).toFixed(2);
+                    })()}</span>
+                  </div>
+                </div>
+
+                <div className="p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
+                  <div className="flex items-start gap-2">
+                    <Icon name="AlertTriangle" className="text-yellow-500 mt-0.5" size={18} />
+                    <p className="text-xs text-muted-foreground">
+                      Обмен будет выполнен по текущему рыночному курсу. Итоговая сумма может немного отличаться из-за волатильности рынка.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => setShowSwapConfirmation(false)}
+                  >
+                    Отмена
+                  </Button>
+                  <Button 
+                    className="flex-1 gap-2"
+                    onClick={handleSwapConfirm}
+                  >
+                    <Icon name="Check" size={18} />
+                    Подтвердить обмен
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
 
           <TabsContent value="history" className="space-y-4">
             {mockTransactions.map((tx) => (
