@@ -186,8 +186,9 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                 </Button>
               </div>
             </div>
-          </>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <AnimatePresence mode="wait">
           {step === 'generate' && (
