@@ -4,6 +4,7 @@ import Icon from '@/components/ui/icon';
 import { useNavigate } from 'react-router-dom';
 import { SplineScene } from '@/components/ui/splite';
 import { Spotlight } from '@/components/ui/spotlight';
+import AnimatedBackground from '@/components/AnimatedBackground';
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -49,8 +50,9 @@ export default function Landing() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
+    <div className="min-h-screen bg-background relative">
+      <AnimatedBackground />
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 relative z-10">
         <header className="flex items-center justify-between mb-16">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
