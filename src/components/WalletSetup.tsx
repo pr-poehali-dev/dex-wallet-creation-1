@@ -18,6 +18,7 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
   const [seedPhrase, setSeedPhrase] = useState<string[]>([]);
   const [confirmedWords, setConfirmedWords] = useState<{ [key: number]: string }>({});
   const [verificationIndexes] = useState<number[]>([2, 5, 8]);
+  const [shuffledWords, setShuffledWords] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
   const [restoreSeed, setRestoreSeed] = useState('');
   const { toast } = useToast();
@@ -27,7 +28,12 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
       const mnemonic = bip39.generateMnemonic();
       setSeedPhrase(mnemonic.split(' '));
     }
-  }, [step]);
+    if (step === 'confirm') {
+      const allWords = [...seedPhrase];
+      const shuffled = allWords.sort(() => Math.random() - 0.5);
+      setShuffledWords(shuffled);
+    }
+  }, [step, seedPhrase]);
 
   const handleCopySeed = () => {
     navigator.clipboard.writeText(seedPhrase.join(' '));
@@ -232,7 +238,7 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
             <DialogHeader>
               <DialogTitle className="text-2xl">Подтверждение seed-фразы</DialogTitle>
               <p className="text-muted-foreground">
-                Введите указанные слова для проверки
+                Выберите правильные слова в нужном порядке
               </p>
             </DialogHeader>
             <div className="space-y-6 mt-4">
@@ -242,19 +248,57 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                     <label className="text-sm font-medium mb-2 block">
                       Слово #{wordIndex + 1}
                     </label>
-                    <Input
-                      placeholder="Введите слово..."
-                      value={confirmedWords[wordIndex] || ''}
-                      onChange={(e) => 
-                        setConfirmedWords({
-                          ...confirmedWords,
-                          [wordIndex]: e.target.value
-                        })
-                      }
-                      className="font-mono"
-                    />
+                    <div className="p-3 rounded-lg border bg-muted/30 min-h-[48px] flex items-center">
+                      {confirmedWords[wordIndex] ? (
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-semibold">{confirmedWords[wordIndex]}</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 w-6 p-0"
+                            onClick={() => {
+                              const newConfirmed = { ...confirmedWords };
+                              delete newConfirmed[wordIndex];
+                              setConfirmedWords(newConfirmed);
+                            }}
+                          >
+                            <Icon name="X" size={14} />
+                          </Button>
+                        </div>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">Выберите слово из списка ниже</span>
+                      )}
+                    </div>
                   </div>
                 ))}
+              </div>
+
+              <div>
+                <p className="text-sm font-medium mb-3">Доступные слова:</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {shuffledWords.map((word, index) => {
+                    const isUsed = Object.values(confirmedWords).includes(word);
+                    return (
+                      <Button
+                        key={index}
+                        variant={isUsed ? "secondary" : "outline"}
+                        className="font-mono h-auto py-2"
+                        disabled={isUsed}
+                        onClick={() => {
+                          const nextEmptyIndex = verificationIndexes.find(i => !confirmedWords[i]);
+                          if (nextEmptyIndex !== undefined) {
+                            setConfirmedWords({
+                              ...confirmedWords,
+                              [nextEmptyIndex]: word
+                            });
+                          }
+                        }}
+                      >
+                        {word}
+                      </Button>
+                    );
+                  })}
+                </div>
               </div>
 
               <div className="flex gap-3">
