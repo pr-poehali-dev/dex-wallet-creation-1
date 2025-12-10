@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import * as bip39 from 'bip39';
 import { useToast } from '@/hooks/use-toast';
+import { DotScreenShader } from '@/components/ui/dot-shader-background';
 
 interface WalletSetupProps {
   open: boolean;
@@ -108,7 +109,10 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="bg-card max-w-2xl" hideClose={step !== 'success'}>
+      <DialogContent className="bg-card/95 backdrop-blur-sm max-w-2xl relative overflow-hidden" hideClose={step !== 'success'}>
+        <div className="absolute inset-0 -z-10">
+          <DotScreenShader />
+        </div>
         {step === 'intro' && (
           <>
             <DialogHeader>
