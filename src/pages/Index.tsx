@@ -76,6 +76,10 @@ export default function Index() {
   const [showAssetDialog, setShowAssetDialog] = useState(false);
   const [sendAmount, setSendAmount] = useState('');
   const [sendAddress, setSendAddress] = useState('');
+  const [mainSendAsset, setMainSendAsset] = useState('BTC');
+  const [mainSendAddress, setMainSendAddress] = useState('');
+  const [mainSendAmount, setMainSendAmount] = useState('');
+  const [showMainSendDialog, setShowMainSendDialog] = useState(false);
   const qrCanvasRef = useRef<HTMLCanvasElement>(null);
   const assetQrCanvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -239,6 +243,29 @@ export default function Index() {
     }
   };
 
+  const handleMainSendConfirm = () => {
+    const amount = parseFloat(mainSendAmount);
+    const asset = assets.find(a => a.symbol === mainSendAsset && !a.network);
+    
+    if (asset && amount > 0 && mainSendAddress && amount <= asset.balance) {
+      setAssets(prevAssets => prevAssets.map(a => {
+        if (a.symbol === mainSendAsset && !a.network) {
+          return { ...a, balance: a.balance - amount };
+        }
+        return a;
+      }));
+
+      toast({
+        title: "Отправка выполнена!",
+        description: `Отправлено ${amount} ${mainSendAsset} на адрес ${mainSendAddress.substring(0, 10)}...`,
+      });
+
+      setMainSendAmount('');
+      setMainSendAddress('');
+      setShowMainSendDialog(false);
+    }
+  };
+
   return (
     <>
       {!walletCreated && <WalletSetup open={showSetup} onComplete={handleWalletComplete} initialMode={setupMode} />}
@@ -286,7 +313,7 @@ export default function Index() {
               </div>
             </div>
             <div className="flex gap-3 mt-6">
-              <Dialog>
+              <Dialog open={showMainSendDialog} onOpenChange={setShowMainSendDialog}>
                 <DialogTrigger asChild>
                   <Button className="flex-1 gap-2">
                     <Icon name="Send" size={18} />
@@ -300,12 +327,12 @@ export default function Index() {
                   <div className="space-y-4 mt-4">
                     <div>
                       <Label>Актив</Label>
-                      <Select defaultValue="BTC">
+                      <Select value={mainSendAsset} onValueChange={setMainSendAsset}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {assets.map(asset => (
+                          {assets.filter(a => !a.network).map(asset => (
                             <SelectItem key={asset.symbol} value={asset.symbol}>
                               <div className="flex items-center gap-2">
                                 <img src={asset.icon} alt={asset.symbol} className="w-4 h-4 object-contain" />
@@ -318,13 +345,32 @@ export default function Index() {
                     </div>
                     <div>
                       <Label>Адрес получателя</Label>
-                      <Input placeholder="0x..." />
+                      <Input 
+                        placeholder="0x..." 
+                        value={mainSendAddress}
+                        onChange={(e) => setMainSendAddress(e.target.value)}
+                      />
                     </div>
                     <div>
                       <Label>Сумма</Label>
-                      <Input type="number" placeholder="0.00" />
+                      <Input 
+                        type="number" 
+                        placeholder="0.00"
+                        value={mainSendAmount}
+                        onChange={(e) => setMainSendAmount(e.target.value)}
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Доступно: {assets.find(a => a.symbol === mainSendAsset && !a.network)?.balance || 0} {mainSendAsset}
+                      </p>
                     </div>
-                    <Button className="w-full">Отправить</Button>
+                    <Button 
+                      className="w-full gap-2"
+                      onClick={handleMainSendConfirm}
+                      disabled={!mainSendAddress || !mainSendAmount || parseFloat(mainSendAmount) <= 0 || parseFloat(mainSendAmount) > (assets.find(a => a.symbol === mainSendAsset && !a.network)?.balance || 0)}
+                    >
+                      <Icon name="Send" size={18} />
+                      Отправить
+                    </Button>
                   </div>
                 </DialogContent>
               </Dialog>
