@@ -1,0 +1,16 @@
+{
+  "tests": [
+    {
+      "name": "Get crypto prices",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "BTC": "number",
+        "ETH": "number",
+        "USDT": "number"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

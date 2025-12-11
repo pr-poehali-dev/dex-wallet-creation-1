@@ -2,6 +2,7 @@ const API_URLS = {
   users: 'https://functions.poehali.dev/5b53d08f-8282-4753-a886-e57f87da0c4c',
   balances: 'https://functions.poehali.dev/a7bcef98-4e37-4a26-84bf-f09f3174f551',
   transactions: 'https://functions.poehali.dev/43928769-a226-4ab3-a0da-56f76ce50b68',
+  cryptoPrices: 'https://functions.poehali.dev/088fbc3b-5fca-41da-bafe-74031b6c898a',
 };
 
 export interface User {
@@ -116,6 +117,14 @@ export const api = {
         }),
       });
       if (!response.ok) throw new Error('Failed to create transaction');
+    },
+  },
+
+  cryptoPrices: {
+    async get(): Promise<{ [symbol: string]: number }> {
+      const response = await fetch(API_URLS.cryptoPrices);
+      if (!response.ok) throw new Error('Failed to fetch crypto prices');
+      return response.json();
     },
   },
 };

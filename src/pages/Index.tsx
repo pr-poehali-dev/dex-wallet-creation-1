@@ -156,12 +156,17 @@ export default function Index() {
 
   const loadUserData = async (userId: string) => {
     try {
-      const balances = await api.balances.get(userId);
+      const [balances, prices] = await Promise.all([
+        api.balances.get(userId),
+        api.cryptoPrices.get().catch(() => ({}))
+      ]);
+      
       setAssets(prevAssets => prevAssets.map(asset => {
         const key = `${asset.symbol}-${asset.network || 'native'}`;
         return {
           ...asset,
-          balance: balances[key] !== undefined ? balances[key] : asset.balance
+          balance: balances[key] !== undefined ? balances[key] : asset.balance,
+          price: prices[asset.symbol] !== undefined ? prices[asset.symbol] : asset.price
         };
       }));
       
@@ -223,6 +228,25 @@ export default function Index() {
     window.addEventListener('balanceUpdate', handleBalanceUpdate);
     return () => window.removeEventListener('balanceUpdate', handleBalanceUpdate);
   }, []);
+
+  useEffect(() => {
+    if (!walletCreated || !userId) return;
+
+    const updatePrices = async () => {
+      try {
+        const prices = await api.cryptoPrices.get();
+        setAssets(prevAssets => prevAssets.map(asset => ({
+          ...asset,
+          price: prices[asset.symbol] !== undefined ? prices[asset.symbol] : asset.price
+        })));
+      } catch (error) {
+        console.error('Failed to update prices:', error);
+      }
+    };
+
+    const interval = setInterval(updatePrices, 30000);
+    return () => clearInterval(interval);
+  }, [walletCreated, userId]);
 
   const handleWalletComplete = (userId: string) => {
     localStorage.setItem('walletCreated', 'true');
