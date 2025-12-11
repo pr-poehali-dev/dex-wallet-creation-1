@@ -613,7 +613,7 @@ export default function Index() {
 
           <TabsContent value="portfolio" className="space-y-4">
             <div className="grid gap-4">
-              {assets.map((asset, index) => {
+              {[...assets].sort((a, b) => (b.balance * b.price) - (a.balance * a.price)).map((asset, index) => {
                 const getNetworkIcon = (network: string) => {
                   const icons: { [key: string]: string } = {
                     'ETH': 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
