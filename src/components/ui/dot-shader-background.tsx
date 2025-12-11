@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState } from 'react'
+import { useMemo, useEffect } from 'react'
 import { Canvas, ThreeEvent, useFrame, useThree } from '@react-three/fiber'
 import { shaderMaterial, useTrailTexture } from '@react-three/drei'
 import * as THREE from 'three'
@@ -92,7 +92,6 @@ const DotMaterial = shaderMaterial(
 function Scene() {
   const size = useThree((s) => s.size)
   const viewport = useThree((s) => s.viewport)
-  const [isReady, setIsReady] = useState(false)
   
   const rotation = 0
   const gridSize = 100
@@ -118,29 +117,18 @@ function Scene() {
   }, [])
 
   useEffect(() => {
-    if (!dotMaterial || !dotMaterial.uniforms) return
-    
-    try {
-      dotMaterial.uniforms.dotColor.value.setHex(themeColors.dotColor.replace('#', '0x') as unknown as number)
-      dotMaterial.uniforms.bgColor.value.setHex(themeColors.bgColor.replace('#', '0x') as unknown as number)
-      dotMaterial.uniforms.dotOpacity.value = themeColors.dotOpacity
-      setIsReady(true)
-    } catch (error) {
-      console.error('Error initializing shader:', error)
-    }
+    dotMaterial.uniforms.dotColor.value.setHex(themeColors.dotColor.replace('#', '0x') as unknown as number)
+    dotMaterial.uniforms.bgColor.value.setHex(themeColors.bgColor.replace('#', '0x') as unknown as number)
+    dotMaterial.uniforms.dotOpacity.value = themeColors.dotOpacity
   }, [dotMaterial, themeColors])
 
   useFrame((state) => {
-    if (!isReady || !dotMaterial || !dotMaterial.uniforms) return
     dotMaterial.uniforms.time.value = state.clock.elapsedTime
   })
 
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
-    if (!isReady) return
     onMove(e)
   }
-
-  if (!isReady || !size || !viewport) return null
 
   const scale = Math.max(viewport.width, viewport.height) / 2
 
@@ -167,11 +155,7 @@ export const DotScreenShader = () => {
         powerPreference: 'high-performance',
         outputColorSpace: THREE.SRGBColorSpace,
         toneMapping: THREE.NoToneMapping
-      }}
-      onCreated={({ gl }) => {
-        gl.setClearColor('#0a0a0a', 1)
-      }}
-    >
+      }}>
       <Scene />
     </Canvas>
   )
