@@ -68,10 +68,14 @@ export default function Index() {
   const [fromToken, setFromToken] = useState('BTC');
   const [toToken, setToToken] = useState('ETH');
   const [swapAmount, setSwapAmount] = useState('');
-  const [selectedReceiveAsset, setSelectedReceiveAsset] = useState<typeof mockAssets[0] | null>(null);
+  const [selectedReceiveAsset, setSelectedReceiveAsset] = useState<typeof initialAssets[0] | null>(null);
   const [showSwapConfirmation, setShowSwapConfirmation] = useState(false);
   const [fromNetwork, setFromNetwork] = useState<string>('');
   const [toNetwork, setToNetwork] = useState<string>('');
+  const [selectedAsset, setSelectedAsset] = useState<typeof initialAssets[0] | null>(null);
+  const [showAssetDialog, setShowAssetDialog] = useState(false);
+  const [sendAmount, setSendAmount] = useState('');
+  const [sendAddress, setSendAddress] = useState('');
   const qrCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const generateAddressForNetwork = async (userId: string, network: string, symbol: string): Promise<string> => {
@@ -127,17 +131,19 @@ export default function Index() {
 
   useEffect(() => {
     const generateAddress = async () => {
-      if (selectedReceiveAsset && userId) {
-        const network = selectedReceiveAsset.network || selectedReceiveAsset.symbol;
-        const address = await generateAddressForNetwork(userId, network, selectedReceiveAsset.symbol);
+      const asset = selectedReceiveAsset || selectedAsset;
+      if (asset && userId) {
+        const network = asset.network || asset.symbol;
+        const address = await generateAddressForNetwork(userId, network, asset.symbol);
         setCurrentReceiveAddress(address);
       }
     };
     generateAddress();
-  }, [selectedReceiveAsset, userId]);
+  }, [selectedReceiveAsset, selectedAsset, userId]);
 
   useEffect(() => {
-    if (qrCanvasRef.current && currentReceiveAddress && selectedReceiveAsset) {
+    const asset = selectedReceiveAsset || selectedAsset;
+    if (qrCanvasRef.current && currentReceiveAddress && asset) {
       QRCode.toCanvas(qrCanvasRef.current, currentReceiveAddress, {
         width: 200,
         margin: 2,
@@ -147,7 +153,7 @@ export default function Index() {
         }
       });
     }
-  }, [currentReceiveAddress, selectedReceiveAsset]);
+  }, [currentReceiveAddress, selectedReceiveAsset, selectedAsset]);
 
   const totalBalance = assets.reduce((sum, asset) => sum + (asset.balance * asset.price), 0);
 
@@ -196,6 +202,28 @@ export default function Index() {
       description: `Обменяно ${swapAmount} ${fromToken} на ${calculateSwapOutput()} ${toToken}`,
     });
     setSwapAmount('');
+  };
+
+  const handleSendConfirm = () => {
+    const amount = parseFloat(sendAmount);
+    if (selectedAsset && amount > 0 && sendAddress) {
+      setAssets(prevAssets => prevAssets.map(asset => {
+        if (asset.symbol === selectedAsset.symbol && (asset.network || asset.symbol) === (selectedAsset.network || selectedAsset.symbol)) {
+          return { ...asset, balance: asset.balance - amount };
+        }
+        return asset;
+      }));
+
+      toast({
+        title: "Отправка выполнена!",
+        description: `Отправлено ${amount} ${selectedAsset.symbol} на адрес ${sendAddress.substring(0, 10)}...`,
+      });
+
+      setSendAmount('');
+      setSendAddress('');
+      setShowAssetDialog(false);
+      setSelectedAsset(null);
+    }
   };
 
   return (
@@ -477,7 +505,14 @@ export default function Index() {
                 };
                 
                 return (
-                  <Card key={`${asset.symbol}-${asset.network}-${index}`} className="p-5 hover-scale cursor-pointer transition-all hover:border-primary/50">
+                  <Card 
+                    key={`${asset.symbol}-${asset.network}-${index}`} 
+                    className="p-5 hover-scale cursor-pointer transition-all hover:border-primary/50"
+                    onClick={() => {
+                      setSelectedAsset(asset);
+                      setShowAssetDialog(true);
+                    }}
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className="relative w-12 h-12 rounded-full bg-background/50 flex items-center justify-center">
@@ -798,6 +833,99 @@ export default function Index() {
           </TabsContent>
         </Tabs>
       </div>
+
+      <Dialog open={showAssetDialog} onOpenChange={setShowAssetDialog}>
+        <DialogContent className="bg-card">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              {selectedAsset && (
+                <>
+                  <img src={selectedAsset.icon} alt={selectedAsset.name} className="w-8 h-8 object-contain" />
+                  {selectedAsset.name}
+                </>
+              )}
+            </DialogTitle>
+          </DialogHeader>
+          {selectedAsset && (
+            <div className="space-y-6 mt-4">
+              <div className="p-4 bg-muted/50 rounded-lg">
+                <p className="text-sm text-muted-foreground mb-1">Баланс</p>
+                <p className="text-2xl font-bold">{selectedAsset.balance} {selectedAsset.symbol}</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  ≈ ${(selectedAsset.balance * selectedAsset.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                </p>
+              </div>
+
+              <Tabs defaultValue="send" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="send">Отправить</TabsTrigger>
+                  <TabsTrigger value="receive">Получить</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="send" className="space-y-4 mt-4">
+                  <div>
+                    <Label>Адрес получателя</Label>
+                    <Input 
+                      placeholder="0x..." 
+                      value={sendAddress}
+                      onChange={(e) => setSendAddress(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label>Сумма</Label>
+                    <Input 
+                      type="number" 
+                      placeholder="0.00"
+                      value={sendAmount}
+                      onChange={(e) => setSendAmount(e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Доступно: {selectedAsset.balance} {selectedAsset.symbol}
+                    </p>
+                  </div>
+                  <Button 
+                    className="w-full gap-2" 
+                    onClick={handleSendConfirm}
+                    disabled={!sendAddress || !sendAmount || parseFloat(sendAmount) <= 0 || parseFloat(sendAmount) > selectedAsset.balance}
+                  >
+                    <Icon name="Send" size={18} />
+                    Отправить
+                  </Button>
+                </TabsContent>
+
+                <TabsContent value="receive" className="space-y-4 mt-4">
+                  <div className="flex justify-center">
+                    <canvas ref={qrCanvasRef} className="rounded-lg" />
+                  </div>
+                  <div>
+                    <Label>Ваш адрес</Label>
+                    <div className="mt-2 p-3 bg-muted rounded-lg font-mono text-sm break-all">
+                      {currentReceiveAddress || 'Генерация адреса...'}
+                    </div>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    className="w-full gap-2"
+                    onClick={() => {
+                      if (currentReceiveAddress) {
+                        navigator.clipboard.writeText(currentReceiveAddress);
+                        toast({
+                          title: "Скопировано!",
+                          description: "Адрес скопирован в буфер обмена",
+                        });
+                      }
+                    }}
+                    disabled={!currentReceiveAddress}
+                  >
+                    <Icon name="Copy" size={16} />
+                    Копировать адрес
+                  </Button>
+                </TabsContent>
+              </Tabs>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
       )}
     </>
