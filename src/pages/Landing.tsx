@@ -138,14 +138,21 @@ export default function Landing() {
               <p className="text-sm sm:text-base md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-xl">
                 Безопасное хранение, мгновенные переводы и обмен криптовалюты в одном приложении
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <GradientButton onClick={() => navigate('/app?mode=create')} className="flex-1 sm:flex-none text-sm sm:text-base px-4 py-2 sm:px-6 sm:py-3">
-                  <span className="truncate">Создать</span>
-                  <Icon name="Plus" size={18} className="ml-1 sm:ml-2 flex-shrink-0" />
+              <div className="flex flex-col gap-3 sm:gap-4">
+                <GradientButton 
+                  onClick={() => navigate('/app?mode=create')} 
+                  className="w-full h-14 sm:h-12 text-base sm:text-lg font-semibold rounded-2xl shadow-xl hover:shadow-2xl active:scale-95 transition-all"
+                >
+                  <Icon name="Plus" size={22} className="mr-2.5" />
+                  <span>Создать кошелек</span>
                 </GradientButton>
-                <GradientButton onClick={() => navigate('/app?mode=restore')} variant="variant" className="flex-1 sm:flex-none text-sm sm:text-base px-4 py-2 sm:px-6 sm:py-3">
-                  <Icon name="RotateCcw" size={18} className="mr-1 sm:mr-2 flex-shrink-0" />
-                  <span className="truncate">Восстановить</span>
+                <GradientButton 
+                  onClick={() => navigate('/app?mode=restore')} 
+                  variant="variant" 
+                  className="w-full h-14 sm:h-12 text-base sm:text-lg font-semibold rounded-2xl shadow-xl hover:shadow-2xl active:scale-95 transition-all border-2"
+                >
+                  <Icon name="RotateCcw" size={22} className="mr-2.5" />
+                  <span>Восстановить кошелек</span>
                 </GradientButton>
               </div>
             </div>
@@ -198,31 +205,31 @@ export default function Landing() {
             className="absolute top-0 left-0 isolate -z-10 h-full w-full overflow-hidden rounded-xl"
             style={{ backdropFilter: 'url("#tokens-glass")' }}
           />
-          <div className="p-8 md:p-12 relative z-10">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold mb-4">Поддерживаемые токены</h2>
-              <p className="text-muted-foreground text-lg">
+          <div className="p-6 sm:p-8 md:p-12 relative z-10">
+            <div className="text-center mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">Поддерживаемые токены</h2>
+              <p className="text-sm sm:text-base md:text-lg text-muted-foreground px-4">
                 Храните и управляйте популярными криптовалютами в одном месте
               </p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {supportedTokens.map((token, index) => (
-                <div key={`${token.symbol}-${token.network || 'native'}-${index}`} className="flex items-center gap-3 p-3 rounded-lg bg-background/50 hover:bg-background/70 transition-colors">
-                  <div className="relative w-10 h-10 rounded-full bg-background flex items-center justify-center flex-shrink-0">
-                    <img src={token.icon} alt={token.name} className="w-6 h-6 object-contain" />
+                <div key={`${token.symbol}-${token.network || 'native'}-${index}`} className="flex items-center gap-3 p-3 sm:p-4 rounded-xl bg-background/50 hover:bg-background/80 transition-all duration-300 hover:shadow-lg active:scale-[0.97] touch-manipulation">
+                  <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-primary/10 to-background/50 flex items-center justify-center flex-shrink-0 shadow-md">
+                    <img src={token.icon} alt={token.name} className="w-6 h-6 sm:w-7 sm:h-7 object-contain" />
                     {token.network && (
-                      <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden shadow-md">
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden shadow-lg">
                         <img 
                           src={getNetworkIcon(token.network)!} 
                           alt={token.network} 
-                          className="w-4 h-4 object-contain"
+                          className="w-3.5 h-3.5 sm:w-4 sm:h-4 object-contain"
                         />
                       </div>
                     )}
                   </div>
                   <div className="min-w-0">
-                    <div className="font-semibold truncate">{token.symbol}</div>
-                    <div className="text-xs text-muted-foreground truncate">{token.network || 'Native'}</div>
+                    <div className="font-bold text-sm sm:text-base truncate">{token.symbol}</div>
+                    <div className="text-[10px] sm:text-xs text-muted-foreground truncate leading-tight">{token.network || 'Native'}</div>
                   </div>
                 </div>
               ))}
@@ -241,14 +248,14 @@ export default function Landing() {
           </svg>
         </section>
 
-        <section className="mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">Почему выбирают нас</h2>
-            <p className="text-muted-foreground text-lg">
+        <section className="mb-16 sm:mb-20">
+          <div className="text-center mb-8 sm:mb-12 px-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">Почему выбирают нас</h2>
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground">
               Современные технологии для безопасного управления криптовалютой
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             {features.map((feature, index) => (
               <div key={index} className="relative group cursor-pointer">
                 <div className="absolute top-0 left-0 z-0 h-full w-full rounded-xl 
@@ -259,12 +266,12 @@ export default function Landing() {
                   className="absolute top-0 left-0 isolate -z-10 h-full w-full overflow-hidden rounded-xl"
                   style={{ backdropFilter: `url(#feature-glass-${index})` }}
                 />
-                <div className="p-6 relative z-10">
-                  <div className="w-12 h-12 rounded-xl bg-muted/30 flex items-center justify-center mb-4">
-                    <Icon name={feature.icon as any} className="text-foreground" size={24} />
+                <div className="p-5 sm:p-6 relative z-10">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center mb-4 shadow-lg">
+                    <Icon name={feature.icon as any} className="text-primary" size={26} />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-muted-foreground">{feature.description}</p>
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2">{feature.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
                 </div>
                 <svg className="hidden">
                   <defs>
@@ -290,15 +297,23 @@ export default function Landing() {
             className="absolute top-0 left-0 isolate -z-10 h-full w-full overflow-hidden rounded-xl"
             style={{ backdropFilter: 'url("#cta-glass")' }}
           />
-          <div className="p-12 text-center relative z-10">
-            <h2 className="text-3xl font-bold mb-4">Готовы начать?</h2>
-            <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
+          <div className="p-6 sm:p-8 md:p-12 text-center relative z-10">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center mx-auto mb-5 sm:mb-6 shadow-xl">
+              <Icon name="Rocket" className="text-primary" size={36} />
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">Готовы начать?</h2>
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto px-4">
               Создайте свой безопасный кошелек прямо сейчас. Это займет меньше минуты.
             </p>
-            <GradientButton onClick={() => navigate('/app')}>
-              Создать кошелек бесплатно
-              <Icon name="Rocket" size={20} className="ml-2" />
-            </GradientButton>
+            <div className="max-w-md mx-auto px-4">
+              <GradientButton 
+                onClick={() => navigate('/app')} 
+                className="w-full h-14 sm:h-12 text-base sm:text-lg font-semibold rounded-2xl shadow-xl hover:shadow-2xl active:scale-95 transition-all"
+              >
+                <Icon name="Plus" size={22} className="mr-2" />
+                Создать кошелек бесплатно
+              </GradientButton>
+            </div>
           </div>
           <svg className="hidden">
             <defs>
