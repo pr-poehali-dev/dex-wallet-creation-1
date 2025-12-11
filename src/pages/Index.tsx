@@ -392,52 +392,53 @@ export default function Index() {
       {!walletCreated ? null : (
     <div className="min-h-screen bg-background p-3 sm:p-4 md:p-6 pb-safe">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-6 sm:mb-8 flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur-xl z-50 py-4 -mx-3 sm:-mx-4 md:-mx-6 px-3 sm:px-4 md:px-6 border-b border-border/40">
+        <header className="mb-4 sm:mb-6 md:mb-8 flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur-xl z-50 py-3 sm:py-4 -mx-3 sm:-mx-4 md:-mx-6 px-3 sm:px-4 md:px-6 border-b border-border/40">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/20 flex items-center justify-center">
-              <Icon name="Wallet" className="text-primary" size={20} />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
+              <Icon name="Wallet" className="text-primary" size={18} />
             </div>
-            <div>
-              <h1 className="text-lg sm:text-2xl font-bold">DEXXX Wallet</h1>
-              <p className="text-[10px] sm:text-xs text-muted-foreground font-mono truncate max-w-[120px] sm:max-w-none">ID: {userId}</p>
+            <div className="min-w-0">
+              <h1 className="text-base sm:text-lg md:text-2xl font-bold">DEXXX Wallet</h1>
+              <p className="text-[10px] sm:text-xs text-muted-foreground font-mono truncate">ID: {userId}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
             {userId === 'ae25420cd4106d43' && (
               <Button 
                 variant="outline" 
                 size="icon" 
-                className="hover-scale"
+                className="hover-scale h-8 w-8 sm:h-10 sm:w-10"
                 onClick={() => navigate('/admin')}
                 title="Админ-панель"
               >
-                <Icon name="Shield" size={20} />
+                <Icon name="Shield" size={16} className="sm:w-5 sm:h-5" />
               </Button>
             )}
             <Button 
               variant="outline" 
               size="icon" 
-              className="hover-scale text-destructive hover:text-destructive"
+              className="hover-scale text-destructive hover:text-destructive h-8 w-8 sm:h-10 sm:w-10"
               onClick={handleLogout}
             >
-              <Icon name="LogOut" size={20} />
+              <Icon name="LogOut" size={16} className="sm:w-5 sm:h-5" />
             </Button>
           </div>
         </header>
 
-        <div className="grid grid-cols-1 gap-4 sm:gap-6 mb-4 sm:mb-6">
-          <Card className="p-4 sm:p-6 transition-all duration-300 hover:shadow-lg bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/20">
-            <div className="flex items-start justify-between mb-4">
-              <div>
+        <div className="grid grid-cols-1 gap-3 sm:gap-4 md:gap-6 mb-3 sm:mb-4 md:mb-6">
+          <Card className="p-3 sm:p-4 md:p-6 transition-all duration-300 hover:shadow-lg bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/20">
+            <div className="flex items-start justify-between mb-3 sm:mb-4">
+              <div className="min-w-0">
                 <p className="text-xs sm:text-sm text-muted-foreground mb-1">Общий баланс</p>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h2>
+                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold truncate">${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h2>
               </div>
-              <div className="px-2 sm:px-3 py-1 rounded-full bg-success/20 text-success text-xs sm:text-sm font-medium flex items-center gap-1">
-                <Icon name="TrendingUp" size={16} />
-                +12.4%
+              <div className="px-2 sm:px-3 py-1 rounded-full bg-success/20 text-success text-xs sm:text-sm font-medium flex items-center gap-1 flex-shrink-0">
+                <Icon name="TrendingUp" size={14} className="sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">+12.4%</span>
+                <span className="sm:hidden">+12%</span>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4 sm:mt-6">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-3 sm:mt-4 md:mt-6">
               <Dialog open={showMainSendDialog} onOpenChange={setShowMainSendDialog}>
                 <DialogTrigger asChild>
                   <Button className="flex-1 gap-2 h-11 sm:h-10 text-sm sm:text-base touch-manipulation">

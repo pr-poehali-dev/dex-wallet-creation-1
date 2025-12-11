@@ -149,53 +149,53 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="bg-card max-w-2xl max-h-[90vh] overflow-y-auto" hideClose={step !== 'success'}>
+      <DialogContent className="bg-card max-w-2xl max-h-[90vh] overflow-y-auto w-[calc(100vw-2rem)] sm:w-full" hideClose={step !== 'success'}>
         {step === 'intro' && (
           <>
             <DialogHeader>
-              <DialogTitle className="text-2xl flex items-center gap-3">
+              <DialogTitle className="text-lg sm:text-2xl flex items-center gap-2 sm:gap-3">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="mr-2"
+                  className="mr-1 sm:mr-2 h-8 w-8 sm:h-10 sm:w-10"
                   onClick={() => navigate('/')}
                 >
-                  <Icon name="ArrowLeft" size={24} />
+                  <Icon name="ArrowLeft" size={20} />
                 </Button>
-                <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-                  <Icon name="Wallet" className="text-primary" size={28} />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                  <Icon name="Wallet" className="text-primary" size={24} />
                 </div>
-                Создание кошелька
+                <span className="text-base sm:text-2xl">Создание кошелька</span>
               </DialogTitle>
             </DialogHeader>
-            <div className="space-y-6 mt-4">
-              <div className="space-y-4">
-                <div className="flex items-start gap-3 p-4 bg-primary/10 rounded-lg border border-primary/20">
-                  <Icon name="Shield" className="text-primary mt-1" size={24} />
+            <div className="space-y-4 sm:space-y-6 mt-4">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-start gap-2 sm:gap-3 p-3 sm:p-4 bg-primary/10 rounded-lg border border-primary/20">
+                  <Icon name="Shield" className="text-primary mt-0.5 flex-shrink-0" size={20} />
                   <div>
-                    <h4 className="font-semibold mb-1">Безопасность превыше всего</h4>
-                    <p className="text-sm text-muted-foreground">
+                    <h4 className="font-semibold mb-1 text-sm sm:text-base">Безопасность превыше всего</h4>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Мы создадим для вас seed-фразу из 12 слов. Это ключ к вашему кошельку.
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-4 bg-destructive/10 rounded-lg border border-destructive/20">
-                  <Icon name="AlertTriangle" className="text-destructive mt-1" size={24} />
+                <div className="flex items-start gap-2 sm:gap-3 p-3 sm:p-4 bg-destructive/10 rounded-lg border border-destructive/20">
+                  <Icon name="AlertTriangle" className="text-destructive mt-0.5 flex-shrink-0" size={20} />
                   <div>
-                    <h4 className="font-semibold mb-1">Важное предупреждение</h4>
-                    <p className="text-sm text-muted-foreground">
+                    <h4 className="font-semibold mb-1 text-sm sm:text-base">Важное предупреждение</h4>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Никогда не делитесь своей seed-фразой. Сохраните её в безопасном месте.
                       Потеря фразы = потеря доступа к средствам.
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg">
-                  <Icon name="FileText" className="text-foreground mt-1" size={24} />
+                <div className="flex items-start gap-2 sm:gap-3 p-3 sm:p-4 bg-muted/50 rounded-lg">
+                  <Icon name="FileText" className="text-foreground mt-0.5 flex-shrink-0" size={20} />
                   <div>
-                    <h4 className="font-semibold mb-1">Запишите на бумаге</h4>
-                    <p className="text-sm text-muted-foreground">
+                    <h4 className="font-semibold mb-1 text-sm sm:text-base">Запишите на бумаге</h4>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Рекомендуем записать seed-фразу на бумаге и хранить в надёжном месте,
                       недоступном для посторонних.
                     </p>

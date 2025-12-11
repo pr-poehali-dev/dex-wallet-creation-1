@@ -113,8 +113,8 @@ export default function Landing() {
             fill="gray"
           />
           
-          <div className="flex flex-col md:flex-row h-[600px]">
-            <div className="flex-1 p-8 md:p-12 relative z-10 flex flex-col justify-center">
+          <div className="flex flex-col md:flex-row min-h-[400px] sm:min-h-[500px] md:h-[600px]">
+            <div className="flex-1 p-4 sm:p-6 md:p-12 relative z-10 flex flex-col justify-center">
               <div className="relative h-[640px] md:h-[768px] mb-8 overflow-hidden w-full hidden md:block">
                 <ParticleTextEffect
                   text="DEXXXWALLET"
@@ -123,26 +123,26 @@ export default function Landing() {
                   particleDensity={2}
                 />
               </div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/30 text-foreground text-sm font-medium mb-6 w-fit">
-                <Icon name="Sparkles" size={16} />
-                <span>Децентрализованный кошелек нового поколения</span>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-muted/30 text-foreground text-xs sm:text-sm font-medium mb-4 sm:mb-6 w-fit">
+                <Icon name="Sparkles" size={14} className="sm:w-4 sm:h-4" />
+                <span className="line-clamp-1">Децентрализованный кошелек</span>
               </div>
-              <p className="text-xl text-muted-foreground mb-8 max-w-xl">
+              <p className="text-sm sm:text-base md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-xl">
                 Безопасное хранение, мгновенные переводы и обмен криптовалюты в одном приложении
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <GradientButton onClick={() => navigate('/app?mode=create')} className="flex-1 sm:flex-none">
-                  Создать кошелек
-                  <Icon name="Plus" size={20} className="ml-2" />
+                <GradientButton onClick={() => navigate('/app?mode=create')} className="flex-1 sm:flex-none text-sm sm:text-base px-4 py-2 sm:px-6 sm:py-3">
+                  <span className="truncate">Создать</span>
+                  <Icon name="Plus" size={18} className="ml-1 sm:ml-2 flex-shrink-0" />
                 </GradientButton>
-                <GradientButton onClick={() => navigate('/app?mode=restore')} variant="variant" className="flex-1 sm:flex-none">
-                  <Icon name="RotateCcw" size={20} className="mr-2" />
-                  Восстановить кошелек
+                <GradientButton onClick={() => navigate('/app?mode=restore')} variant="variant" className="flex-1 sm:flex-none text-sm sm:text-base px-4 py-2 sm:px-6 sm:py-3">
+                  <Icon name="RotateCcw" size={18} className="mr-1 sm:mr-2 flex-shrink-0" />
+                  <span className="truncate">Восстановить</span>
                 </GradientButton>
               </div>
             </div>
 
-            <div className="flex-1 relative">
+            <div className="flex-1 relative hidden md:block">
               <SplineScene 
                 scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
                 className="w-full h-full"
