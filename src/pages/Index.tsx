@@ -14,9 +14,9 @@ import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
 
 const initialAssets = [
-  { name: 'Bitcoin', symbol: 'BTC', balance: 0, price: 43250.00, icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png' },
-  { name: 'Ethereum', symbol: 'ETH', balance: 0, price: 2280.50, icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png' },
-  { name: 'Binance Coin', symbol: 'BNB', balance: 0, price: 312.75, icon: 'https://cryptologos.cc/logos/bnb-bnb-logo.png' },
+  { name: 'Bitcoin', symbol: 'BTC', balance: 0, price: 43250.00, icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png', network: null },
+  { name: 'Ethereum', symbol: 'ETH', balance: 0, price: 2280.50, icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png', network: null },
+  { name: 'Binance Coin', symbol: 'BNB', balance: 0, price: 312.75, icon: 'https://cryptologos.cc/logos/bnb-bnb-logo.png', network: null },
   
   { name: 'Tether (Ethereum)', symbol: 'USDT', balance: 100.00, price: 1.00, icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'ETH' },
   { name: 'Tether (Tron)', symbol: 'USDT', balance: 50.00, price: 1.00, icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'TRX' },
@@ -284,10 +284,9 @@ export default function Index() {
 
   const getSelectedAsset = (symbol: string, network: string) => {
     if (!network) {
-      const assetsBySymbol = getAssetsBySymbol(symbol);
-      return assetsBySymbol[0];
+      return assets.find(a => a.symbol === symbol && a.network === null);
     }
-    return assets.find(a => a.symbol === symbol && (a.network || a.symbol) === network);
+    return assets.find(a => a.symbol === symbol && a.network === network);
   };
 
   const calculateSwapOutput = () => {
@@ -308,10 +307,10 @@ export default function Index() {
     if (fromAsset && toAsset && swapAmountNum > 0) {
       setAssets(prevAssets => {
         const updatedAssets = prevAssets.map(asset => {
-          if (asset.symbol === fromAsset.symbol && (asset.network || asset.symbol) === (fromAsset.network || fromAsset.symbol)) {
+          if (asset.symbol === fromAsset.symbol && asset.network === fromAsset.network) {
             return { ...asset, balance: asset.balance - swapAmountNum };
           }
-          if (asset.symbol === toAsset.symbol && (asset.network || asset.symbol) === (toAsset.network || toAsset.symbol)) {
+          if (asset.symbol === toAsset.symbol && asset.network === toAsset.network) {
             return { ...asset, balance: asset.balance + outputAmount };
           }
           return asset;
@@ -336,7 +335,7 @@ export default function Index() {
     if (selectedAsset && amount > 0 && sendAddress) {
       setAssets(prevAssets => {
         const updatedAssets = prevAssets.map(asset => {
-          if (asset.symbol === selectedAsset.symbol && (asset.network || asset.symbol) === (selectedAsset.network || selectedAsset.symbol)) {
+          if (asset.symbol === selectedAsset.symbol && asset.network === selectedAsset.network) {
             return { ...asset, balance: asset.balance - amount };
           }
           return asset;
@@ -365,7 +364,7 @@ export default function Index() {
     if (mainSendAsset && amount > 0 && mainSendAddress && amount <= mainSendAsset.balance) {
       setAssets(prevAssets => {
         const updatedAssets = prevAssets.map(a => {
-          if (a.symbol === mainSendAsset.symbol && (a.network || a.symbol) === (mainSendAsset.network || mainSendAsset.symbol)) {
+          if (a.symbol === mainSendAsset.symbol && a.network === mainSendAsset.network) {
             return { ...a, balance: a.balance - amount };
           }
           return a;
@@ -749,8 +748,16 @@ export default function Index() {
                   <Label className="text-sm">Отдаете</Label>
                   <div className="flex gap-2">
                     <div className="flex flex-col gap-1">
-                      <Select value={fromToken} onValueChange={(val) => { setFromToken(val); setFromNetwork(''); }}>
-                        <SelectTrigger className="w-32">
+                      <Select value={fromToken} onValueChange={(val) => { 
+                        setFromToken(val);
+                        const assetOptions = assets.filter(a => a.symbol === val);
+                        if (assetOptions.length === 1) {
+                          setFromNetwork(assetOptions[0].network || '');
+                        } else {
+                          setFromNetwork('');
+                        }
+                      }}>
+                        <SelectTrigger className="w-24 sm:w-32 h-11 sm:h-10">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -771,7 +778,7 @@ export default function Index() {
                           </SelectTrigger>
                           <SelectContent>
                             {getAssetsBySymbol(fromToken).map((asset, idx) => (
-                              <SelectItem key={idx} value={asset.network || asset.symbol}>
+                              <SelectItem key={idx} value={asset.network || ''}>
                                 {asset.network || 'Native'}
                               </SelectItem>
                             ))}
@@ -811,8 +818,16 @@ export default function Index() {
                   <Label className="text-sm">Получаете</Label>
                   <div className="flex gap-2">
                     <div className="flex flex-col gap-1">
-                      <Select value={toToken} onValueChange={(val) => { setToToken(val); setToNetwork(''); }}>
-                        <SelectTrigger className="w-32">
+                      <Select value={toToken} onValueChange={(val) => { 
+                        setToToken(val);
+                        const assetOptions = assets.filter(a => a.symbol === val);
+                        if (assetOptions.length === 1) {
+                          setToNetwork(assetOptions[0].network || '');
+                        } else {
+                          setToNetwork('');
+                        }
+                      }}>
+                        <SelectTrigger className="w-24 sm:w-32 h-11 sm:h-10">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -833,7 +848,7 @@ export default function Index() {
                           </SelectTrigger>
                           <SelectContent>
                             {getAssetsBySymbol(toToken).map((asset, idx) => (
-                              <SelectItem key={idx} value={asset.network || asset.symbol}>
+                              <SelectItem key={idx} value={asset.network || ''}>
                                 {asset.network || 'Native'}
                               </SelectItem>
                             ))}

@@ -22,13 +22,13 @@ export default function Admin() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showAdjustDialog, setShowAdjustDialog] = useState(false);
   const [adjustType, setAdjustType] = useState<'add' | 'remove'>('add');
-  const [selectedCrypto, setSelectedCrypto] = useState('BTC');
+  const [selectedCryptoKey, setSelectedCryptoKey] = useState('BTC-native');
   const [adjustAmount, setAdjustAmount] = useState('');
 
   const cryptoOptions = [
-    { symbol: 'BTC', name: 'Bitcoin', icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png' },
-    { symbol: 'ETH', name: 'Ethereum', icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png' },
-    { symbol: 'BNB', name: 'Binance Coin', icon: 'https://cryptologos.cc/logos/bnb-bnb-logo.png' },
+    { symbol: 'BTC', name: 'Bitcoin', icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png', network: null },
+    { symbol: 'ETH', name: 'Ethereum', icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png', network: null },
+    { symbol: 'BNB', name: 'Binance Coin', icon: 'https://cryptologos.cc/logos/bnb-bnb-logo.png', network: null },
     { symbol: 'USDT', name: 'Tether (ETH)', icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'ETH' },
     { symbol: 'USDT', name: 'Tether (TRX)', icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'TRX' },
     { symbol: 'USDT', name: 'Tether (BSC)', icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'BSC' },
@@ -100,11 +100,24 @@ export default function Admin() {
     }
 
     try {
-      const selectedOption = cryptoOptions.find(c => c.symbol === selectedCrypto);
-      const network = selectedOption?.network || null;
+      const [symbol, networkKey] = selectedCryptoKey.split('-');
+      const selectedOption = cryptoOptions.find(c => 
+        c.symbol === symbol && (c.network === null ? networkKey === 'native' : c.network === networkKey)
+      );
+      
+      if (!selectedOption) {
+        toast({
+          variant: "destructive",
+          title: "Ошибка",
+          description: "Криптовалюта не найдена",
+        });
+        return;
+      }
+      
+      const network = selectedOption.network;
       
       const balances = await api.balances.get(selectedUser.userId);
-      const balanceKey = `${selectedCrypto}-${network || 'native'}`;
+      const balanceKey = `${symbol}-${network || 'native'}`;
       const currentBalance = balances[balanceKey] || 0;
 
       let newBalance: number;
@@ -122,11 +135,11 @@ export default function Admin() {
         newBalance = currentBalance - amount;
       }
 
-      await api.balances.update(selectedUser.userId, selectedCrypto, network, newBalance);
+      await api.balances.update(selectedUser.userId, symbol, network, newBalance);
 
       toast({
         title: adjustType === 'add' ? "Пополнение выполнено" : "Списание выполнено",
-        description: `${adjustType === 'add' ? 'Добавлено' : 'Списано'} ${amount} ${selectedCrypto} для пользователя ${selectedUser.userId}`,
+        description: `${adjustType === 'add' ? 'Добавлено' : 'Списано'} ${amount} ${symbol}${network ? ` (${network})` : ''} для пользователя ${selectedUser.userId}`,
       });
 
       window.dispatchEvent(new CustomEvent('balanceUpdate'));
@@ -209,8 +222,17 @@ export default function Admin() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="icon" onClick={loadUsers} className="hover-scale">
+            <Button variant="outline" size="icon" onClick={loadUsers} className="hover-scale" title="Обновить">
               <Icon name="RefreshCw" size={20} />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="hover-scale"
+              onClick={() => navigate('/app')}
+              title="Вернуться в кошелек"
+            >
+              <Icon name="Wallet" size={20} />
             </Button>
             <Button
               variant="outline"
@@ -220,6 +242,7 @@ export default function Admin() {
                 setIsAuthenticated(false);
                 setPassword('');
               }}
+              title="Выйти"
             >
               <Icon name="LogOut" size={20} />
             </Button>
@@ -335,19 +358,22 @@ export default function Admin() {
                           </div>
                           <div>
                             <Label>Криптовалюта</Label>
-                            <Select value={selectedCrypto} onValueChange={setSelectedCrypto}>
+                            <Select value={selectedCryptoKey} onValueChange={setSelectedCryptoKey}>
                               <SelectTrigger>
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                {cryptoOptions.map((crypto, index) => (
-                                  <SelectItem key={`${crypto.symbol}-${crypto.network || 'native'}-${index}`} value={crypto.symbol}>
-                                    <div className="flex items-center gap-2">
-                                      <img src={crypto.icon} alt={crypto.symbol} className="w-4 h-4 object-contain" />
-                                      {crypto.name}
-                                    </div>
-                                  </SelectItem>
-                                ))}
+                                {cryptoOptions.map((crypto, index) => {
+                                  const key = `${crypto.symbol}-${crypto.network || 'native'}`;
+                                  return (
+                                    <SelectItem key={`${key}-${index}`} value={key}>
+                                      <div className="flex items-center gap-2">
+                                        <img src={crypto.icon} alt={crypto.symbol} className="w-4 h-4 object-contain" />
+                                        {crypto.name}
+                                      </div>
+                                    </SelectItem>
+                                  );
+                                })}
                               </SelectContent>
                             </Select>
                           </div>
