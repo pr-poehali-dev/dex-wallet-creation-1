@@ -114,6 +114,7 @@ export default function Admin() {
       }
       
       const network = selectedOption.network;
+      const symbol = selectedOption.symbol;
       
       const balances = await api.balances.get(selectedUser.userId);
       const balanceKey = `${symbol}-${network || 'native'}`;
