@@ -10,37 +10,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import Icon from '@/components/ui/icon';
 import QRCode from 'qrcode';
 import WalletSetup from '@/components/WalletSetup';
+import CryptoIcon from '@/components/CryptoIcon';
+import NetworkBadge from '@/components/NetworkBadge';
 import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
 
-const getCryptoIcon = (symbol: string) => {
-  const icons: { [key: string]: { emoji: string; colors: [string, string] } } = {
-    'BTC': { emoji: '₿', colors: ['#f97316', '#ea580c'] },
-    'ETH': { emoji: '◆', colors: ['#a855f7', '#4f46e5'] },
-    'BNB': { emoji: '◉', colors: ['#facc15', '#ca8a04'] },
-    'USDT': { emoji: '₮', colors: ['#22c55e', '#14b8a6'] },
-    'USDC': { emoji: '$', colors: ['#3b82f6', '#2563eb'] },
-    'BUSD': { emoji: '$', colors: ['#eab308', '#ca8a04'] },
-    'DAI': { emoji: '◈', colors: ['#fbbf24', '#f97316'] },
-    'TUSD': { emoji: 'T', colors: ['#2563eb', '#1d4ed8'] },
-    'USDP': { emoji: 'P', colors: ['#059669', '#059669'] },
-    'FRAX': { emoji: 'F', colors: ['#374151', '#1f2937'] },
-    'USDD': { emoji: 'D', colors: ['#475569', '#334155'] },
-  };
-  return icons[symbol] || { emoji: '●', colors: ['#9ca3af', '#6b7280'] };
-};
 
-const getNetworkBadge = (network: string) => {
-  const badges: { [key: string]: { name: string; color: string } } = {
-    'ETH': { name: 'ETH', color: '#a855f7' },
-    'BSC': { name: 'BSC', color: '#eab308' },
-    'TRX': { name: 'TRX', color: '#ef4444' },
-    'MATIC': { name: 'MATIC', color: '#8b5cf6' },
-    'ARB': { name: 'ARB', color: '#3b82f6' },
-    'OP': { name: 'OP', color: '#dc2626' },
-  };
-  return badges[network] || { name: network, color: '#6b7280' };
-};
 
 const initialAssets = [
   { name: 'Bitcoin', symbol: 'BTC', balance: 0, price: 43250.00, network: null },
@@ -689,59 +664,40 @@ export default function Index() {
                   
                   {!selectedReceiveAsset ? (
                     <div className="space-y-2 mt-4">
-                      {assets.map((asset, index) => {
-                        const cryptoIcon = getCryptoIcon(asset.symbol);
-                        const networkBadge = asset.network ? getNetworkBadge(asset.network) : null;
-                        
-                        return (
-                          <Button
-                            key={`${asset.symbol}-${asset.network || 'native'}-${index}`}
-                            variant="outline"
-                            className="w-full justify-start h-auto py-3 px-4 hover:bg-muted"
-                            onClick={() => setSelectedReceiveAsset(asset)}
-                          >
-                            <div className="flex items-center gap-3 w-full">
-                              <div 
-                                className="relative w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                                style={{ background: `linear-gradient(to bottom right, ${cryptoIcon.colors[0]}, ${cryptoIcon.colors[1]})` }}
-                              >
-                                <span className="text-lg text-white font-bold">{cryptoIcon.emoji}</span>
-                                {networkBadge && (
-                                  <div 
-                                    className="absolute -bottom-1 -right-1 px-1 py-0.5 rounded border border-white/20 flex items-center justify-center"
-                                    style={{ backgroundColor: networkBadge.color }}
-                                  >
-                                    <span className="text-[8px] text-white font-bold leading-none">{networkBadge.name}</span>
-                                  </div>
-                                )}
-                              </div>
-                              <div className="text-left flex-1">
-                                <div className="font-semibold">{asset.name}</div>
-                                <div className="text-sm text-muted-foreground">{asset.symbol}</div>
-                              </div>
-                              <Icon name="ChevronRight" size={20} className="text-muted-foreground" />
+                      {assets.map((asset, index) => (
+                        <Button
+                          key={`${asset.symbol}-${asset.network || 'native'}-${index}`}
+                          variant="outline"
+                          className="w-full justify-start h-auto py-3 px-4 hover:bg-muted"
+                          onClick={() => setSelectedReceiveAsset(asset)}
+                        >
+                          <div className="flex items-center gap-3 w-full">
+                            <div className="relative flex-shrink-0">
+                              <CryptoIcon symbol={asset.symbol} size={40} />
+                              {asset.network && (
+                                <div className="absolute -bottom-1 -right-1">
+                                  <NetworkBadge network={asset.network} size="sm" />
+                                </div>
+                              )}
                             </div>
-                          </Button>
-                        );
-                      })}
+                            <div className="text-left flex-1">
+                              <div className="font-semibold">{asset.name}</div>
+                              <div className="text-sm text-muted-foreground">{asset.symbol}</div>
+                            </div>
+                            <Icon name="ChevronRight" size={20} className="text-muted-foreground" />
+                          </div>
+                        </Button>
+                      ))}
                     </div>
                   ) : (
                     <div className="space-y-4 mt-4">
                       <div className="flex justify-center items-center gap-3 p-4 bg-muted/50 rounded-lg">
-                        <div 
-                          className="relative w-12 h-12 rounded-xl flex items-center justify-center"
-                          style={{ background: `linear-gradient(to bottom right, ${getCryptoIcon(selectedReceiveAsset.symbol).colors[0]}, ${getCryptoIcon(selectedReceiveAsset.symbol).colors[1]})` }}
-                        >
-                          <span className="text-2xl text-white font-bold">{getCryptoIcon(selectedReceiveAsset.symbol).emoji}</span>
-                          {selectedReceiveAsset.network && (() => {
-                            const networkBadge = getNetworkBadge(selectedReceiveAsset.network);
-                            return (
-                              <div 
-                                className="absolute -bottom-1 -right-1 px-1.5 py-0.5 rounded-md border border-white/20 flex items-center justify-center"
-                                style={{ backgroundColor: networkBadge.color }}
-                              >
-                                <span className="text-[9px] text-white font-bold leading-none">{networkBadge.name}</span>
-                              </div>
+                        <div className="relative">
+                          <CryptoIcon symbol={selectedReceiveAsset.symbol} size={48} />
+                          {selectedReceiveAsset.network && (
+                            <div className="absolute -bottom-1 -right-1">
+                              <NetworkBadge network={selectedReceiveAsset.network} size="md" />
+                            </div>
                             );
                           })()}
                         </div>
@@ -804,9 +760,6 @@ export default function Index() {
           <TabsContent value="portfolio" className="space-y-3">
             <div className="grid gap-3">
               {[...assets].sort((a, b) => (b.balance * b.price) - (a.balance * a.price)).map((asset, index) => {
-                const cryptoIcon = getCryptoIcon(asset.symbol);
-                const networkBadge = asset.network ? getNetworkBadge(asset.network) : null;
-                
                 return (
                   <Card 
                     key={`${asset.symbol}-${asset.network}-${index}`} 
@@ -818,17 +771,11 @@ export default function Index() {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div 
-                          className="relative w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-md"
-                          style={{ background: `linear-gradient(to bottom right, ${cryptoIcon.colors[0]}, ${cryptoIcon.colors[1]})` }}
-                        >
-                          <span className="text-2xl text-white font-bold">{cryptoIcon.emoji}</span>
-                          {networkBadge && (
-                            <div 
-                              className="absolute -bottom-1.5 -right-1.5 px-1.5 py-0.5 rounded-md border border-white/20 flex items-center justify-center shadow-lg"
-                              style={{ backgroundColor: networkBadge.color }}
-                            >
-                              <span className="text-[9px] text-white font-bold leading-none">{networkBadge.name}</span>
+                        <div className="relative flex-shrink-0">
+                          <CryptoIcon symbol={asset.symbol} size={56} />
+                          {asset.network && (
+                            <div className="absolute -bottom-1.5 -right-1.5">
+                              <NetworkBadge network={asset.network} size="md" />
                             </div>
                           )}
                         </div>
@@ -879,22 +826,14 @@ export default function Index() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {Array.from(new Set(assets.map(a => a.symbol))).map(symbol => {
-                            const cryptoIcon = getCryptoIcon(symbol);
-                            return (
-                              <SelectItem key={symbol} value={symbol}>
-                                <div className="flex items-center gap-2">
-                                  <div 
-                                    className="w-5 h-5 rounded flex items-center justify-center"
-                                    style={{ background: `linear-gradient(to bottom right, ${cryptoIcon.colors[0]}, ${cryptoIcon.colors[1]})` }}
-                                  >
-                                    <span className="text-xs text-white font-bold">{cryptoIcon.emoji}</span>
-                                  </div>
-                                  {symbol}
-                                </div>
-                              </SelectItem>
-                            );
-                          })}
+                          {Array.from(new Set(assets.map(a => a.symbol))).map(symbol => (
+                            <SelectItem key={symbol} value={symbol}>
+                              <div className="flex items-center gap-2">
+                                <CryptoIcon symbol={symbol} size={20} />
+                                {symbol}
+                              </div>
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       {getAssetsBySymbol(fromToken).length > 1 && (
@@ -957,22 +896,14 @@ export default function Index() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {Array.from(new Set(assets.map(a => a.symbol))).map(symbol => {
-                            const cryptoIcon = getCryptoIcon(symbol);
-                            return (
-                              <SelectItem key={symbol} value={symbol}>
-                                <div className="flex items-center gap-2">
-                                  <div 
-                                    className="w-5 h-5 rounded flex items-center justify-center"
-                                    style={{ background: `linear-gradient(to bottom right, ${cryptoIcon.colors[0]}, ${cryptoIcon.colors[1]})` }}
-                                  >
-                                    <span className="text-xs text-white font-bold">{cryptoIcon.emoji}</span>
-                                  </div>
-                                  {symbol}
-                                </div>
-                              </SelectItem>
-                            );
-                          })}
+                          {Array.from(new Set(assets.map(a => a.symbol))).map(symbol => (
+                            <SelectItem key={symbol} value={symbol}>
+                              <div className="flex items-center gap-2">
+                                <CryptoIcon symbol={symbol} size={20} />
+                                {symbol}
+                              </div>
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       {getAssetsBySymbol(toToken).length > 1 && (
