@@ -121,9 +121,9 @@ export default function Landing() {
             fill="gray"
           />
           
-          <div className="flex flex-col md:flex-row min-h-[400px] sm:min-h-[500px] md:h-[600px]">
-            <div className="flex-1 p-4 sm:p-6 md:p-12 relative z-10 flex flex-col justify-center">
-              <div className="relative h-[640px] md:h-[768px] mb-8 overflow-hidden w-full hidden md:block">
+          <div className="flex flex-col md:flex-row min-h-[300px] sm:min-h-[350px] md:h-[450px]">
+            <div className="flex-1 p-4 sm:p-5 md:p-8 relative z-10 flex flex-col justify-center">
+              <div className="relative h-[480px] md:h-[580px] mb-6 overflow-hidden w-full hidden md:block">
                 <ParticleTextEffect
                   text="DEXXXWALLET"
                   colors={['6b7280', '9ca3af', 'a1a1aa', '71717a', '52525b']}
@@ -131,14 +131,14 @@ export default function Landing() {
                   particleDensity={2}
                 />
               </div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-muted/30 text-foreground text-xs sm:text-sm font-medium mb-4 sm:mb-6 w-fit">
-                <Icon name="Sparkles" size={14} className="sm:w-4 sm:h-4" />
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-muted/30 text-foreground text-[10px] sm:text-xs font-medium mb-3 sm:mb-4 w-fit">
+                <Icon name="Sparkles" size={12} className="sm:w-3.5 sm:h-3.5" />
                 <span className="line-clamp-1">Децентрализованный кошелек</span>
               </div>
-              <p className="text-sm sm:text-base md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-xl">
+              <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-4 sm:mb-5 max-w-xl">
                 Безопасное хранение, мгновенные переводы и обмен криптовалюты в одном приложении
               </p>
-              <div className="flex flex-col gap-3 sm:gap-4">
+              <div className="flex flex-col gap-2.5 sm:gap-3">
                 <GradientButton 
                   onClick={() => navigate('/app?mode=create')} 
                   className="w-full h-14 sm:h-12 text-base sm:text-lg font-semibold rounded-2xl shadow-xl hover:shadow-2xl active:scale-95 transition-all"
