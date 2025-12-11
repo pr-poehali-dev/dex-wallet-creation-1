@@ -391,16 +391,16 @@ export default function Index() {
     <>
       {!walletCreated && <WalletSetup open={showSetup} onComplete={handleWalletComplete} initialMode={setupMode} />}
       {!walletCreated ? null : (
-    <div className="min-h-screen bg-background p-4 md:p-6">
+    <div className="min-h-screen bg-background p-3 sm:p-4 md:p-6 pb-safe">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
-              <Icon name="Wallet" className="text-primary" size={24} />
+        <header className="mb-6 sm:mb-8 flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur-xl z-50 py-4 -mx-3 sm:-mx-4 md:-mx-6 px-3 sm:px-4 md:px-6 border-b border-border/40">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/20 flex items-center justify-center">
+              <Icon name="Wallet" className="text-primary" size={20} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">DEXXX Wallet</h1>
-              <p className="text-xs text-muted-foreground font-mono">ID: {userId}</p>
+              <h1 className="text-lg sm:text-2xl font-bold">DEXXX Wallet</h1>
+              <p className="text-[10px] sm:text-xs text-muted-foreground font-mono truncate max-w-[120px] sm:max-w-none">ID: {userId}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -426,22 +426,22 @@ export default function Index() {
           </div>
         </header>
 
-        <div className="grid grid-cols-1 gap-6 mb-6">
-          <Card className="p-6 hover-scale bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/20">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 mb-4 sm:mb-6">
+          <Card className="p-4 sm:p-6 transition-all duration-300 hover:shadow-lg bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/20">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Общий баланс</p>
-                <h2 className="text-4xl font-bold">${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h2>
+                <p className="text-xs sm:text-sm text-muted-foreground mb-1">Общий баланс</p>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h2>
               </div>
-              <div className="px-3 py-1 rounded-full bg-success/20 text-success text-sm font-medium flex items-center gap-1">
+              <div className="px-2 sm:px-3 py-1 rounded-full bg-success/20 text-success text-xs sm:text-sm font-medium flex items-center gap-1">
                 <Icon name="TrendingUp" size={16} />
                 +12.4%
               </div>
             </div>
-            <div className="flex gap-3 mt-6">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4 sm:mt-6">
               <Dialog open={showMainSendDialog} onOpenChange={setShowMainSendDialog}>
                 <DialogTrigger asChild>
-                  <Button className="flex-1 gap-2">
+                  <Button className="flex-1 gap-2 h-11 sm:h-10 text-sm sm:text-base touch-manipulation">
                     <Icon name="Send" size={18} />
                     Отправить
                   </Button>
@@ -534,7 +534,7 @@ export default function Index() {
               
               <Dialog onOpenChange={(open) => { if (!open) setSelectedReceiveAsset(null); }}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="flex-1 gap-2">
+                  <Button variant="outline" className="flex-1 gap-2 h-11 sm:h-10 text-sm sm:text-base touch-manipulation">
                     <Icon name="Download" size={18} />
                     Получить
                   </Button>
@@ -664,7 +664,7 @@ export default function Index() {
                 </DialogContent>
               </Dialog>
               
-              <Button variant="outline" className="flex-1 gap-2">
+              <Button variant="outline" className="flex-1 gap-2 h-11 sm:h-10 text-sm sm:text-base touch-manipulation">
                 <Icon name="QrCode" size={18} />
                 Сканировать
               </Button>
@@ -672,8 +672,8 @@ export default function Index() {
           </Card>
         </div>
 
-        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-6">
-          <TabsList className="grid grid-cols-3 w-full max-w-md">
+        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-4 sm:space-y-6">
+          <TabsList className="grid grid-cols-3 w-full max-w-md h-11 sm:h-10">
             <TabsTrigger value="portfolio">Портфель</TabsTrigger>
             <TabsTrigger value="swap">Обмен</TabsTrigger>
             <TabsTrigger value="history">История</TabsTrigger>
@@ -699,34 +699,34 @@ export default function Index() {
                 return (
                   <Card 
                     key={`${asset.symbol}-${asset.network}-${index}`} 
-                    className="p-5 hover-scale cursor-pointer transition-all hover:border-primary/50"
+                    className="p-4 sm:p-5 cursor-pointer transition-all duration-200 hover:border-primary/50 hover:shadow-md active:scale-[0.98] touch-manipulation"
                     onClick={() => {
                       setSelectedAsset(asset);
                       setShowAssetDialog(true);
                     }}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="relative w-12 h-12 rounded-full bg-background/50 flex items-center justify-center">
-                          <img src={asset.icon} alt={asset.name} className="w-8 h-8 object-contain" />
+                      <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background/50 flex items-center justify-center flex-shrink-0">
+                          <img src={asset.icon} alt={asset.name} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
                           {asset.network && (
-                            <div className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden shadow-md">
+                            <div className="absolute -bottom-1 sm:-bottom-1.5 -right-1 sm:-right-1.5 w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden shadow-md">
                               <img 
                                 src={getNetworkIcon(asset.network)} 
                                 alt={asset.network} 
-                                className="w-5 h-5 object-contain"
+                                className="w-3 h-3 sm:w-5 sm:h-5 object-contain"
                               />
                             </div>
                           )}
                         </div>
                         <div>
-                          <h4 className="font-semibold">{asset.name}</h4>
-                          <p className="text-sm text-muted-foreground">{asset.symbol}</p>
+                          <h4 className="font-semibold text-sm sm:text-base">{asset.name}</h4>
+                          <p className="text-xs sm:text-sm text-muted-foreground">{asset.symbol}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold">{asset.balance} {asset.symbol}</p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="font-semibold text-sm sm:text-base">{asset.balance} {asset.symbol}</p>
+                        <p className="text-xs sm:text-sm text-muted-foreground">
                           ${(asset.balance * asset.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                         </p>
                       </div>
@@ -738,15 +738,15 @@ export default function Index() {
           </TabsContent>
 
           <TabsContent value="swap" className="space-y-4">
-            <Card className="p-6">
-              <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+            <Card className="p-4 sm:p-6">
+              <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
                 <Icon name="ArrowLeftRight" className="text-primary" size={24} />
                 Обмен токенов
               </h3>
               
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Отдаете</Label>
+                  <Label className="text-sm">Отдаете</Label>
                   <div className="flex gap-2">
                     <div className="flex flex-col gap-1">
                       <Select value={fromToken} onValueChange={(val) => { setFromToken(val); setFromNetwork(''); }}>
@@ -766,7 +766,7 @@ export default function Index() {
                       </Select>
                       {getAssetsBySymbol(fromToken).length > 1 && (
                         <Select value={fromNetwork} onValueChange={setFromNetwork}>
-                          <SelectTrigger className="w-32 h-8 text-xs">
+                          <SelectTrigger className="w-24 sm:w-32 h-8 text-xs">
                             <SelectValue placeholder="Сеть" />
                           </SelectTrigger>
                           <SelectContent>
@@ -784,7 +784,7 @@ export default function Index() {
                       placeholder="0.00" 
                       value={swapAmount}
                       onChange={(e) => setSwapAmount(e.target.value)}
-                      className="flex-1"
+                      className="flex-1 h-11 sm:h-10 touch-manipulation"
                     />
                   </div>
                   <p className="text-xs text-muted-foreground">
@@ -808,7 +808,7 @@ export default function Index() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Получаете</Label>
+                  <Label className="text-sm">Получаете</Label>
                   <div className="flex gap-2">
                     <div className="flex flex-col gap-1">
                       <Select value={toToken} onValueChange={(val) => { setToToken(val); setToNetwork(''); }}>
@@ -828,7 +828,7 @@ export default function Index() {
                       </Select>
                       {getAssetsBySymbol(toToken).length > 1 && (
                         <Select value={toNetwork} onValueChange={setToNetwork}>
-                          <SelectTrigger className="w-32 h-8 text-xs">
+                          <SelectTrigger className="w-24 sm:w-32 h-8 text-xs">
                             <SelectValue placeholder="Сеть" />
                           </SelectTrigger>
                           <SelectContent>
@@ -872,7 +872,7 @@ export default function Index() {
                 </div>
 
                 <Button 
-                  className="w-full" 
+                  className="w-full h-11 sm:h-10 text-sm sm:text-base touch-manipulation" 
                   size="lg" 
                   disabled={!swapAmount || parseFloat(swapAmount) <= 0 || parseFloat(swapAmount) > (getSelectedAsset(fromToken, fromNetwork)?.balance || 0)}
                   onClick={() => setShowSwapConfirmation(true)}
@@ -982,13 +982,13 @@ export default function Index() {
 
           <TabsContent value="history" className="space-y-4">
             {transactions.length === 0 ? (
-              <Card className="p-12 text-center">
+              <Card className="p-8 sm:p-12 text-center">
                 <div className="flex flex-col items-center gap-4">
                   <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center">
                     <Icon name="History" size={32} className="text-muted-foreground" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg mb-2">История транзакций пуста</h3>
+                    <h3 className="font-semibold text-base sm:text-lg mb-2">История транзакций пуста</h3>
                     <p className="text-muted-foreground text-sm">
                       Здесь будут отображаться ваши отправки, получения и обмены
                     </p>
@@ -997,10 +997,10 @@ export default function Index() {
               </Card>
             ) : (
               transactions.map((tx) => (
-              <Card key={tx.id} className="p-5 hover-scale cursor-pointer transition-all hover:border-primary/50">
+              <Card key={tx.id} className="p-4 sm:p-5 cursor-pointer transition-all duration-200 hover:border-primary/50 hover:shadow-md active:scale-[0.98] touch-manipulation">
                 <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                       tx.type === 'receive' ? 'bg-success/20' : 
                       tx.type === 'send' ? 'bg-destructive/20' : 'bg-secondary/20'
                     }`}>
@@ -1015,7 +1015,7 @@ export default function Index() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="font-semibold capitalize">{
+                        <h4 className="font-semibold capitalize text-sm sm:text-base">{
                           tx.type === 'receive' ? 'Получение' : 
                           tx.type === 'send' ? 'Отправка' : 'Обмен'
                         }</h4>
@@ -1025,12 +1025,12 @@ export default function Index() {
                           {tx.status === 'completed' ? 'Завершено' : 'В обработке'}
                         </span>
                       </div>
-                      <p className="text-sm text-muted-foreground">{tx.date}</p>
-                      <p className="text-xs text-muted-foreground font-mono mt-1">{tx.hash}</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">{tx.date}</p>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground font-mono mt-1 truncate max-w-[150px] sm:max-w-none">{tx.hash}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className={`font-semibold ${tx.type === 'receive' ? 'text-success' : 'text-foreground'}`}>
+                    <p className={`font-semibold text-sm sm:text-base ${tx.type === 'receive' ? 'text-success' : 'text-foreground'}`}>
                       {tx.type === 'receive' ? '+' : tx.type === 'send' ? '-' : ''}{tx.amount} {tx.asset}
                     </p>
                   </div>

@@ -149,7 +149,7 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="bg-card max-w-2xl" hideClose={step !== 'success'}>
+      <DialogContent className="bg-card max-w-2xl max-h-[90vh] overflow-y-auto" hideClose={step !== 'success'}>
         {step === 'intro' && (
           <>
             <DialogHeader>
@@ -203,10 +203,10 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                 </div>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <Button 
                   onClick={() => setStep('generate')} 
-                  className="flex-1" 
+                  className="flex-1 h-11 sm:h-10 text-sm sm:text-base touch-manipulation" 
                   size="lg"
                 >
                   Создать новый кошелек
@@ -215,7 +215,7 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                 <Button 
                   onClick={() => setStep('restore')} 
                   variant="outline"
-                  className="flex-1" 
+                  className="flex-1 h-11 sm:h-10 text-sm sm:text-base touch-manipulation" 
                   size="lg"
                 >
                   Восстановить кошелек
@@ -229,17 +229,17 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
         {step === 'generate' && (
           <>
             <DialogHeader>
-              <DialogTitle className="text-2xl">Ваша Seed-фраза</DialogTitle>
+              <DialogTitle className="text-xl sm:text-2xl">Ваша Seed-фраза</DialogTitle>
               <p className="text-muted-foreground">
                 Запишите эти 12 слов в правильном порядке
               </p>
             </DialogHeader>
             <div className="space-y-6 mt-4">
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
                 {seedPhrase.map((word, index) => (
-                  <Card key={index} className="p-3 bg-muted/50 hover:bg-muted transition-colors">
-                    <div className="text-xs text-muted-foreground mb-1">#{index + 1}</div>
-                    <div className="font-mono font-semibold">{word}</div>
+                  <Card key={index} className="p-2 sm:p-3 bg-muted/50 hover:bg-muted transition-colors">
+                    <div className="text-[10px] sm:text-xs text-muted-foreground mb-1">#{index + 1}</div>
+                    <div className="font-mono font-semibold text-sm sm:text-base">{word}</div>
                   </Card>
                 ))}
               </div>
@@ -248,7 +248,7 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                 <Button 
                   onClick={handleCopySeed} 
                   variant="outline" 
-                  className="flex-1 gap-2"
+                  className="flex-1 gap-2 h-11 sm:h-10 text-sm sm:text-base touch-manipulation"
                 >
                   <Icon name={copied ? "Check" : "Copy"} size={18} />
                   {copied ? 'Скопировано' : 'Копировать всё'}
@@ -266,7 +266,7 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
 
               <Button 
                 onClick={() => setStep('confirm')} 
-                className="w-full" 
+                className="w-full h-11 sm:h-10 text-sm sm:text-base touch-manipulation" 
                 size="lg"
               >
                 Я записал seed-фразу
@@ -279,7 +279,7 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
         {step === 'confirm' && (
           <>
             <DialogHeader>
-              <DialogTitle className="text-2xl">Подтверждение seed-фразы</DialogTitle>
+              <DialogTitle className="text-xl sm:text-2xl">Подтверждение seed-фразы</DialogTitle>
               <p className="text-muted-foreground">
                 Выберите правильные слова в нужном порядке
               </p>
@@ -317,15 +317,15 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
               </div>
 
               <div>
-                <p className="text-sm font-medium mb-3">Доступные слова:</p>
-                <div className="grid grid-cols-3 gap-2">
+                <p className="text-xs sm:text-sm font-medium mb-3">Доступные слова:</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {shuffledWords.map((word, index) => {
                     const isUsed = Object.values(confirmedWords).includes(word);
                     return (
                       <Button
                         key={index}
                         variant={isUsed ? "secondary" : "outline"}
-                        className="font-mono h-auto py-2"
+                        className="font-mono h-auto py-2 text-sm touch-manipulation"
                         disabled={isUsed}
                         onClick={() => {
                           const nextEmptyIndex = verificationIndexes.find(i => !confirmedWords[i]);
@@ -348,14 +348,14 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                 <Button 
                   onClick={() => setStep('generate')} 
                   variant="outline" 
-                  className="flex-1"
+                  className="flex-1 h-11 sm:h-10 text-sm sm:text-base touch-manipulation"
                 >
                   <Icon name="ArrowLeft" className="mr-2" size={18} />
                   Назад
                 </Button>
                 <Button 
                   onClick={handleConfirm} 
-                  className="flex-1"
+                  className="flex-1 h-11 sm:h-10 text-sm sm:text-base touch-manipulation"
                   disabled={!verificationIndexes.every(i => confirmedWords[i]?.trim())}
                 >
                   Подтвердить
@@ -369,8 +369,8 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
         {step === 'restore' && (
           <>
             <DialogHeader>
-              <DialogTitle className="text-2xl flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+              <DialogTitle className="text-xl sm:text-2xl flex items-center gap-2 sm:gap-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/20 flex items-center justify-center">
                   <Icon name="RotateCcw" className="text-primary" size={28} />
                 </div>
                 Восстановление кошелька
@@ -379,7 +379,7 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                 Введите вашу seed-фразу из 12 слов
               </p>
             </DialogHeader>
-            <div className="space-y-6 mt-4">
+            <div className="space-y-4 sm:space-y-6 mt-4">
               <div className="space-y-3">
                 <label className="text-sm font-medium">
                   Seed-фраза (12 слов через пробел)
@@ -388,7 +388,7 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                   value={restoreSeed}
                   onChange={(e) => setRestoreSeed(e.target.value)}
                   placeholder="word1 word2 word3 word4 word5 word6 word7 word8 word9 word10 word11 word12"
-                  className="w-full min-h-[120px] p-3 rounded-lg border bg-background font-mono text-sm resize-none"
+                  className="w-full min-h-[120px] p-3 rounded-lg border bg-background font-mono text-sm resize-none touch-manipulation"
                 />
                 <p className="text-xs text-muted-foreground">
                   Введите 12 слов в правильном порядке, разделяя их пробелами
@@ -408,14 +408,14 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                 <Button 
                   onClick={() => setStep('intro')} 
                   variant="outline" 
-                  className="flex-1"
+                  className="flex-1 h-11 sm:h-10 text-sm sm:text-base touch-manipulation"
                 >
                   <Icon name="ArrowLeft" className="mr-2" size={18} />
                   Назад
                 </Button>
                 <Button 
                   onClick={handleRestore} 
-                  className="flex-1"
+                  className="flex-1 h-11 sm:h-10 text-sm sm:text-base touch-manipulation"
                   disabled={!restoreSeed.trim()}
                 >
                   Восстановить
@@ -429,9 +429,9 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
         {step === 'success' && (
           <>
             <DialogHeader>
-              <DialogTitle className="text-2xl text-center">Кошелек создан!</DialogTitle>
+              <DialogTitle className="text-xl sm:text-2xl text-center">Кошелек создан!</DialogTitle>
             </DialogHeader>
-            <div className="space-y-6 mt-4 text-center py-8">
+            <div className="space-y-4 sm:space-y-6 mt-4 text-center py-6 sm:py-8">
               <div className="flex justify-center">
                 <div className="w-20 h-20 rounded-full bg-success/20 flex items-center justify-center">
                   <Icon name="CheckCircle" className="text-success" size={48} />

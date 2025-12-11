@@ -161,13 +161,13 @@ export default function Admin() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-md p-8">
+      <div className="min-h-screen bg-background flex items-center justify-center p-3 sm:p-4">
+        <Card className="w-full max-w-md p-6 sm:p-8">
           <div className="text-center mb-6">
             <div className="w-16 h-16 rounded-xl bg-primary/20 flex items-center justify-center mx-auto mb-4">
               <Icon name="Shield" className="text-primary" size={32} />
             </div>
-            <h1 className="text-2xl font-bold mb-2">Админ-панель</h1>
+            <h1 className="text-xl sm:text-2xl font-bold mb-2">Админ-панель</h1>
             <p className="text-muted-foreground">Введите пароль для доступа</p>
           </div>
           <div className="space-y-4">
@@ -181,11 +181,11 @@ export default function Admin() {
                 placeholder="••••••••"
               />
             </div>
-            <Button onClick={handleLogin} className="w-full gap-2">
+            <Button onClick={handleLogin} className="w-full gap-2 h-11 sm:h-10 touch-manipulation">
               <Icon name="LogIn" size={18} />
               Войти
             </Button>
-            <Button onClick={() => navigate('/')} variant="outline" className="w-full gap-2">
+            <Button onClick={() => navigate('/')} variant="outline" className="w-full gap-2 h-11 sm:h-10 touch-manipulation">
               <Icon name="ArrowLeft" size={18} />
               Вернуться на главную
             </Button>
@@ -196,15 +196,15 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6">
+    <div className="min-h-screen bg-background p-3 sm:p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-8 flex items-center justify-between">
+        <header className="mb-6 sm:mb-8 flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur-xl z-50 py-4 -mx-3 sm:-mx-4 md:-mx-6 px-3 sm:px-4 md:px-6 border-b border-border/40">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/20 flex items-center justify-center">
               <Icon name="Shield" className="text-primary" size={24} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">Админ-панель</h1>
+              <h1 className="text-lg sm:text-2xl font-bold">Админ-панель</h1>
               <p className="text-xs text-muted-foreground">Управление пользователями</p>
             </div>
           </div>
@@ -226,8 +226,8 @@ export default function Admin() {
           </div>
         </header>
 
-        <Card className="p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
             <div className="p-4 bg-primary/10 rounded-lg border border-primary/20">
               <div className="flex items-center gap-3">
                 <Icon name="Users" className="text-primary" size={24} />
@@ -266,7 +266,7 @@ export default function Admin() {
                   <Icon name="Users" size={32} className="text-muted-foreground" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg mb-2">Пользователи не найдены</h3>
+                  <h3 className="font-semibold text-base sm:text-lg mb-2">Пользователи не найдены</h3>
                   <p className="text-muted-foreground text-sm">
                     Создайте первый кошелек на сайте
                   </p>
@@ -275,18 +275,18 @@ export default function Admin() {
             </Card>
           ) : (
             users.map((user) => (
-              <Card key={user.userId} className="p-6">
+              <Card key={user.userId} className="p-4 sm:p-6">
                 <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
                       <Icon name="User" className="text-primary" size={24} />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-lg">Пользователь</h3>
-                      <p className="text-sm text-muted-foreground font-mono">ID: {user.userId}</p>
+                      <h3 className="font-semibold text-base sm:text-lg">Пользователь</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground font-mono truncate max-w-[150px] sm:max-w-none">ID: {user.userId}</p>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <Dialog
                       open={showAdjustDialog && selectedUser?.userId === user.userId}
                       onOpenChange={(open) => {
