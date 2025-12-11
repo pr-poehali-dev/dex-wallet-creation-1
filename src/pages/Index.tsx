@@ -198,18 +198,21 @@ export default function Index() {
     const hasWallet = localStorage.getItem('walletCreated');
     const mode = searchParams.get('mode');
     const storedUserId = localStorage.getItem('userId');
+    const storedSeed = localStorage.getItem('walletSeed');
     
-    if (!hasWallet) {
-      setShowSetup(true);
-      if (mode === 'restore') {
-        setSetupMode('restore');
+    if (!hasWallet || !storedUserId || !storedSeed) {
+      if (mode === 'create' || mode === 'restore') {
+        setShowSetup(true);
+        if (mode === 'restore') {
+          setSetupMode('restore');
+        }
+      } else {
+        navigate('/');
       }
     } else {
       setWalletCreated(true);
-      if (storedUserId) {
-        setUserId(storedUserId);
-        loadUserData(storedUserId);
-      }
+      setUserId(storedUserId);
+      loadUserData(storedUserId);
     }
 
     if (!mainSendAsset && assets.length > 0) {
