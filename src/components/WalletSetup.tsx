@@ -153,19 +153,19 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
         {step === 'intro' && (
           <>
             <DialogHeader>
-              <DialogTitle className="text-lg sm:text-2xl flex items-center gap-2 sm:gap-3">
+              <DialogTitle className="text-xl md:text-2xl flex items-center gap-3">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="mr-1 sm:mr-2 h-8 w-8 sm:h-10 sm:w-10"
+                  className="mr-2 h-11 w-11 md:h-10 md:w-10 rounded-xl hover:scale-105 transition-transform"
                   onClick={() => navigate('/')}
                 >
-                  <Icon name="ArrowLeft" size={20} />
+                  <Icon name="ArrowLeft" size={22} />
                 </Button>
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-                  <Icon name="Wallet" className="text-primary" size={24} />
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center shadow-lg">
+                  <Icon name="Wallet" className="text-primary" size={26} />
                 </div>
-                <span className="text-base sm:text-2xl">Создание кошелька</span>
+                <span className="text-xl md:text-2xl font-bold">Создание кошелька</span>
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4 sm:space-y-6 mt-4">
@@ -203,23 +203,23 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex flex-col gap-3">
                 <Button 
                   onClick={() => setStep('generate')} 
-                  className="flex-1 h-11 sm:h-10 text-sm sm:text-base touch-manipulation" 
+                  className="w-full h-14 md:h-12 text-base font-semibold touch-manipulation rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all" 
                   size="lg"
                 >
                   Создать новый кошелек
-                  <Icon name="Plus" className="ml-2" size={18} />
+                  <Icon name="Plus" className="ml-2" size={20} />
                 </Button>
                 <Button 
                   onClick={() => setStep('restore')} 
                   variant="outline"
-                  className="flex-1 h-11 sm:h-10 text-sm sm:text-base touch-manipulation" 
+                  className="w-full h-14 md:h-12 text-base font-semibold touch-manipulation rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all border-2" 
                   size="lg"
                 >
                   Восстановить кошелек
-                  <Icon name="RotateCcw" className="ml-2" size={18} />
+                  <Icon name="RotateCcw" className="ml-2" size={20} />
                 </Button>
               </div>
             </div>
@@ -229,8 +229,13 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
         {step === 'generate' && (
           <>
             <DialogHeader>
-              <DialogTitle className="text-xl sm:text-2xl">Ваша Seed-фраза</DialogTitle>
-              <p className="text-muted-foreground">
+              <DialogTitle className="text-xl md:text-2xl font-bold flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center shadow-lg">
+                  <Icon name="Key" className="text-primary" size={26} />
+                </div>
+                Ваша Seed-фраза
+              </DialogTitle>
+              <p className="text-muted-foreground text-base mt-2">
                 Запишите эти 12 слов в правильном порядке
               </p>
             </DialogHeader>
@@ -244,16 +249,14 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                 ))}
               </div>
 
-              <div className="flex gap-3">
-                <Button 
-                  onClick={handleCopySeed} 
-                  variant="outline" 
-                  className="flex-1 gap-2 h-11 sm:h-10 text-sm sm:text-base touch-manipulation"
-                >
-                  <Icon name={copied ? "Check" : "Copy"} size={18} />
-                  {copied ? 'Скопировано' : 'Копировать всё'}
-                </Button>
-              </div>
+              <Button 
+                onClick={handleCopySeed} 
+                variant="outline" 
+                className="w-full gap-2 h-14 md:h-12 text-base font-semibold touch-manipulation rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all border-2"
+              >
+                <Icon name={copied ? "Check" : "Copy"} size={20} />
+                {copied ? 'Скопировано' : 'Копировать всё'}
+              </Button>
 
               <div className="p-4 bg-destructive/10 rounded-lg border border-destructive/20">
                 <div className="flex items-start gap-2">
@@ -266,11 +269,11 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
 
               <Button 
                 onClick={() => setStep('confirm')} 
-                className="w-full h-11 sm:h-10 text-sm sm:text-base touch-manipulation" 
+                className="w-full h-14 md:h-12 text-base font-semibold touch-manipulation rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all" 
                 size="lg"
               >
                 Я записал seed-фразу
-                <Icon name="ArrowRight" className="ml-2" size={18} />
+                <Icon name="ArrowRight" className="ml-2" size={20} />
               </Button>
             </div>
           </>
@@ -279,8 +282,13 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
         {step === 'confirm' && (
           <>
             <DialogHeader>
-              <DialogTitle className="text-xl sm:text-2xl">Подтверждение seed-фразы</DialogTitle>
-              <p className="text-muted-foreground">
+              <DialogTitle className="text-xl md:text-2xl font-bold flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center shadow-lg">
+                  <Icon name="ShieldCheck" className="text-primary" size={26} />
+                </div>
+                Подтверждение seed-фразы
+              </DialogTitle>
+              <p className="text-muted-foreground text-base mt-2">
                 Выберите правильные слова в нужном порядке
               </p>
             </DialogHeader>
@@ -325,7 +333,7 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                       <Button
                         key={index}
                         variant={isUsed ? "secondary" : "outline"}
-                        className="font-mono h-auto py-2 text-sm touch-manipulation"
+                        className="font-mono h-12 py-2 text-base touch-manipulation rounded-xl hover:scale-105 active:scale-95 transition-transform"
                         disabled={isUsed}
                         onClick={() => {
                           const nextEmptyIndex = verificationIndexes.find(i => !confirmedWords[i]);
@@ -344,22 +352,22 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                 </div>
               </div>
 
-              <div className="flex gap-3">
-                <Button 
-                  onClick={() => setStep('generate')} 
-                  variant="outline" 
-                  className="flex-1 h-11 sm:h-10 text-sm sm:text-base touch-manipulation"
-                >
-                  <Icon name="ArrowLeft" className="mr-2" size={18} />
-                  Назад
-                </Button>
+              <div className="flex flex-col gap-3">
                 <Button 
                   onClick={handleConfirm} 
-                  className="flex-1 h-11 sm:h-10 text-sm sm:text-base touch-manipulation"
+                  className="w-full h-14 md:h-12 text-base font-semibold touch-manipulation rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all"
                   disabled={!verificationIndexes.every(i => confirmedWords[i]?.trim())}
                 >
                   Подтвердить
-                  <Icon name="Check" className="ml-2" size={18} />
+                  <Icon name="Check" className="ml-2" size={20} />
+                </Button>
+                <Button 
+                  onClick={() => setStep('generate')} 
+                  variant="outline" 
+                  className="w-full h-14 md:h-12 text-base font-semibold touch-manipulation rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all border-2"
+                >
+                  <Icon name="ArrowLeft" className="mr-2" size={20} />
+                  Назад
                 </Button>
               </div>
             </div>
@@ -369,13 +377,13 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
         {step === 'restore' && (
           <>
             <DialogHeader>
-              <DialogTitle className="text-xl sm:text-2xl flex items-center gap-2 sm:gap-3">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-                  <Icon name="RotateCcw" className="text-primary" size={28} />
+              <DialogTitle className="text-xl md:text-2xl font-bold flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center shadow-lg">
+                  <Icon name="RotateCcw" className="text-primary" size={26} />
                 </div>
                 Восстановление кошелька
               </DialogTitle>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground text-base mt-2">
                 Введите вашу seed-фразу из 12 слов
               </p>
             </DialogHeader>
@@ -388,7 +396,7 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                   value={restoreSeed}
                   onChange={(e) => setRestoreSeed(e.target.value)}
                   placeholder="word1 word2 word3 word4 word5 word6 word7 word8 word9 word10 word11 word12"
-                  className="w-full min-h-[120px] p-3 rounded-lg border bg-background font-mono text-sm resize-none touch-manipulation"
+                  className="w-full min-h-[140px] p-4 rounded-xl border-2 bg-background font-mono text-base resize-none touch-manipulation focus:ring-2 focus:ring-primary"
                 />
                 <p className="text-xs text-muted-foreground">
                   Введите 12 слов в правильном порядке, разделяя их пробелами
@@ -404,22 +412,22 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
                 </div>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex flex-col gap-3">
+                <Button 
+                  onClick={handleRestore} 
+                  className="w-full h-14 md:h-12 text-base font-semibold touch-manipulation rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all"
+                  disabled={!restoreSeed.trim()}
+                >
+                  Восстановить кошелек
+                  <Icon name="Check" className="ml-2" size={20} />
+                </Button>
                 <Button 
                   onClick={() => setStep('intro')} 
                   variant="outline" 
-                  className="flex-1 h-11 sm:h-10 text-sm sm:text-base touch-manipulation"
+                  className="w-full h-14 md:h-12 text-base font-semibold touch-manipulation rounded-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all border-2"
                 >
-                  <Icon name="ArrowLeft" className="mr-2" size={18} />
+                  <Icon name="ArrowLeft" className="mr-2" size={20} />
                   Назад
-                </Button>
-                <Button 
-                  onClick={handleRestore} 
-                  className="flex-1 h-11 sm:h-10 text-sm sm:text-base touch-manipulation"
-                  disabled={!restoreSeed.trim()}
-                >
-                  Восстановить
-                  <Icon name="Check" className="ml-2" size={18} />
                 </Button>
               </div>
             </div>
