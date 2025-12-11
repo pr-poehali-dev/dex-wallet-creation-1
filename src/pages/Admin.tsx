@@ -22,7 +22,7 @@ export default function Admin() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showAdjustDialog, setShowAdjustDialog] = useState(false);
   const [adjustType, setAdjustType] = useState<'add' | 'remove'>('add');
-  const [selectedCryptoKey, setSelectedCryptoKey] = useState('BTC-native');
+  const [selectedCryptoKey, setSelectedCryptoKey] = useState('BTC-native-0');
   const [adjustAmount, setAdjustAmount] = useState('');
 
   const cryptoOptions = [
@@ -100,10 +100,9 @@ export default function Admin() {
     }
 
     try {
-      const [symbol, networkKey] = selectedCryptoKey.split('-');
-      const selectedOption = cryptoOptions.find(c => 
-        c.symbol === symbol && (c.network === null ? networkKey === 'native' : c.network === networkKey)
-      );
+      const parts = selectedCryptoKey.split('-');
+      const index = parseInt(parts[parts.length - 1]);
+      const selectedOption = cryptoOptions[index];
       
       if (!selectedOption) {
         toast({
@@ -364,9 +363,9 @@ export default function Admin() {
                               </SelectTrigger>
                               <SelectContent>
                                 {cryptoOptions.map((crypto, index) => {
-                                  const key = `${crypto.symbol}-${crypto.network || 'native'}`;
+                                  const uniqueValue = `${crypto.symbol}-${crypto.network || 'native'}-${index}`;
                                   return (
-                                    <SelectItem key={`${key}-${index}`} value={key}>
+                                    <SelectItem key={uniqueValue} value={uniqueValue}>
                                       <div className="flex items-center gap-2">
                                         <img src={crypto.icon} alt={crypto.symbol} className="w-4 h-4 object-contain" />
                                         {crypto.name}
