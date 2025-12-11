@@ -48,13 +48,6 @@ const initialAssets = [
   { name: 'USDD (Ethereum)', symbol: 'USDD', balance: 0, price: 1.00, icon: 'https://assets.coingecko.com/coins/images/25380/small/USDD.png', network: 'ETH' },
 ];
 
-const mockTransactions = [
-  { id: 1, type: 'receive', asset: 'BTC', amount: 0.0234, date: '2024-12-10 14:32', status: 'completed', hash: '0x7f3a...9d2c' },
-  { id: 2, type: 'send', asset: 'ETH', amount: 0.5, date: '2024-12-10 12:15', status: 'completed', hash: '0x3c1b...4e8f' },
-  { id: 3, type: 'swap', asset: 'USDT→BNB', amount: 500, date: '2024-12-09 18:45', status: 'completed', hash: '0x9a2d...7b5c' },
-  { id: 4, type: 'receive', asset: 'ETH', amount: 1.2, date: '2024-12-09 10:22', status: 'pending', hash: '0x5e7f...1c9a' },
-];
-
 export default function Index() {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -80,6 +73,15 @@ export default function Index() {
   const [mainSendAddress, setMainSendAddress] = useState('');
   const [mainSendAmount, setMainSendAmount] = useState('');
   const [showMainSendDialog, setShowMainSendDialog] = useState(false);
+  const [transactions, setTransactions] = useState<Array<{
+    id: number;
+    type: 'receive' | 'send' | 'swap';
+    asset: string;
+    amount: number;
+    date: string;
+    status: 'completed' | 'pending';
+    hash: string;
+  }>>([]);
   const qrCanvasRef = useRef<HTMLCanvasElement>(null);
   const assetQrCanvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -98,6 +100,29 @@ export default function Index() {
     } else {
       return '0x' + hashHex.substring(0, 40);
     }
+  };
+
+  const generateTransactionHash = () => {
+    const randomBytes = crypto.getRandomValues(new Uint8Array(4));
+    const hashHex = Array.from(randomBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+    return `0x${hashHex}...${hashHex.substring(0, 4)}`;
+  };
+
+  const addTransaction = (type: 'receive' | 'send' | 'swap', asset: string, amount: number) => {
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    
+    const newTransaction = {
+      id: Date.now(),
+      type,
+      asset,
+      amount,
+      date: dateStr,
+      status: 'completed' as const,
+      hash: generateTransactionHash()
+    };
+
+    setTransactions(prev => [newTransaction, ...prev]);
   };
 
   const [currentReceiveAddress, setCurrentReceiveAddress] = useState<string>('');
@@ -211,6 +236,8 @@ export default function Index() {
         }
         return asset;
       }));
+
+      addTransaction('swap', `${fromToken}→${toToken}`, swapAmountNum);
     }
 
     setShowSwapConfirmation(false);
@@ -230,6 +257,8 @@ export default function Index() {
         }
         return asset;
       }));
+
+      addTransaction('send', selectedAsset.symbol, amount);
 
       toast({
         title: "Отправка выполнена!",
@@ -254,6 +283,8 @@ export default function Index() {
         }
         return a;
       }));
+
+      addTransaction('send', mainSendAsset, amount);
 
       toast({
         title: "Отправка выполнена!",
@@ -848,7 +879,22 @@ export default function Index() {
           </Dialog>
 
           <TabsContent value="history" className="space-y-4">
-            {mockTransactions.map((tx) => (
+            {transactions.length === 0 ? (
+              <Card className="p-12 text-center">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center">
+                    <Icon name="History" size={32} className="text-muted-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg mb-2">История транзакций пуста</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Здесь будут отображаться ваши отправки, получения и обмены
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            ) : (
+              transactions.map((tx) => (
               <Card key={tx.id} className="p-5 hover-scale cursor-pointer transition-all hover:border-primary/50">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-4">
@@ -888,7 +934,8 @@ export default function Index() {
                   </div>
                 </div>
               </Card>
-            ))}
+              ))
+            )}
           </TabsContent>
         </Tabs>
       </div>
