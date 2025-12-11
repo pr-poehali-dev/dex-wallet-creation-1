@@ -150,9 +150,11 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
 
   return (
     <>
-      <div className="fixed inset-0 z-40 pointer-events-none">
-        <DotScreenShader />
-      </div>
+      {open && (
+        <div className="fixed inset-0 z-40 pointer-events-none">
+          <DotScreenShader />
+        </div>
+      )}
       <Dialog open={open} onOpenChange={() => {}}>
         <DialogContent className="bg-card/95 backdrop-blur-sm max-w-2xl border-primary/20" hideClose={step !== 'success'}>
         {step === 'intro' && (
