@@ -77,6 +77,7 @@ export default function Index() {
   const [sendAmount, setSendAmount] = useState('');
   const [sendAddress, setSendAddress] = useState('');
   const qrCanvasRef = useRef<HTMLCanvasElement>(null);
+  const assetQrCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const generateAddressForNetwork = async (userId: string, network: string, symbol: string): Promise<string> => {
     const input = `${userId}-${network}-${symbol}`;
@@ -142,8 +143,7 @@ export default function Index() {
   }, [selectedReceiveAsset, selectedAsset, userId]);
 
   useEffect(() => {
-    const asset = selectedReceiveAsset || selectedAsset;
-    if (qrCanvasRef.current && currentReceiveAddress && asset) {
+    if (qrCanvasRef.current && currentReceiveAddress && selectedReceiveAsset) {
       QRCode.toCanvas(qrCanvasRef.current, currentReceiveAddress, {
         width: 200,
         margin: 2,
@@ -153,7 +153,20 @@ export default function Index() {
         }
       });
     }
-  }, [currentReceiveAddress, selectedReceiveAsset, selectedAsset]);
+  }, [currentReceiveAddress, selectedReceiveAsset]);
+
+  useEffect(() => {
+    if (assetQrCanvasRef.current && currentReceiveAddress && selectedAsset && showAssetDialog) {
+      QRCode.toCanvas(assetQrCanvasRef.current, currentReceiveAddress, {
+        width: 200,
+        margin: 2,
+        color: {
+          dark: '#ffffff',
+          light: '#1a1f2c'
+        }
+      });
+    }
+  }, [currentReceiveAddress, selectedAsset, showAssetDialog]);
 
   const totalBalance = assets.reduce((sum, asset) => sum + (asset.balance * asset.price), 0);
 
@@ -895,7 +908,7 @@ export default function Index() {
 
                 <TabsContent value="receive" className="space-y-4 mt-4">
                   <div className="flex justify-center">
-                    <canvas ref={qrCanvasRef} className="rounded-lg" />
+                    <canvas ref={assetQrCanvasRef} className="rounded-lg" />
                   </div>
                   <div>
                     <Label>Ваш адрес</Label>
