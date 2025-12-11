@@ -7,6 +7,7 @@ import Icon from '@/components/ui/icon';
 import * as bip39 from 'bip39';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { api } from '@/lib/api';
 
 interface WalletSetupProps {
   open: boolean;
@@ -67,24 +68,24 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
     if (isValid) {
       const seed = seedPhrase.join(' ');
       const userId = await generateUserId(seed);
-      const now = new Date();
-      const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
       
-      localStorage.setItem('walletSeed', seed);
-      localStorage.setItem('userId', userId);
-      
-      const userData = {
-        userId,
-        seedPhrase: seed,
-        createdAt: dateStr,
-        lastLogin: dateStr
-      };
-      localStorage.setItem(`user_${userId}`, JSON.stringify(userData));
-      
-      setStep('success');
-      setTimeout(() => {
-        onComplete(userId);
-      }, 2000);
+      try {
+        await api.users.create(userId, seed);
+        
+        localStorage.setItem('walletSeed', seed);
+        localStorage.setItem('userId', userId);
+        
+        setStep('success');
+        setTimeout(() => {
+          onComplete(userId);
+        }, 2000);
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Ошибка сохранения",
+          description: "Не удалось сохранить данные кошелька",
+        });
+      }
     } else {
       toast({
         variant: "destructive",
@@ -117,35 +118,33 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
 
     const seed = words.join(' ');
     const userId = await generateUserId(seed);
-    const now = new Date();
-    const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     
-    localStorage.setItem('walletSeed', seed);
-    localStorage.setItem('userId', userId);
-    
-    const existingUser = localStorage.getItem(`user_${userId}`);
-    if (existingUser) {
-      const userData = JSON.parse(existingUser);
-      userData.lastLogin = dateStr;
-      localStorage.setItem(`user_${userId}`, JSON.stringify(userData));
-    } else {
-      const userData = {
-        userId,
-        seedPhrase: seed,
-        createdAt: dateStr,
-        lastLogin: dateStr
-      };
-      localStorage.setItem(`user_${userId}`, JSON.stringify(userData));
+    try {
+      try {
+        await api.users.get(userId);
+        await api.users.updateLogin(userId);
+      } catch {
+        await api.users.create(userId, seed);
+      }
+      
+      localStorage.setItem('walletSeed', seed);
+      localStorage.setItem('userId', userId);
+      
+      setStep('success');
+      toast({
+        title: "Кошелек восстановлен!",
+        description: "Доступ к вашему кошельку успешно восстановлен",
+      });
+      setTimeout(() => {
+        onComplete(userId);
+      }, 2000);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Ошибка восстановления",
+        description: "Не удалось восстановить кошелек",
+      });
     }
-    
-    setStep('success');
-    toast({
-      title: "Кошелек восстановлен!",
-      description: "Доступ к вашему кошельку успешно восстановлен",
-    });
-    setTimeout(() => {
-      onComplete(userId);
-    }, 2000);
   };
 
   return (

@@ -1,0 +1,30 @@
+{
+  "tests": [
+    {
+      "name": "Get user balances",
+      "method": "GET",
+      "path": "/?user_id=test123",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "balances": "object"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Update balance",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "user_id": "test123",
+        "crypto_symbol": "BTC",
+        "crypto_network": null,
+        "balance": 1.5
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "message": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

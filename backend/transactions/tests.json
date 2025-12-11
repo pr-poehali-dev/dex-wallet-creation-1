@@ -1,0 +1,32 @@
+{
+  "tests": [
+    {
+      "name": "Get user transactions",
+      "method": "GET",
+      "path": "/?user_id=test123",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "transactions": "array"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Create transaction",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "user_id": "test123",
+        "tx_type": "send",
+        "asset": "BTC",
+        "amount": 0.5,
+        "tx_hash": "0x123abc",
+        "status": "completed"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "message": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

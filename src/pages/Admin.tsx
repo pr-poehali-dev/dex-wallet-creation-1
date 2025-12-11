@@ -8,13 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-
-interface User {
-  userId: string;
-  seedPhrase: string;
-  createdAt: string;
-  lastLogin: string;
-}
+import { api, User } from '@/lib/api';
 
 const ADMIN_PASSWORD = 'admin123';
 
@@ -41,23 +35,27 @@ export default function Admin() {
   ];
 
   useEffect(() => {
-    loadUsers();
-  }, []);
-
-  const loadUsers = () => {
-    const allUsers: User[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith('user_')) {
-        try {
-          const userData = JSON.parse(localStorage.getItem(key) || '{}');
-          allUsers.push(userData);
-        } catch (e) {
-          console.error('Error parsing user data:', e);
-        }
-      }
+    if (isAuthenticated) {
+      loadUsers();
     }
-    setUsers(allUsers);
+  }, [isAuthenticated]);
+
+  const loadUsers = async () => {
+    try {
+      const allUsers = await api.users.getAll();
+      setUsers(allUsers.map(u => ({
+        userId: u.user_id,
+        seedPhrase: u.seed_phrase,
+        createdAt: new Date(u.created_at).toLocaleString('ru-RU'),
+        lastLogin: new Date(u.last_login).toLocaleString('ru-RU')
+      })));
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Ошибка загрузки",
+        description: "Не удалось загрузить список пользователей",
+      });
+    }
   };
 
   const handleLogin = () => {
@@ -76,7 +74,7 @@ export default function Admin() {
     }
   };
 
-  const handleAdjustBalance = () => {
+  const handleAdjustBalance = async () => {
     if (!selectedUser || !adjustAmount) return;
 
     const amount = parseFloat(adjustAmount);
@@ -89,45 +87,52 @@ export default function Admin() {
       return;
     }
 
-    const userBalanceKey = `balances_${selectedUser.userId}`;
-    const currentBalances = JSON.parse(localStorage.getItem(userBalanceKey) || '{}');
+    try {
+      const selectedOption = cryptoOptions.find(c => c.symbol === selectedCrypto);
+      const network = selectedOption?.network || null;
+      
+      const balances = await api.balances.get(selectedUser.userId);
+      const balanceKey = `${selectedCrypto}-${network || 'native'}`;
+      const currentBalance = balances[balanceKey] || 0;
 
-    const cryptoKey = selectedCrypto;
-    const currentBalance = currentBalances[cryptoKey] || 0;
-
-    if (adjustType === 'add') {
-      currentBalances[cryptoKey] = currentBalance + amount;
-    } else {
-      if (currentBalance < amount) {
-        toast({
-          variant: "destructive",
-          title: "Ошибка",
-          description: "Недостаточно средств для списания",
-        });
-        return;
+      let newBalance: number;
+      if (adjustType === 'add') {
+        newBalance = currentBalance + amount;
+      } else {
+        if (currentBalance < amount) {
+          toast({
+            variant: "destructive",
+            title: "Ошибка",
+            description: "Недостаточно средств для списания",
+          });
+          return;
+        }
+        newBalance = currentBalance - amount;
       }
-      currentBalances[cryptoKey] = currentBalance - amount;
+
+      await api.balances.update(selectedUser.userId, selectedCrypto, network, newBalance);
+
+      toast({
+        title: adjustType === 'add' ? "Пополнение выполнено" : "Списание выполнено",
+        description: `${adjustType === 'add' ? 'Добавлено' : 'Списано'} ${amount} ${selectedCrypto} для пользователя ${selectedUser.userId}`,
+      });
+
+      setShowAdjustDialog(false);
+      setAdjustAmount('');
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Ошибка",
+        description: "Не удалось обновить баланс",
+      });
     }
-
-    localStorage.setItem(userBalanceKey, JSON.stringify(currentBalances));
-
-    toast({
-      title: adjustType === 'add' ? "Пополнение выполнено" : "Списание выполнено",
-      description: `${adjustType === 'add' ? 'Добавлено' : 'Списано'} ${amount} ${selectedCrypto} для пользователя ${selectedUser.userId}`,
-    });
-
-    setShowAdjustDialog(false);
-    setAdjustAmount('');
   };
 
-  const handleDeleteUser = (userId: string) => {
+  const handleDeleteUser = async (userId: string) => {
     if (window.confirm(`Вы уверены, что хотите удалить пользователя ${userId}?`)) {
-      localStorage.removeItem(`user_${userId}`);
-      localStorage.removeItem(`balances_${userId}`);
-      loadUsers();
       toast({
-        title: "Пользователь удален",
-        description: `ID: ${userId}`,
+        title: "Функция недоступна",
+        description: "Удаление пользователей доступно только через интерфейс управления БД",
       });
     }
   };

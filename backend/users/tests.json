@@ -1,0 +1,29 @@
+{
+  "tests": [
+    {
+      "name": "Get all users",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "users": "array"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Create user",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "user_id": "test123",
+        "seed_phrase": "word1 word2 word3 word4 word5 word6 word7 word8 word9 word10 word11 word12"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "message": "string",
+        "user_id": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

@@ -11,6 +11,7 @@ import Icon from '@/components/ui/icon';
 import QRCode from 'qrcode';
 import WalletSetup from '@/components/WalletSetup';
 import { useToast } from '@/hooks/use-toast';
+import { api } from '@/lib/api';
 
 const initialAssets = [
   { name: 'Bitcoin', symbol: 'BTC', balance: 0, price: 43250.00, icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png' },
@@ -108,17 +109,25 @@ export default function Index() {
     return `0x${hashHex}...${hashHex.substring(0, 4)}`;
   };
 
-  const saveBalances = (updatedAssets: typeof initialAssets) => {
+  const saveBalances = async (updatedAssets: typeof initialAssets) => {
     if (userId) {
-      const balances: { [key: string]: number } = {};
-      updatedAssets.forEach(asset => {
-        balances[asset.symbol] = asset.balance;
-      });
-      localStorage.setItem(`balances_${userId}`, JSON.stringify(balances));
+      for (const asset of updatedAssets) {
+        try {
+          await api.balances.update(
+            userId,
+            asset.symbol,
+            asset.network || null,
+            asset.balance
+          );
+        } catch (error) {
+          console.error('Failed to save balance:', error);
+        }
+      }
     }
   };
 
-  const addTransaction = (type: 'receive' | 'send' | 'swap', asset: string, amount: number) => {
+  const addTransaction = async (type: 'receive' | 'send' | 'swap', asset: string, amount: number) => {
+    const txHash = generateTransactionHash();
     const now = new Date();
     const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     
@@ -129,10 +138,18 @@ export default function Index() {
       amount,
       date: dateStr,
       status: 'completed' as const,
-      hash: generateTransactionHash()
+      hash: txHash
     };
 
     setTransactions(prev => [newTransaction, ...prev]);
+    
+    if (userId) {
+      try {
+        await api.transactions.create(userId, type, asset, amount, txHash);
+      } catch (error) {
+        console.error('Failed to save transaction:', error);
+      }
+    }
   };
 
   const [currentReceiveAddress, setCurrentReceiveAddress] = useState<string>('');
@@ -152,15 +169,42 @@ export default function Index() {
       if (storedUserId) {
         setUserId(storedUserId);
         
-        const balancesKey = `balances_${storedUserId}`;
-        const savedBalances = localStorage.getItem(balancesKey);
-        if (savedBalances) {
-          const balances = JSON.parse(savedBalances);
-          setAssets(prevAssets => prevAssets.map(asset => ({
-            ...asset,
-            balance: balances[asset.symbol] || asset.balance
-          })));
-        }
+        const loadUserData = async () => {
+          try {
+            const balances = await api.balances.get(storedUserId);
+            setAssets(prevAssets => prevAssets.map(asset => {
+              const key = `${asset.symbol}-${asset.network || 'native'}`;
+              return {
+                ...asset,
+                balance: balances[key] !== undefined ? balances[key] : asset.balance
+              };
+            }));
+            
+            const txList = await api.transactions.get(storedUserId);
+            const formattedTransactions = txList.map(tx => ({
+              id: tx.id,
+              type: tx.tx_type as 'receive' | 'send' | 'swap',
+              asset: tx.asset,
+              amount: tx.amount,
+              date: new Date(tx.tx_date).toLocaleString('ru-RU', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+              }).replace(',', ''),
+              status: tx.status as 'completed' | 'pending',
+              hash: tx.tx_hash
+            }));
+            setTransactions(formattedTransactions);
+            
+            await api.users.updateLogin(storedUserId);
+          } catch (error) {
+            console.error('Failed to load user data:', error);
+          }
+        };
+        
+        loadUserData();
       }
     }
 
