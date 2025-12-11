@@ -8,6 +8,7 @@ import * as bip39 from 'bip39';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { api } from '@/lib/api';
+import { DotScreenShader } from '@/components/ui/dot-shader-background';
 
 interface WalletSetupProps {
   open: boolean;
@@ -148,8 +149,12 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
   };
 
   return (
-    <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="bg-card max-w-2xl" hideClose={step !== 'success'}>
+    <>
+      <div className="fixed inset-0 z-40 pointer-events-none">
+        <DotScreenShader />
+      </div>
+      <Dialog open={open} onOpenChange={() => {}}>
+        <DialogContent className="bg-card/95 backdrop-blur-sm max-w-2xl border-primary/20" hideClose={step !== 'success'}>
         {step === 'intro' && (
           <>
             <DialogHeader>
@@ -446,7 +451,8 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
             </div>
           </>
         )}
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
