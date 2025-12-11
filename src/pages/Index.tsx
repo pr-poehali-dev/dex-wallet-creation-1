@@ -13,40 +13,69 @@ import WalletSetup from '@/components/WalletSetup';
 import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
 
+const getCryptoIcon = (symbol: string) => {
+  const icons: { [key: string]: { emoji: string; gradient: string } } = {
+    'BTC': { emoji: '₿', gradient: 'from-orange-500 to-orange-600' },
+    'ETH': { emoji: '◆', gradient: 'from-purple-500 to-indigo-600' },
+    'BNB': { emoji: '◉', gradient: 'from-yellow-400 to-yellow-600' },
+    'USDT': { emoji: '₮', gradient: 'from-green-500 to-teal-600' },
+    'USDC': { emoji: '$', gradient: 'from-blue-500 to-blue-600' },
+    'BUSD': { emoji: '$', gradient: 'from-yellow-500 to-yellow-600' },
+    'DAI': { emoji: '◈', gradient: 'from-amber-400 to-orange-500' },
+    'TUSD': { emoji: 'T', gradient: 'from-blue-600 to-blue-700' },
+    'USDP': { emoji: 'P', gradient: 'from-green-600 to-emerald-600' },
+    'FRAX': { emoji: 'F', gradient: 'from-gray-700 to-gray-800' },
+    'USDD': { emoji: 'D', gradient: 'from-slate-600 to-slate-700' },
+  };
+  return icons[symbol] || { emoji: '●', gradient: 'from-gray-400 to-gray-600' };
+};
+
+const getNetworkBadge = (network: string) => {
+  const badges: { [key: string]: { name: string; color: string } } = {
+    'ETH': { name: 'ETH', color: 'bg-purple-500/90' },
+    'BSC': { name: 'BSC', color: 'bg-yellow-500/90' },
+    'TRX': { name: 'TRX', color: 'bg-red-500/90' },
+    'MATIC': { name: 'MATIC', color: 'bg-violet-500/90' },
+    'ARB': { name: 'ARB', color: 'bg-blue-500/90' },
+    'OP': { name: 'OP', color: 'bg-red-600/90' },
+  };
+  return badges[network] || { name: network, color: 'bg-gray-500/90' };
+};
+
 const initialAssets = [
-  { name: 'Bitcoin', symbol: 'BTC', balance: 0, price: 43250.00, icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png', network: null },
-  { name: 'Ethereum', symbol: 'ETH', balance: 0, price: 2280.50, icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png', network: null },
-  { name: 'Binance Coin', symbol: 'BNB', balance: 0, price: 312.75, icon: 'https://cryptologos.cc/logos/bnb-bnb-logo.png', network: null },
+  { name: 'Bitcoin', symbol: 'BTC', balance: 0, price: 43250.00, network: null },
+  { name: 'Ethereum', symbol: 'ETH', balance: 0, price: 2280.50, network: null },
+  { name: 'Binance Coin', symbol: 'BNB', balance: 0, price: 312.75, network: null },
   
-  { name: 'Tether (Ethereum)', symbol: 'USDT', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'ETH' },
-  { name: 'Tether (Tron)', symbol: 'USDT', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'TRX' },
-  { name: 'Tether (BSC)', symbol: 'USDT', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'BSC' },
-  { name: 'Tether (Polygon)', symbol: 'USDT', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'MATIC' },
-  { name: 'Tether (Arbitrum)', symbol: 'USDT', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'ARB' },
+  { name: 'Tether (Ethereum)', symbol: 'USDT', balance: 0, price: 1.00, network: 'ETH' },
+  { name: 'Tether (Tron)', symbol: 'USDT', balance: 0, price: 1.00, network: 'TRX' },
+  { name: 'Tether (BSC)', symbol: 'USDT', balance: 0, price: 1.00, network: 'BSC' },
+  { name: 'Tether (Polygon)', symbol: 'USDT', balance: 0, price: 1.00, network: 'MATIC' },
+  { name: 'Tether (Arbitrum)', symbol: 'USDT', balance: 0, price: 1.00, network: 'ARB' },
   
-  { name: 'USD Coin (Ethereum)', symbol: 'USDC', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png', network: 'ETH' },
-  { name: 'USD Coin (BSC)', symbol: 'USDC', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png', network: 'BSC' },
-  { name: 'USD Coin (Polygon)', symbol: 'USDC', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png', network: 'MATIC' },
-  { name: 'USD Coin (Arbitrum)', symbol: 'USDC', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png', network: 'ARB' },
-  { name: 'USD Coin (Optimism)', symbol: 'USDC', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png', network: 'OP' },
+  { name: 'USD Coin (Ethereum)', symbol: 'USDC', balance: 0, price: 1.00, network: 'ETH' },
+  { name: 'USD Coin (BSC)', symbol: 'USDC', balance: 0, price: 1.00, network: 'BSC' },
+  { name: 'USD Coin (Polygon)', symbol: 'USDC', balance: 0, price: 1.00, network: 'MATIC' },
+  { name: 'USD Coin (Arbitrum)', symbol: 'USDC', balance: 0, price: 1.00, network: 'ARB' },
+  { name: 'USD Coin (Optimism)', symbol: 'USDC', balance: 0, price: 1.00, network: 'OP' },
   
-  { name: 'Binance USD (BSC)', symbol: 'BUSD', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/binance-usd-busd-logo.png', network: 'BSC' },
-  { name: 'Binance USD (Ethereum)', symbol: 'BUSD', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/binance-usd-busd-logo.png', network: 'ETH' },
+  { name: 'Binance USD (BSC)', symbol: 'BUSD', balance: 0, price: 1.00, network: 'BSC' },
+  { name: 'Binance USD (Ethereum)', symbol: 'BUSD', balance: 0, price: 1.00, network: 'ETH' },
   
-  { name: 'Dai (Ethereum)', symbol: 'DAI', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png', network: 'ETH' },
-  { name: 'Dai (BSC)', symbol: 'DAI', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png', network: 'BSC' },
-  { name: 'Dai (Polygon)', symbol: 'DAI', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png', network: 'MATIC' },
+  { name: 'Dai (Ethereum)', symbol: 'DAI', balance: 0, price: 1.00, network: 'ETH' },
+  { name: 'Dai (BSC)', symbol: 'DAI', balance: 0, price: 1.00, network: 'BSC' },
+  { name: 'Dai (Polygon)', symbol: 'DAI', balance: 0, price: 1.00, network: 'MATIC' },
   
-  { name: 'TrueUSD (Ethereum)', symbol: 'TUSD', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/trueusd-tusd-logo.png', network: 'ETH' },
-  { name: 'TrueUSD (Tron)', symbol: 'TUSD', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/trueusd-tusd-logo.png', network: 'TRX' },
+  { name: 'TrueUSD (Ethereum)', symbol: 'TUSD', balance: 0, price: 1.00, network: 'ETH' },
+  { name: 'TrueUSD (Tron)', symbol: 'TUSD', balance: 0, price: 1.00, network: 'TRX' },
   
-  { name: 'Pax Dollar (Ethereum)', symbol: 'USDP', balance: 0, price: 1.00, icon: 'https://assets.coingecko.com/coins/images/6013/small/Pax_Dollar.png', network: 'ETH' },
+  { name: 'Pax Dollar (Ethereum)', symbol: 'USDP', balance: 0, price: 1.00, network: 'ETH' },
   
-  { name: 'Frax (Ethereum)', symbol: 'FRAX', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/frax-frax-logo.png', network: 'ETH' },
-  { name: 'Frax (BSC)', symbol: 'FRAX', balance: 0, price: 1.00, icon: 'https://cryptologos.cc/logos/frax-frax-logo.png', network: 'BSC' },
+  { name: 'Frax (Ethereum)', symbol: 'FRAX', balance: 0, price: 1.00, network: 'ETH' },
+  { name: 'Frax (BSC)', symbol: 'FRAX', balance: 0, price: 1.00, network: 'BSC' },
   
-  { name: 'USDD (Tron)', symbol: 'USDD', balance: 0, price: 1.00, icon: 'https://assets.coingecko.com/coins/images/25380/small/USDD.png', network: 'TRX' },
-  { name: 'USDD (Ethereum)', symbol: 'USDD', balance: 0, price: 1.00, icon: 'https://assets.coingecko.com/coins/images/25380/small/USDD.png', network: 'ETH' },
+  { name: 'USDD (Tron)', symbol: 'USDD', balance: 0, price: 1.00, network: 'TRX' },
+  { name: 'USDD (Ethereum)', symbol: 'USDD', balance: 0, price: 1.00, network: 'ETH' },
 ];
 
 export default function Index() {
@@ -661,19 +690,8 @@ export default function Index() {
                   {!selectedReceiveAsset ? (
                     <div className="space-y-2 mt-4">
                       {assets.map((asset, index) => {
-                        const getNetworkIcon = (network: string) => {
-                          const icons: { [key: string]: string } = {
-                            'ETH': 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
-                            'BSC': 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
-                            'BNB': 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
-                            'TRX': 'https://cryptologos.cc/logos/tron-trx-logo.png',
-                            'BTC': 'https://cryptologos.cc/logos/bitcoin-btc-logo.png',
-                            'MATIC': 'https://cryptologos.cc/logos/polygon-matic-logo.png',
-                            'ARB': 'https://assets.coingecko.com/coins/images/16547/small/photo_2023-03-29_21.47.00.jpeg',
-                            'OP': 'https://assets.coingecko.com/coins/images/25244/small/Optimism.png',
-                          };
-                          return icons[network] || '';
-                        };
+                        const cryptoIcon = getCryptoIcon(asset.symbol);
+                        const networkBadge = asset.network ? getNetworkBadge(asset.network) : null;
                         
                         return (
                           <Button
@@ -683,15 +701,11 @@ export default function Index() {
                             onClick={() => setSelectedReceiveAsset(asset)}
                           >
                             <div className="flex items-center gap-3 w-full">
-                              <div className="relative w-10 h-10 rounded-full bg-background/50 flex items-center justify-center flex-shrink-0">
-                                <img src={asset.icon} alt={asset.name} className="w-7 h-7 object-contain" />
-                                {asset.network && (
-                                  <div className="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden shadow-md">
-                                    <img 
-                                      src={getNetworkIcon(asset.network)} 
-                                      alt={asset.network} 
-                                      className="w-4 h-4 object-contain"
-                                    />
+                              <div className={`relative w-10 h-10 rounded-xl bg-gradient-to-br ${cryptoIcon.gradient} flex items-center justify-center flex-shrink-0`}>
+                                <span className="text-lg text-white font-bold">{cryptoIcon.emoji}</span>
+                                {networkBadge && (
+                                  <div className={`absolute -bottom-1 -right-1 px-1 py-0.5 rounded ${networkBadge.color} border border-white/20 flex items-center justify-center`}>
+                                    <span className="text-[8px] text-white font-bold leading-none">{networkBadge.name}</span>
                                   </div>
                                 )}
                               </div>
@@ -708,29 +722,13 @@ export default function Index() {
                   ) : (
                     <div className="space-y-4 mt-4">
                       <div className="flex justify-center items-center gap-3 p-4 bg-muted/50 rounded-lg">
-                        <div className="relative w-12 h-12 rounded-full bg-background/50 flex items-center justify-center">
-                          <img src={selectedReceiveAsset.icon} alt={selectedReceiveAsset.name} className="w-8 h-8 object-contain" />
+                        <div className={`relative w-12 h-12 rounded-xl bg-gradient-to-br ${getCryptoIcon(selectedReceiveAsset.symbol).gradient} flex items-center justify-center`}>
+                          <span className="text-2xl text-white font-bold">{getCryptoIcon(selectedReceiveAsset.symbol).emoji}</span>
                           {selectedReceiveAsset.network && (() => {
-                            const getNetworkIcon = (network: string) => {
-                              const icons: { [key: string]: string } = {
-                                'ETH': 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
-                                'BSC': 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
-                                'BNB': 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
-                                'TRX': 'https://cryptologos.cc/logos/tron-trx-logo.png',
-                                'BTC': 'https://cryptologos.cc/logos/bitcoin-btc-logo.png',
-                                'MATIC': 'https://cryptologos.cc/logos/polygon-matic-logo.png',
-                                'ARB': 'https://assets.coingecko.com/coins/images/16547/small/photo_2023-03-29_21.47.00.jpeg',
-                                'OP': 'https://assets.coingecko.com/coins/images/25244/small/Optimism.png',
-                              };
-                              return icons[network] || '';
-                            };
+                            const networkBadge = getNetworkBadge(selectedReceiveAsset.network);
                             return (
-                              <div className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden shadow-md">
-                                <img 
-                                  src={getNetworkIcon(selectedReceiveAsset.network)} 
-                                  alt={selectedReceiveAsset.network} 
-                                  className="w-5 h-5 object-contain"
-                                />
+                              <div className={`absolute -bottom-1 -right-1 px-1.5 py-0.5 rounded-md ${networkBadge.color} border border-white/20 flex items-center justify-center`}>
+                                <span className="text-[9px] text-white font-bold leading-none">{networkBadge.name}</span>
                               </div>
                             );
                           })()}
@@ -794,19 +792,8 @@ export default function Index() {
           <TabsContent value="portfolio" className="space-y-3">
             <div className="grid gap-3">
               {[...assets].sort((a, b) => (b.balance * b.price) - (a.balance * a.price)).map((asset, index) => {
-                const getNetworkIcon = (network: string) => {
-                  const icons: { [key: string]: string } = {
-                    'ETH': 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
-                    'BSC': 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
-                    'BNB': 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
-                    'TRX': 'https://cryptologos.cc/logos/tron-trx-logo.png',
-                    'BTC': 'https://cryptologos.cc/logos/bitcoin-btc-logo.png',
-                    'MATIC': 'https://cryptologos.cc/logos/polygon-matic-logo.png',
-                    'ARB': 'https://assets.coingecko.com/coins/images/16547/small/photo_2023-03-29_21.47.00.jpeg',
-                    'OP': 'https://assets.coingecko.com/coins/images/25244/small/Optimism.png',
-                  };
-                  return icons[network] || '';
-                };
+                const cryptoIcon = getCryptoIcon(asset.symbol);
+                const networkBadge = asset.network ? getNetworkBadge(asset.network) : null;
                 
                 return (
                   <Card 
@@ -819,15 +806,11 @@ export default function Index() {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-background/50 flex items-center justify-center flex-shrink-0 shadow-md">
-                          <img src={asset.icon} alt={asset.name} className="w-9 h-9 object-contain" />
-                          {asset.network && (
-                            <div className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full bg-background border-2 border-card flex items-center justify-center overflow-hidden shadow-lg">
-                              <img 
-                                src={getNetworkIcon(asset.network)} 
-                                alt={asset.network} 
-                                className="w-5 h-5 object-contain"
-                              />
+                        <div className={`relative w-14 h-14 rounded-2xl bg-gradient-to-br ${cryptoIcon.gradient} flex items-center justify-center flex-shrink-0 shadow-md`}>
+                          <span className="text-2xl text-white font-bold">{cryptoIcon.emoji}</span>
+                          {networkBadge && (
+                            <div className={`absolute -bottom-1.5 -right-1.5 px-1.5 py-0.5 rounded-md ${networkBadge.color} border border-white/20 flex items-center justify-center shadow-lg`}>
+                              <span className="text-[9px] text-white font-bold leading-none">{networkBadge.name}</span>
                             </div>
                           )}
                         </div>
@@ -878,14 +861,19 @@ export default function Index() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {Array.from(new Set(assets.map(a => a.symbol))).map(symbol => (
-                            <SelectItem key={symbol} value={symbol}>
-                              <div className="flex items-center gap-2">
-                                <img src={assets.find(a => a.symbol === symbol)!.icon} alt={symbol} className="w-4 h-4 object-contain" />
-                                {symbol}
-                              </div>
-                            </SelectItem>
-                          ))}
+                          {Array.from(new Set(assets.map(a => a.symbol))).map(symbol => {
+                            const cryptoIcon = getCryptoIcon(symbol);
+                            return (
+                              <SelectItem key={symbol} value={symbol}>
+                                <div className="flex items-center gap-2">
+                                  <div className={`w-5 h-5 rounded bg-gradient-to-br ${cryptoIcon.gradient} flex items-center justify-center`}>
+                                    <span className="text-xs text-white font-bold">{cryptoIcon.emoji}</span>
+                                  </div>
+                                  {symbol}
+                                </div>
+                              </SelectItem>
+                            );
+                          })}
                         </SelectContent>
                       </Select>
                       {getAssetsBySymbol(fromToken).length > 1 && (
@@ -948,14 +936,19 @@ export default function Index() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {Array.from(new Set(assets.map(a => a.symbol))).map(symbol => (
-                            <SelectItem key={symbol} value={symbol}>
-                              <div className="flex items-center gap-2">
-                                <img src={assets.find(a => a.symbol === symbol)!.icon} alt={symbol} className="w-4 h-4 object-contain" />
-                                {symbol}
-                              </div>
-                            </SelectItem>
-                          ))}
+                          {Array.from(new Set(assets.map(a => a.symbol))).map(symbol => {
+                            const cryptoIcon = getCryptoIcon(symbol);
+                            return (
+                              <SelectItem key={symbol} value={symbol}>
+                                <div className="flex items-center gap-2">
+                                  <div className={`w-5 h-5 rounded bg-gradient-to-br ${cryptoIcon.gradient} flex items-center justify-center`}>
+                                    <span className="text-xs text-white font-bold">{cryptoIcon.emoji}</span>
+                                  </div>
+                                  {symbol}
+                                </div>
+                              </SelectItem>
+                            );
+                          })}
                         </SelectContent>
                       </Select>
                       {getAssetsBySymbol(toToken).length > 1 && (
