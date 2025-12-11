@@ -108,6 +108,16 @@ export default function Index() {
     return `0x${hashHex}...${hashHex.substring(0, 4)}`;
   };
 
+  const saveBalances = (updatedAssets: typeof initialAssets) => {
+    if (userId) {
+      const balances: { [key: string]: number } = {};
+      updatedAssets.forEach(asset => {
+        balances[asset.symbol] = asset.balance;
+      });
+      localStorage.setItem(`balances_${userId}`, JSON.stringify(balances));
+    }
+  };
+
   const addTransaction = (type: 'receive' | 'send' | 'swap', asset: string, amount: number) => {
     const now = new Date();
     const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -141,13 +151,23 @@ export default function Index() {
       setWalletCreated(true);
       if (storedUserId) {
         setUserId(storedUserId);
+        
+        const balancesKey = `balances_${storedUserId}`;
+        const savedBalances = localStorage.getItem(balancesKey);
+        if (savedBalances) {
+          const balances = JSON.parse(savedBalances);
+          setAssets(prevAssets => prevAssets.map(asset => ({
+            ...asset,
+            balance: balances[asset.symbol] || asset.balance
+          })));
+        }
       }
     }
 
     if (!mainSendAsset && assets.length > 0) {
       setMainSendAsset(assets[0]);
     }
-  }, [searchParams, mainSendAsset, assets]);
+  }, [searchParams, mainSendAsset, assets.length]);
 
   const handleWalletComplete = (userId: string) => {
     localStorage.setItem('walletCreated', 'true');
@@ -231,15 +251,19 @@ export default function Index() {
     const outputAmount = parseFloat(calculateSwapOutput());
 
     if (fromAsset && toAsset && swapAmountNum > 0) {
-      setAssets(prevAssets => prevAssets.map(asset => {
-        if (asset.symbol === fromAsset.symbol && (asset.network || asset.symbol) === (fromAsset.network || fromAsset.symbol)) {
-          return { ...asset, balance: asset.balance - swapAmountNum };
-        }
-        if (asset.symbol === toAsset.symbol && (asset.network || asset.symbol) === (toAsset.network || toAsset.symbol)) {
-          return { ...asset, balance: asset.balance + outputAmount };
-        }
-        return asset;
-      }));
+      setAssets(prevAssets => {
+        const updatedAssets = prevAssets.map(asset => {
+          if (asset.symbol === fromAsset.symbol && (asset.network || asset.symbol) === (fromAsset.network || fromAsset.symbol)) {
+            return { ...asset, balance: asset.balance - swapAmountNum };
+          }
+          if (asset.symbol === toAsset.symbol && (asset.network || asset.symbol) === (toAsset.network || toAsset.symbol)) {
+            return { ...asset, balance: asset.balance + outputAmount };
+          }
+          return asset;
+        });
+        saveBalances(updatedAssets);
+        return updatedAssets;
+      });
 
       addTransaction('swap', `${fromToken}→${toToken}`, swapAmountNum);
     }
@@ -255,12 +279,16 @@ export default function Index() {
   const handleSendConfirm = () => {
     const amount = parseFloat(sendAmount);
     if (selectedAsset && amount > 0 && sendAddress) {
-      setAssets(prevAssets => prevAssets.map(asset => {
-        if (asset.symbol === selectedAsset.symbol && (asset.network || asset.symbol) === (selectedAsset.network || selectedAsset.symbol)) {
-          return { ...asset, balance: asset.balance - amount };
-        }
-        return asset;
-      }));
+      setAssets(prevAssets => {
+        const updatedAssets = prevAssets.map(asset => {
+          if (asset.symbol === selectedAsset.symbol && (asset.network || asset.symbol) === (selectedAsset.network || selectedAsset.symbol)) {
+            return { ...asset, balance: asset.balance - amount };
+          }
+          return asset;
+        });
+        saveBalances(updatedAssets);
+        return updatedAssets;
+      });
 
       addTransaction('send', selectedAsset.symbol, amount);
 
@@ -280,12 +308,16 @@ export default function Index() {
     const amount = parseFloat(mainSendAmount);
     
     if (mainSendAsset && amount > 0 && mainSendAddress && amount <= mainSendAsset.balance) {
-      setAssets(prevAssets => prevAssets.map(a => {
-        if (a.symbol === mainSendAsset.symbol && (a.network || a.symbol) === (mainSendAsset.network || mainSendAsset.symbol)) {
-          return { ...a, balance: a.balance - amount };
-        }
-        return a;
-      }));
+      setAssets(prevAssets => {
+        const updatedAssets = prevAssets.map(a => {
+          if (a.symbol === mainSendAsset.symbol && (a.network || a.symbol) === (mainSendAsset.network || mainSendAsset.symbol)) {
+            return { ...a, balance: a.balance - amount };
+          }
+          return a;
+        });
+        saveBalances(updatedAssets);
+        return updatedAssets;
+      });
 
       addTransaction('send', mainSendAsset.symbol, amount);
 

@@ -67,8 +67,20 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
     if (isValid) {
       const seed = seedPhrase.join(' ');
       const userId = await generateUserId(seed);
+      const now = new Date();
+      const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      
       localStorage.setItem('walletSeed', seed);
       localStorage.setItem('userId', userId);
+      
+      const userData = {
+        userId,
+        seedPhrase: seed,
+        createdAt: dateStr,
+        lastLogin: dateStr
+      };
+      localStorage.setItem(`user_${userId}`, JSON.stringify(userData));
+      
       setStep('success');
       setTimeout(() => {
         onComplete(userId);
@@ -105,8 +117,27 @@ export default function WalletSetup({ open, onComplete, initialMode = 'create' }
 
     const seed = words.join(' ');
     const userId = await generateUserId(seed);
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    
     localStorage.setItem('walletSeed', seed);
     localStorage.setItem('userId', userId);
+    
+    const existingUser = localStorage.getItem(`user_${userId}`);
+    if (existingUser) {
+      const userData = JSON.parse(existingUser);
+      userData.lastLogin = dateStr;
+      localStorage.setItem(`user_${userId}`, JSON.stringify(userData));
+    } else {
+      const userData = {
+        userId,
+        seedPhrase: seed,
+        createdAt: dateStr,
+        lastLogin: dateStr
+      };
+      localStorage.setItem(`user_${userId}`, JSON.stringify(userData));
+    }
+    
     setStep('success');
     toast({
       title: "Кошелек восстановлен!",
