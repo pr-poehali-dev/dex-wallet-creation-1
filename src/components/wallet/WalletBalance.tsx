@@ -122,13 +122,11 @@ export default function WalletBalance({
                         <SelectItem key={`${asset.symbol}-${asset.network || 'native'}-${index}`} value={`${asset.symbol}-${asset.network || 'native'}`}>
                           <div className="flex items-center gap-2">
                             <div className="relative">
-                              <img src={asset.icon} alt={asset.symbol} className="w-5 h-5 object-contain" />
+                              <CryptoIcon symbol={asset.symbol} size={20} />
                               {asset.network && (
-                                <img 
-                                  src={getNetworkIcon(asset.network)} 
-                                  alt={asset.network}
-                                  className="w-3 h-3 object-contain absolute -bottom-0.5 -right-0.5 rounded-full bg-background border border-card"
-                                />
+                                <div className="absolute -bottom-0.5 -right-0.5">
+                                  <NetworkBadge network={asset.network} size="sm" />
+                                </div>
                               )}
                             </div>
                             <span>{asset.name}</span>

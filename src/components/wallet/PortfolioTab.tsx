@@ -113,7 +113,7 @@ export default function PortfolioTab({
             <DialogTitle className="flex items-center gap-3">
               {selectedAsset && (
                 <>
-                  <img src={selectedAsset.icon} alt={selectedAsset.name} className="w-8 h-8 object-contain" />
+                  <CryptoIcon symbol={selectedAsset.symbol} size={32} />
                   {selectedAsset.name}
                 </>
               )}

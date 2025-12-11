@@ -243,7 +243,7 @@ export default function SwapTab({
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Вы отдаете</span>
                 <div className="flex items-center gap-2">
-                  <img src={getSelectedAsset(fromToken, fromNetwork)?.icon} alt={fromToken} className="w-5 h-5 object-contain" />
+                  <CryptoIcon symbol={fromToken} size={20} />
                   <span className="font-semibold">{swapAmount} {fromToken}</span>
                 </div>
               </div>
@@ -261,7 +261,7 @@ export default function SwapTab({
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Вы получите</span>
                 <div className="flex items-center gap-2">
-                  <img src={getSelectedAsset(toToken, toNetwork)?.icon} alt={toToken} className="w-5 h-5 object-contain" />
+                  <CryptoIcon symbol={toToken} size={20} />
                   <span className="font-semibold">{calculateSwapOutput()} {toToken}</span>
                 </div>
               </div>
