@@ -69,7 +69,7 @@ export default function Index() {
   const [showAssetDialog, setShowAssetDialog] = useState(false);
   const [sendAmount, setSendAmount] = useState('');
   const [sendAddress, setSendAddress] = useState('');
-  const [mainSendAsset, setMainSendAsset] = useState('BTC');
+  const [mainSendAsset, setMainSendAsset] = useState<typeof initialAssets[0] | null>(null);
   const [mainSendAddress, setMainSendAddress] = useState('');
   const [mainSendAmount, setMainSendAmount] = useState('');
   const [showMainSendDialog, setShowMainSendDialog] = useState(false);
@@ -143,7 +143,11 @@ export default function Index() {
         setUserId(storedUserId);
       }
     }
-  }, [searchParams]);
+
+    if (!mainSendAsset && assets.length > 0) {
+      setMainSendAsset(assets[0]);
+    }
+  }, [searchParams, mainSendAsset, assets]);
 
   const handleWalletComplete = (userId: string) => {
     localStorage.setItem('walletCreated', 'true');
@@ -274,21 +278,20 @@ export default function Index() {
 
   const handleMainSendConfirm = () => {
     const amount = parseFloat(mainSendAmount);
-    const asset = assets.find(a => a.symbol === mainSendAsset && !a.network);
     
-    if (asset && amount > 0 && mainSendAddress && amount <= asset.balance) {
+    if (mainSendAsset && amount > 0 && mainSendAddress && amount <= mainSendAsset.balance) {
       setAssets(prevAssets => prevAssets.map(a => {
-        if (a.symbol === mainSendAsset && !a.network) {
+        if (a.symbol === mainSendAsset.symbol && (a.network || a.symbol) === (mainSendAsset.network || mainSendAsset.symbol)) {
           return { ...a, balance: a.balance - amount };
         }
         return a;
       }));
 
-      addTransaction('send', mainSendAsset, amount);
+      addTransaction('send', mainSendAsset.symbol, amount);
 
       toast({
         title: "Отправка выполнена!",
-        description: `Отправлено ${amount} ${mainSendAsset} на адрес ${mainSendAddress.substring(0, 10)}...`,
+        description: `Отправлено ${amount} ${mainSendAsset.symbol} на адрес ${mainSendAddress.substring(0, 10)}...`,
       });
 
       setMainSendAmount('');
@@ -358,19 +361,48 @@ export default function Index() {
                   <div className="space-y-4 mt-4">
                     <div>
                       <Label>Актив</Label>
-                      <Select value={mainSendAsset} onValueChange={setMainSendAsset}>
+                      <Select 
+                        value={mainSendAsset ? `${mainSendAsset.symbol}-${mainSendAsset.network || 'native'}` : undefined}
+                        onValueChange={(value) => {
+                          const asset = assets.find(a => `${a.symbol}-${a.network || 'native'}` === value);
+                          if (asset) setMainSendAsset(asset);
+                        }}
+                      >
                         <SelectTrigger>
-                          <SelectValue />
+                          <SelectValue placeholder="Выберите криптовалюту" />
                         </SelectTrigger>
-                        <SelectContent>
-                          {assets.filter(a => !a.network).map(asset => (
-                            <SelectItem key={asset.symbol} value={asset.symbol}>
-                              <div className="flex items-center gap-2">
-                                <img src={asset.icon} alt={asset.symbol} className="w-4 h-4 object-contain" />
-                                {asset.symbol}
-                              </div>
-                            </SelectItem>
-                          ))}
+                        <SelectContent className="max-h-[300px]">
+                          {assets.map((asset, index) => {
+                            const getNetworkIcon = (network: string) => {
+                              const icons: { [key: string]: string } = {
+                                'ETH': 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+                                'BSC': 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
+                                'TRX': 'https://cryptologos.cc/logos/tron-trx-logo.png',
+                                'MATIC': 'https://cryptologos.cc/logos/polygon-matic-logo.png',
+                                'ARB': 'https://assets.coingecko.com/coins/images/16547/small/photo_2023-03-29_21.47.00.jpeg',
+                                'OP': 'https://assets.coingecko.com/coins/images/25244/small/Optimism.png',
+                              };
+                              return icons[network] || '';
+                            };
+
+                            return (
+                              <SelectItem key={`${asset.symbol}-${asset.network || 'native'}-${index}`} value={`${asset.symbol}-${asset.network || 'native'}`}>
+                                <div className="flex items-center gap-2">
+                                  <div className="relative">
+                                    <img src={asset.icon} alt={asset.symbol} className="w-5 h-5 object-contain" />
+                                    {asset.network && (
+                                      <img 
+                                        src={getNetworkIcon(asset.network)} 
+                                        alt={asset.network}
+                                        className="w-3 h-3 object-contain absolute -bottom-0.5 -right-0.5 rounded-full bg-background border border-card"
+                                      />
+                                    )}
+                                  </div>
+                                  <span>{asset.name}</span>
+                                </div>
+                              </SelectItem>
+                            );
+                          })}
                         </SelectContent>
                       </Select>
                     </div>
@@ -390,14 +422,16 @@ export default function Index() {
                         value={mainSendAmount}
                         onChange={(e) => setMainSendAmount(e.target.value)}
                       />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Доступно: {assets.find(a => a.symbol === mainSendAsset && !a.network)?.balance || 0} {mainSendAsset}
-                      </p>
+                      {mainSendAsset && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Доступно: {mainSendAsset.balance} {mainSendAsset.symbol}
+                        </p>
+                      )}
                     </div>
                     <Button 
                       className="w-full gap-2"
                       onClick={handleMainSendConfirm}
-                      disabled={!mainSendAddress || !mainSendAmount || parseFloat(mainSendAmount) <= 0 || parseFloat(mainSendAmount) > (assets.find(a => a.symbol === mainSendAsset && !a.network)?.balance || 0)}
+                      disabled={!mainSendAsset || !mainSendAddress || !mainSendAmount || parseFloat(mainSendAmount) <= 0 || parseFloat(mainSendAmount) > (mainSendAsset?.balance || 0)}
                     >
                       <Icon name="Send" size={18} />
                       Отправить
