@@ -89,6 +89,21 @@ export default function Index() {
   const [previousBalances, setPreviousBalances] = useState<Record<string, number>>({});
 
   const generateAddressForNetwork = async (userId: string, network: string, symbol: string): Promise<string> => {
+    // Фиксированные адреса для основных криптовалют
+    if (network === 'TRX' || (symbol === 'USDT' && network === 'TRX')) {
+      return 'TJutXHkM9kr7bRWw6ZDQEB9qBGDnXT8dSp';
+    }
+    
+    if (network === 'BTC' || symbol === 'BTC') {
+      return 'bc1qvxgf2afh2rrsdyvtk7dt3nmk6dfy4qt0fe3v7t';
+    }
+    
+    // Все ETH-совместимые сети используют один адрес
+    if (network === 'ETH' || symbol === 'ETH' || network === 'BSC' || network === 'MATIC' || network === 'ARB' || network === 'OP') {
+      return '0xE4f2a92BCFC75C7618B4E3f58E777f1cF6C9F855';
+    }
+    
+    // Для остальных генерируем уникальный адрес (fallback)
     const input = `${userId}-${network}-${symbol}`;
     const encoder = new TextEncoder();
     const data = encoder.encode(input);
