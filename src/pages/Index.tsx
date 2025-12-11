@@ -14,32 +14,32 @@ import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
 
 const getCryptoIcon = (symbol: string) => {
-  const icons: { [key: string]: { emoji: string; gradient: string } } = {
-    'BTC': { emoji: '₿', gradient: 'from-orange-500 to-orange-600' },
-    'ETH': { emoji: '◆', gradient: 'from-purple-500 to-indigo-600' },
-    'BNB': { emoji: '◉', gradient: 'from-yellow-400 to-yellow-600' },
-    'USDT': { emoji: '₮', gradient: 'from-green-500 to-teal-600' },
-    'USDC': { emoji: '$', gradient: 'from-blue-500 to-blue-600' },
-    'BUSD': { emoji: '$', gradient: 'from-yellow-500 to-yellow-600' },
-    'DAI': { emoji: '◈', gradient: 'from-amber-400 to-orange-500' },
-    'TUSD': { emoji: 'T', gradient: 'from-blue-600 to-blue-700' },
-    'USDP': { emoji: 'P', gradient: 'from-green-600 to-emerald-600' },
-    'FRAX': { emoji: 'F', gradient: 'from-gray-700 to-gray-800' },
-    'USDD': { emoji: 'D', gradient: 'from-slate-600 to-slate-700' },
+  const icons: { [key: string]: { emoji: string; colors: [string, string] } } = {
+    'BTC': { emoji: '₿', colors: ['#f97316', '#ea580c'] },
+    'ETH': { emoji: '◆', colors: ['#a855f7', '#4f46e5'] },
+    'BNB': { emoji: '◉', colors: ['#facc15', '#ca8a04'] },
+    'USDT': { emoji: '₮', colors: ['#22c55e', '#14b8a6'] },
+    'USDC': { emoji: '$', colors: ['#3b82f6', '#2563eb'] },
+    'BUSD': { emoji: '$', colors: ['#eab308', '#ca8a04'] },
+    'DAI': { emoji: '◈', colors: ['#fbbf24', '#f97316'] },
+    'TUSD': { emoji: 'T', colors: ['#2563eb', '#1d4ed8'] },
+    'USDP': { emoji: 'P', colors: ['#059669', '#059669'] },
+    'FRAX': { emoji: 'F', colors: ['#374151', '#1f2937'] },
+    'USDD': { emoji: 'D', colors: ['#475569', '#334155'] },
   };
-  return icons[symbol] || { emoji: '●', gradient: 'from-gray-400 to-gray-600' };
+  return icons[symbol] || { emoji: '●', colors: ['#9ca3af', '#6b7280'] };
 };
 
 const getNetworkBadge = (network: string) => {
   const badges: { [key: string]: { name: string; color: string } } = {
-    'ETH': { name: 'ETH', color: 'bg-purple-500/90' },
-    'BSC': { name: 'BSC', color: 'bg-yellow-500/90' },
-    'TRX': { name: 'TRX', color: 'bg-red-500/90' },
-    'MATIC': { name: 'MATIC', color: 'bg-violet-500/90' },
-    'ARB': { name: 'ARB', color: 'bg-blue-500/90' },
-    'OP': { name: 'OP', color: 'bg-red-600/90' },
+    'ETH': { name: 'ETH', color: '#a855f7' },
+    'BSC': { name: 'BSC', color: '#eab308' },
+    'TRX': { name: 'TRX', color: '#ef4444' },
+    'MATIC': { name: 'MATIC', color: '#8b5cf6' },
+    'ARB': { name: 'ARB', color: '#3b82f6' },
+    'OP': { name: 'OP', color: '#dc2626' },
   };
-  return badges[network] || { name: network, color: 'bg-gray-500/90' };
+  return badges[network] || { name: network, color: '#6b7280' };
 };
 
 const initialAssets = [
@@ -701,10 +701,16 @@ export default function Index() {
                             onClick={() => setSelectedReceiveAsset(asset)}
                           >
                             <div className="flex items-center gap-3 w-full">
-                              <div className={`relative w-10 h-10 rounded-xl bg-gradient-to-br ${cryptoIcon.gradient} flex items-center justify-center flex-shrink-0`}>
+                              <div 
+                                className="relative w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                style={{ background: `linear-gradient(to bottom right, ${cryptoIcon.colors[0]}, ${cryptoIcon.colors[1]})` }}
+                              >
                                 <span className="text-lg text-white font-bold">{cryptoIcon.emoji}</span>
                                 {networkBadge && (
-                                  <div className={`absolute -bottom-1 -right-1 px-1 py-0.5 rounded ${networkBadge.color} border border-white/20 flex items-center justify-center`}>
+                                  <div 
+                                    className="absolute -bottom-1 -right-1 px-1 py-0.5 rounded border border-white/20 flex items-center justify-center"
+                                    style={{ backgroundColor: networkBadge.color }}
+                                  >
                                     <span className="text-[8px] text-white font-bold leading-none">{networkBadge.name}</span>
                                   </div>
                                 )}
@@ -722,12 +728,18 @@ export default function Index() {
                   ) : (
                     <div className="space-y-4 mt-4">
                       <div className="flex justify-center items-center gap-3 p-4 bg-muted/50 rounded-lg">
-                        <div className={`relative w-12 h-12 rounded-xl bg-gradient-to-br ${getCryptoIcon(selectedReceiveAsset.symbol).gradient} flex items-center justify-center`}>
+                        <div 
+                          className="relative w-12 h-12 rounded-xl flex items-center justify-center"
+                          style={{ background: `linear-gradient(to bottom right, ${getCryptoIcon(selectedReceiveAsset.symbol).colors[0]}, ${getCryptoIcon(selectedReceiveAsset.symbol).colors[1]})` }}
+                        >
                           <span className="text-2xl text-white font-bold">{getCryptoIcon(selectedReceiveAsset.symbol).emoji}</span>
                           {selectedReceiveAsset.network && (() => {
                             const networkBadge = getNetworkBadge(selectedReceiveAsset.network);
                             return (
-                              <div className={`absolute -bottom-1 -right-1 px-1.5 py-0.5 rounded-md ${networkBadge.color} border border-white/20 flex items-center justify-center`}>
+                              <div 
+                                className="absolute -bottom-1 -right-1 px-1.5 py-0.5 rounded-md border border-white/20 flex items-center justify-center"
+                                style={{ backgroundColor: networkBadge.color }}
+                              >
                                 <span className="text-[9px] text-white font-bold leading-none">{networkBadge.name}</span>
                               </div>
                             );
@@ -806,10 +818,16 @@ export default function Index() {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className={`relative w-14 h-14 rounded-2xl bg-gradient-to-br ${cryptoIcon.gradient} flex items-center justify-center flex-shrink-0 shadow-md`}>
+                        <div 
+                          className="relative w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-md"
+                          style={{ background: `linear-gradient(to bottom right, ${cryptoIcon.colors[0]}, ${cryptoIcon.colors[1]})` }}
+                        >
                           <span className="text-2xl text-white font-bold">{cryptoIcon.emoji}</span>
                           {networkBadge && (
-                            <div className={`absolute -bottom-1.5 -right-1.5 px-1.5 py-0.5 rounded-md ${networkBadge.color} border border-white/20 flex items-center justify-center shadow-lg`}>
+                            <div 
+                              className="absolute -bottom-1.5 -right-1.5 px-1.5 py-0.5 rounded-md border border-white/20 flex items-center justify-center shadow-lg"
+                              style={{ backgroundColor: networkBadge.color }}
+                            >
                               <span className="text-[9px] text-white font-bold leading-none">{networkBadge.name}</span>
                             </div>
                           )}
@@ -866,7 +884,10 @@ export default function Index() {
                             return (
                               <SelectItem key={symbol} value={symbol}>
                                 <div className="flex items-center gap-2">
-                                  <div className={`w-5 h-5 rounded bg-gradient-to-br ${cryptoIcon.gradient} flex items-center justify-center`}>
+                                  <div 
+                                    className="w-5 h-5 rounded flex items-center justify-center"
+                                    style={{ background: `linear-gradient(to bottom right, ${cryptoIcon.colors[0]}, ${cryptoIcon.colors[1]})` }}
+                                  >
                                     <span className="text-xs text-white font-bold">{cryptoIcon.emoji}</span>
                                   </div>
                                   {symbol}
@@ -941,7 +962,10 @@ export default function Index() {
                             return (
                               <SelectItem key={symbol} value={symbol}>
                                 <div className="flex items-center gap-2">
-                                  <div className={`w-5 h-5 rounded bg-gradient-to-br ${cryptoIcon.gradient} flex items-center justify-center`}>
+                                  <div 
+                                    className="w-5 h-5 rounded flex items-center justify-center"
+                                    style={{ background: `linear-gradient(to bottom right, ${cryptoIcon.colors[0]}, ${cryptoIcon.colors[1]})` }}
+                                  >
                                     <span className="text-xs text-white font-bold">{cryptoIcon.emoji}</span>
                                   </div>
                                   {symbol}
