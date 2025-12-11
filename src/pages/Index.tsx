@@ -85,6 +85,8 @@ export default function Index() {
   }>>([]);
   const qrCanvasRef = useRef<HTMLCanvasElement>(null);
   const assetQrCanvasRef = useRef<HTMLCanvasElement>(null);
+  const [animatingAsset, setAnimatingAsset] = useState<string | null>(null);
+  const [previousBalances, setPreviousBalances] = useState<Record<string, number>>({});
 
   const generateAddressForNetwork = async (userId: string, network: string, symbol: string): Promise<string> => {
     const input = `${userId}-${network}-${symbol}`;
@@ -154,7 +156,7 @@ export default function Index() {
 
   const [currentReceiveAddress, setCurrentReceiveAddress] = useState<string>('');
 
-  const loadUserData = async (userId: string) => {
+  const loadUserData = async (userId: string, skipAnimation = false) => {
     try {
       const [balances, prices] = await Promise.all([
         api.balances.get(userId),
@@ -163,12 +165,27 @@ export default function Index() {
       
       setAssets(prevAssets => prevAssets.map(asset => {
         const key = `${asset.symbol}-${asset.network || 'native'}`;
+        const newBalance = balances[key] !== undefined ? balances[key] : asset.balance;
+        const oldBalance = previousBalances[key] || asset.balance;
+        
+        if (!skipAnimation && newBalance > oldBalance) {
+          setAnimatingAsset(key);
+          setTimeout(() => setAnimatingAsset(null), 2000);
+          
+          toast({
+            title: "Баланс пополнен! 💰",
+            description: `+${(newBalance - oldBalance).toFixed(8)} ${asset.symbol}`,
+          });
+        }
+        
         return {
           ...asset,
-          balance: balances[key] !== undefined ? balances[key] : asset.balance,
+          balance: newBalance,
           price: prices[asset.symbol] !== undefined ? prices[asset.symbol] : asset.price
         };
       }));
+      
+      setPreviousBalances(balances);
       
       const txList = await api.transactions.get(userId);
       const formattedTransactions = txList.map(tx => ({
@@ -212,7 +229,7 @@ export default function Index() {
     } else {
       setWalletCreated(true);
       setUserId(storedUserId);
-      loadUserData(storedUserId);
+      loadUserData(storedUserId, true);
     }
 
     if (!mainSendAsset && assets.length > 0) {
@@ -247,8 +264,17 @@ export default function Index() {
       }
     };
 
-    const interval = setInterval(updatePrices, 30000);
-    return () => clearInterval(interval);
+    const priceInterval = setInterval(updatePrices, 30000);
+    const balanceInterval = setInterval(() => {
+      if (userId) {
+        loadUserData(userId);
+      }
+    }, 5000);
+    
+    return () => {
+      clearInterval(priceInterval);
+      clearInterval(balanceInterval);
+    };
   }, [walletCreated, userId]);
 
   const handleWalletComplete = (userId: string) => {
@@ -457,7 +483,9 @@ export default function Index() {
             <div className="flex items-start justify-between mb-4">
               <div className="min-w-0">
                 <p className="text-sm md:text-sm text-muted-foreground mb-2 font-medium">Общий баланс</p>
-                <h2 className="text-3xl md:text-4xl font-bold truncate tracking-tight">${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h2>
+                <h2 className={`text-3xl md:text-4xl font-bold truncate tracking-tight transition-all duration-500 ${
+                  animatingAsset ? 'text-success scale-105' : ''
+                }`}>${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h2>
               </div>
               <div className="px-3 py-1.5 rounded-full bg-success/20 text-success text-sm font-semibold flex items-center gap-1.5 flex-shrink-0 shadow-md">
                 <Icon name="TrendingUp" size={16} />
@@ -751,7 +779,9 @@ export default function Index() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-base">{asset.balance} {asset.symbol}</p>
+                        <p className={`font-semibold text-base transition-all duration-300 ${
+                          animatingAsset === `${asset.symbol}-${asset.network || 'native'}` ? 'text-success scale-110' : ''
+                        }`}>{asset.balance} {asset.symbol}</p>
                         <p className="text-sm text-muted-foreground">
                           ${(asset.balance * asset.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                         </p>
