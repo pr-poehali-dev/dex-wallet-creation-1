@@ -316,26 +316,18 @@ export default function Index() {
               <p className="text-xs text-muted-foreground font-mono">ID: {userId}</p>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="icon" className="hover-scale">
-              <Icon name="Bell" size={20} />
-            </Button>
-            <Button variant="outline" size="icon" className="hover-scale">
-              <Icon name="Settings" size={20} />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="hover-scale text-destructive hover:text-destructive"
-              onClick={handleLogout}
-            >
-              <Icon name="LogOut" size={20} />
-            </Button>
-          </div>
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="hover-scale text-destructive hover:text-destructive"
+            onClick={handleLogout}
+          >
+            <Icon name="LogOut" size={20} />
+          </Button>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          <Card className="lg:col-span-2 p-6 hover-scale bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/20">
+        <div className="grid grid-cols-1 gap-6 mb-6">
+          <Card className="p-6 hover-scale bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/20">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Общий баланс</p>
@@ -576,30 +568,6 @@ export default function Index() {
                 <Icon name="QrCode" size={18} />
                 Сканировать
               </Button>
-            </div>
-          </Card>
-
-          <Card className="p-6 hover-scale">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Icon name="Shield" className="text-primary" size={20} />
-                Безопасность
-              </h3>
-              <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                <span className="text-sm">2FA защита</span>
-                <Icon name="CheckCircle" className="text-success" size={18} />
-              </div>
-              <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                <span className="text-sm">Резервная копия</span>
-                <Icon name="CheckCircle" className="text-success" size={18} />
-              </div>
-              <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                <span className="text-sm">Биометрия</span>
-                <Icon name="CheckCircle" className="text-success" size={18} />
-              </div>
             </div>
           </Card>
         </div>
