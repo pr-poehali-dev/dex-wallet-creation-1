@@ -87,6 +87,7 @@ export default function Index() {
   const assetQrCanvasRef = useRef<HTMLCanvasElement>(null);
   const [animatingAsset, setAnimatingAsset] = useState<string | null>(null);
   const [previousBalances, setPreviousBalances] = useState<Record<string, number>>({});
+  const [lastPriceUpdate, setLastPriceUpdate] = useState<Date | null>(null);
 
   const generateAddressForNetwork = async (userId: string, network: string, symbol: string): Promise<string> => {
     // Bitcoin - фиксированный адрес
@@ -182,8 +183,13 @@ export default function Index() {
     try {
       const [balances, prices] = await Promise.all([
         api.balances.get(userId),
-        api.cryptoPrices.get().catch(() => ({}))
+        api.cryptoPrices.get().catch((error) => {
+          console.error('Failed to load crypto prices:', error);
+          return {};
+        })
       ]);
+      
+      console.log('Loaded prices:', prices);
       
       setAssets(prevAssets => prevAssets.map(asset => {
         const key = `${asset.symbol}-${asset.network || 'native'}`;
@@ -258,6 +264,28 @@ export default function Index() {
       setMainSendAsset(assets[0]);
     }
   }, [searchParams, mainSendAsset, assets.length]);
+
+  useEffect(() => {
+    const updatePrices = async () => {
+      try {
+        const prices = await api.cryptoPrices.get();
+        console.log('Updating prices:', prices);
+        setAssets(prevAssets => prevAssets.map(asset => ({
+          ...asset,
+          price: prices[asset.symbol] !== undefined ? prices[asset.symbol] : asset.price
+        })));
+        setLastPriceUpdate(new Date());
+      } catch (error) {
+        console.error('Failed to update prices:', error);
+      }
+    };
+
+    if (walletCreated) {
+      updatePrices();
+      const priceInterval = setInterval(updatePrices, 30000);
+      return () => clearInterval(priceInterval);
+    }
+  }, [walletCreated]);
 
   useEffect(() => {
     const handleBalanceUpdate = () => {
@@ -504,7 +532,15 @@ export default function Index() {
           <Card className="p-5 md:p-6 transition-all duration-300 hover:shadow-2xl bg-gradient-to-br from-primary/15 to-secondary/10 border-primary/30 shadow-lg">
             <div className="flex items-start justify-between mb-4">
               <div className="min-w-0">
-                <p className="text-sm md:text-sm text-muted-foreground mb-2 font-medium">Общий баланс</p>
+                <div className="flex items-center gap-2 mb-2">
+                  <p className="text-sm md:text-sm text-muted-foreground font-medium">Общий баланс</p>
+                  {lastPriceUpdate && (
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Icon name="RefreshCw" size={10} className="text-success" />
+                      <span>{lastPriceUpdate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                  )}
+                </div>
                 <h2 className={`text-3xl md:text-4xl font-bold truncate tracking-tight transition-all duration-500 ${
                   animatingAsset ? 'text-success scale-105' : ''
                 }`}>${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h2>
@@ -948,15 +984,28 @@ export default function Index() {
                 </div>
 
                 <div className="p-4 bg-muted/50 rounded-lg space-y-2 text-sm">
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Курс обмена</span>
-                    <span>1 {fromToken} ≈ {(() => {
-                      const fromAsset = getSelectedAsset(fromToken, fromNetwork);
-                      const toAsset = getSelectedAsset(toToken, toNetwork);
-                      if (!fromAsset || !toAsset) return '0.00';
-                      return (fromAsset.price / toAsset.price).toFixed(6);
-                    })()} {toToken}</span>
+                    <div className="flex items-center gap-2">
+                      <span>1 {fromToken} ≈ {(() => {
+                        const fromAsset = getSelectedAsset(fromToken, fromNetwork);
+                        const toAsset = getSelectedAsset(toToken, toNetwork);
+                        if (!fromAsset || !toAsset) return '0.00';
+                        return (fromAsset.price / toAsset.price).toFixed(6);
+                      })()} {toToken}</span>
+                      {lastPriceUpdate && (
+                        <Icon name="RefreshCw" size={12} className="text-success animate-pulse" />
+                      )}
+                    </div>
                   </div>
+                  {lastPriceUpdate && (
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">Обновлено</span>
+                      <span className="text-muted-foreground">
+                        {lastPriceUpdate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Комиссия сети</span>
                     <span>~$2.50</span>
