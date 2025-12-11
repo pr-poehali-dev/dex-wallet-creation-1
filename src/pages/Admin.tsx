@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { api, User } from '@/lib/api';
 
 const ADMIN_PASSWORD = 'admin123';
+const ADMIN_USER_ID = 'ae25420cd4106d43';
 
 export default function Admin() {
   const { toast } = useToast();
@@ -59,6 +60,17 @@ export default function Admin() {
   };
 
   const handleLogin = () => {
+    const currentUserId = localStorage.getItem('userId');
+    
+    if (currentUserId !== ADMIN_USER_ID) {
+      toast({
+        variant: "destructive",
+        title: "Доступ запрещен",
+        description: "У вас нет прав администратора",
+      });
+      return;
+    }
+    
     if (password === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
       toast({
@@ -116,6 +128,8 @@ export default function Admin() {
         title: adjustType === 'add' ? "Пополнение выполнено" : "Списание выполнено",
         description: `${adjustType === 'add' ? 'Добавлено' : 'Списано'} ${amount} ${selectedCrypto} для пользователя ${selectedUser.userId}`,
       });
+
+      window.dispatchEvent(new CustomEvent('balanceUpdate'));
 
       setShowAdjustDialog(false);
       setAdjustAmount('');

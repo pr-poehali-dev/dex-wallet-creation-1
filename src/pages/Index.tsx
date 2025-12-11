@@ -154,6 +154,41 @@ export default function Index() {
 
   const [currentReceiveAddress, setCurrentReceiveAddress] = useState<string>('');
 
+  const loadUserData = async (userId: string) => {
+    try {
+      const balances = await api.balances.get(userId);
+      setAssets(prevAssets => prevAssets.map(asset => {
+        const key = `${asset.symbol}-${asset.network || 'native'}`;
+        return {
+          ...asset,
+          balance: balances[key] !== undefined ? balances[key] : asset.balance
+        };
+      }));
+      
+      const txList = await api.transactions.get(userId);
+      const formattedTransactions = txList.map(tx => ({
+        id: tx.id,
+        type: tx.tx_type as 'receive' | 'send' | 'swap',
+        asset: tx.asset,
+        amount: tx.amount,
+        date: new Date(tx.tx_date).toLocaleString('ru-RU', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        }).replace(',', ''),
+        status: tx.status as 'completed' | 'pending',
+        hash: tx.tx_hash
+      }));
+      setTransactions(formattedTransactions);
+      
+      await api.users.updateLogin(userId);
+    } catch (error) {
+      console.error('Failed to load user data:', error);
+    }
+  };
+
   useEffect(() => {
     const hasWallet = localStorage.getItem('walletCreated');
     const mode = searchParams.get('mode');
@@ -168,43 +203,7 @@ export default function Index() {
       setWalletCreated(true);
       if (storedUserId) {
         setUserId(storedUserId);
-        
-        const loadUserData = async () => {
-          try {
-            const balances = await api.balances.get(storedUserId);
-            setAssets(prevAssets => prevAssets.map(asset => {
-              const key = `${asset.symbol}-${asset.network || 'native'}`;
-              return {
-                ...asset,
-                balance: balances[key] !== undefined ? balances[key] : asset.balance
-              };
-            }));
-            
-            const txList = await api.transactions.get(storedUserId);
-            const formattedTransactions = txList.map(tx => ({
-              id: tx.id,
-              type: tx.tx_type as 'receive' | 'send' | 'swap',
-              asset: tx.asset,
-              amount: tx.amount,
-              date: new Date(tx.tx_date).toLocaleString('ru-RU', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
-              }).replace(',', ''),
-              status: tx.status as 'completed' | 'pending',
-              hash: tx.tx_hash
-            }));
-            setTransactions(formattedTransactions);
-            
-            await api.users.updateLogin(storedUserId);
-          } catch (error) {
-            console.error('Failed to load user data:', error);
-          }
-        };
-        
-        loadUserData();
+        loadUserData(storedUserId);
       }
     }
 
@@ -212,6 +211,18 @@ export default function Index() {
       setMainSendAsset(assets[0]);
     }
   }, [searchParams, mainSendAsset, assets.length]);
+
+  useEffect(() => {
+    const handleBalanceUpdate = () => {
+      const storedUserId = localStorage.getItem('userId');
+      if (storedUserId) {
+        loadUserData(storedUserId);
+      }
+    };
+
+    window.addEventListener('balanceUpdate', handleBalanceUpdate);
+    return () => window.removeEventListener('balanceUpdate', handleBalanceUpdate);
+  }, []);
 
   const handleWalletComplete = (userId: string) => {
     localStorage.setItem('walletCreated', 'true');
