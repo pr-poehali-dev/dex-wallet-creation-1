@@ -89,17 +89,24 @@ export default function Index() {
   const [previousBalances, setPreviousBalances] = useState<Record<string, number>>({});
 
   const generateAddressForNetwork = async (userId: string, network: string, symbol: string): Promise<string> => {
-    // Фиксированные адреса для основных криптовалют
-    if (network === 'TRX' || (symbol === 'USDT' && network === 'TRX')) {
-      return 'TJutXHkM9kr7bRWw6ZDQEB9qBGDnXT8dSp';
-    }
-    
-    if (network === 'BTC' || symbol === 'BTC') {
+    // Bitcoin - фиксированный адрес
+    if (symbol === 'BTC') {
       return 'bc1qvxgf2afh2rrsdyvtk7dt3nmk6dfy4qt0fe3v7t';
     }
     
-    // Все ETH-совместимые сети используют один адрес
-    if (network === 'ETH' || symbol === 'ETH' || network === 'BSC' || network === 'MATIC' || network === 'ARB' || network === 'OP') {
+    // TRON и все токены на TRON (USDT TRC20, TUSD TRC20, USDD TRC20)
+    if (network === 'TRX') {
+      return 'TJutXHkM9kr7bRWw6ZDQEB9qBGDnXT8dSp';
+    }
+    
+    // Ethereum и все EVM-совместимые сети (ETH, BSC, Polygon, Arbitrum, Optimism)
+    // Сюда входят: ETH, BNB, USDT (на ETH/BSC/Polygon/Arbitrum), USDC, BUSD, DAI, и т.д.
+    if (symbol === 'ETH' || network === 'ETH' || network === 'BSC' || network === 'MATIC' || network === 'ARB' || network === 'OP') {
+      return '0xE4f2a92BCFC75C7618B4E3f58E777f1cF6C9F855';
+    }
+    
+    // BNB (native) также использует EVM адрес
+    if (symbol === 'BNB') {
       return '0xE4f2a92BCFC75C7618B4E3f58E777f1cF6C9F855';
     }
     
