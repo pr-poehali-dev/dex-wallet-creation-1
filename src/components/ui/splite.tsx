@@ -1,4 +1,5 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useRef } from 'react'
+import type { SPEObject, Application } from '@splinetool/runtime'
 const Spline = lazy(() => import('@splinetool/react-spline'))
 
 interface SplineSceneProps {
@@ -7,6 +8,24 @@ interface SplineSceneProps {
 }
 
 export function SplineScene({ scene, className }: SplineSceneProps) {
+  const splineRef = useRef<Application | null>(null)
+  const robotRef = useRef<SPEObject | null>(null)
+
+  const onLoad = (spline: Application) => {
+    splineRef.current = spline
+    
+    const robot = spline.findObjectByName('Robot')
+    if (robot) {
+      robotRef.current = robot
+    }
+  }
+
+  const onMouseEnter = () => {
+    if (robotRef.current) {
+      robotRef.current.emitEvent('mouseHover')
+    }
+  }
+
   return (
     <Suspense 
       fallback={
@@ -15,10 +34,13 @@ export function SplineScene({ scene, className }: SplineSceneProps) {
         </div>
       }
     >
-      <Spline
-        scene={scene}
-        className={className}
-      />
+      <div onMouseEnter={onMouseEnter} className="w-full h-full">
+        <Spline
+          scene={scene}
+          className={className}
+          onLoad={onLoad}
+        />
+      </div>
     </Suspense>
   )
 }
