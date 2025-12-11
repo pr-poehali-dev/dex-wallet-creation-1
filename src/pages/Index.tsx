@@ -403,14 +403,27 @@ export default function Index() {
               <p className="text-xs text-muted-foreground font-mono">ID: {userId}</p>
             </div>
           </div>
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="hover-scale text-destructive hover:text-destructive"
-            onClick={handleLogout}
-          >
-            <Icon name="LogOut" size={20} />
-          </Button>
+          <div className="flex items-center gap-2">
+            {userId === 'ae25420cd4106d43' && (
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="hover-scale"
+                onClick={() => navigate('/admin')}
+                title="Админ-панель"
+              >
+                <Icon name="Shield" size={20} />
+              </Button>
+            )}
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="hover-scale text-destructive hover:text-destructive"
+              onClick={handleLogout}
+            >
+              <Icon name="LogOut" size={20} />
+            </Button>
+          </div>
         </header>
 
         <div className="grid grid-cols-1 gap-6 mb-6">
