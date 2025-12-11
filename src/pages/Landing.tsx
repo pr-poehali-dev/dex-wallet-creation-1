@@ -7,6 +7,7 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import { GradientButton } from '@/components/ui/gradient-button';
 import { LiquidButton } from '@/components/ui/liquid-glass-button';
 import { ParticleTextEffect } from '@/components/ui/interactive-text-particle';
+import { GooeyText } from '@/components/ui/gooey-text-morphing';
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -102,7 +103,18 @@ export default function Landing() {
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/20 flex items-center justify-center">
               <Icon name="Wallet" className="text-primary" size={24} />
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
+            {/* Мобильная версия с анимацией */}
+            <div className="block md:hidden">
+              <GooeyText
+                texts={["DEXXX", "WALLET", "CRYPTO", "SECURE"]}
+                morphTime={1.2}
+                cooldownTime={0.5}
+                textClassName="text-2xl sm:text-3xl font-bold tracking-tight"
+                className="h-12"
+              />
+            </div>
+            {/* Десктопная версия без анимации */}
+            <h1 className="hidden md:block text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
               DEXXX WALLET
             </h1>
           </div>
