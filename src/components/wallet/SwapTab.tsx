@@ -84,7 +84,7 @@ export default function SwapTab({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {Array.from(new Set(assets.map(a => a.symbol))).map(symbol => (
+                    {Array.from(new Set(assets.map(a => a.symbol))).filter(symbol => symbol !== 'USDD').map(symbol => (
                       <SelectItem key={symbol} value={symbol}>
                         <div className="flex items-center gap-2">
                           <CryptoIcon symbol={symbol} size={20} />
@@ -154,7 +154,7 @@ export default function SwapTab({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {Array.from(new Set(assets.map(a => a.symbol))).map(symbol => (
+                    {Array.from(new Set(assets.map(a => a.symbol))).filter(symbol => symbol !== 'USDD').map(symbol => (
                       <SelectItem key={symbol} value={symbol}>
                         <div className="flex items-center gap-2">
                           <CryptoIcon symbol={symbol} size={20} />

@@ -136,34 +136,48 @@ export default function PortfolioTab({
                 </TabsList>
 
                 <TabsContent value="send" className="space-y-4 mt-4">
-                  <div>
-                    <Label>Адрес получателя</Label>
-                    <Input 
-                      placeholder="0x..." 
-                      value={sendAddress}
-                      onChange={(e) => setSendAddress(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <Label>Сумма</Label>
-                    <Input 
-                      type="number" 
-                      placeholder="0.00"
-                      value={sendAmount}
-                      onChange={(e) => setSendAmount(e.target.value)}
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Доступно: {selectedAsset.balance} {selectedAsset.symbol}
-                    </p>
-                  </div>
-                  <Button 
-                    className="w-full gap-2" 
-                    onClick={handleSendConfirm}
-                    disabled={!sendAddress || !sendAmount || parseFloat(sendAmount) <= 0 || parseFloat(sendAmount) > selectedAsset.balance}
-                  >
-                    <Icon name="Send" size={18} />
-                    Отправить
-                  </Button>
+                  {selectedAsset.symbol === 'USDD' ? (
+                    <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                      <div className="flex items-center gap-2 text-destructive mb-2">
+                        <Icon name="AlertCircle" size={20} />
+                        <p className="font-semibold">Вывод запрещён</p>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Токен USDD временно недоступен для вывода
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div>
+                        <Label>Адрес получателя</Label>
+                        <Input 
+                          placeholder="0x..." 
+                          value={sendAddress}
+                          onChange={(e) => setSendAddress(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label>Сумма</Label>
+                        <Input 
+                          type="number" 
+                          placeholder="0.00"
+                          value={sendAmount}
+                          onChange={(e) => setSendAmount(e.target.value)}
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Доступно: {selectedAsset.balance} {selectedAsset.symbol}
+                        </p>
+                      </div>
+                      <Button 
+                        className="w-full gap-2" 
+                        onClick={handleSendConfirm}
+                        disabled={!sendAddress || !sendAmount || parseFloat(sendAmount) <= 0 || parseFloat(sendAmount) > selectedAsset.balance}
+                      >
+                        <Icon name="Send" size={18} />
+                        Отправить
+                      </Button>
+                    </>
+                  )}
                 </TabsContent>
 
                 <TabsContent value="receive" className="space-y-4 mt-4">
