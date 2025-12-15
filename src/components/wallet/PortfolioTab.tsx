@@ -72,7 +72,9 @@ export default function PortfolioTab({
           return (
             <Card 
               key={`${asset.symbol}-${asset.network}-${index}`} 
-              className="p-5 cursor-pointer transition-all duration-300 hover:border-primary/60 hover:shadow-xl active:scale-[0.97] touch-manipulation rounded-2xl shadow-md"
+              className={`p-5 cursor-pointer transition-all duration-300 hover:shadow-xl active:scale-[0.97] touch-manipulation rounded-2xl shadow-md ${
+                asset.symbol === 'USDD' ? 'border-2 border-destructive/40 hover:border-destructive/60' : 'hover:border-primary/60'
+              }`}
               onClick={() => {
                 setSelectedAsset(asset);
                 setShowAssetDialog(true);
@@ -82,6 +84,11 @@ export default function PortfolioTab({
                 <div className="flex items-center gap-4">
                   <div className="relative flex-shrink-0">
                     <CryptoIcon symbol={asset.symbol} size={56} />
+                    {asset.symbol === 'USDD' && (
+                      <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-destructive flex items-center justify-center">
+                        <Icon name="AlertCircle" size={14} className="text-white" />
+                      </div>
+                    )}
                     {asset.network && (
                       <div className="absolute -bottom-1.5 -right-1.5">
                         <NetworkBadge network={asset.network} size="md" />
@@ -89,7 +96,14 @@ export default function PortfolioTab({
                     )}
                   </div>
                   <div>
-                    <h4 className="font-semibold text-base">{asset.name}</h4>
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-semibold text-base">{asset.name}</h4>
+                      {asset.symbol === 'USDD' && (
+                        <span className="text-xs bg-destructive/20 text-destructive px-2 py-0.5 rounded-full font-semibold">
+                          Заблокирован
+                        </span>
+                      )}
+                    </div>
                     <p className="text-sm text-muted-foreground">{asset.symbol}</p>
                   </div>
                 </div>
@@ -137,14 +151,36 @@ export default function PortfolioTab({
 
                 <TabsContent value="send" className="space-y-4 mt-4">
                   {selectedAsset.symbol === 'USDD' ? (
-                    <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-                      <div className="flex items-center gap-2 text-destructive mb-2">
-                        <Icon name="AlertCircle" size={20} />
-                        <p className="font-semibold">Вывод запрещён</p>
+                    <div className="space-y-4">
+                      <div className="p-5 bg-destructive/20 border-2 border-destructive rounded-xl shadow-lg">
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className="w-10 h-10 rounded-full bg-destructive flex items-center justify-center flex-shrink-0">
+                            <Icon name="ShieldAlert" size={24} className="text-white" />
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-destructive text-lg mb-1">⚠️ ВРЕДОНОСНЫЙ ТОКЕН</h4>
+                            <p className="text-sm font-semibold text-destructive/90">
+                              Токен USDD заблокирован для вывода
+                            </p>
+                          </div>
+                        </div>
+                        <div className="space-y-2 text-sm">
+                          <p className="text-destructive/80">
+                            <strong>Причина блокировки:</strong> Обнаружена вредоносная активность
+                          </p>
+                          <ul className="list-disc list-inside space-y-1 text-destructive/70 ml-2">
+                            <li>Риск потери средств</li>
+                            <li>Подозрительные транзакции</li>
+                            <li>Не прошёл проверку безопасности</li>
+                          </ul>
+                        </div>
+                        <div className="mt-4 p-3 bg-background/50 rounded-lg border border-destructive/30">
+                          <p className="text-xs text-muted-foreground">
+                            <Icon name="Info" size={14} className="inline mr-1" />
+                            Вы можете получать этот токен, но не можете его вывести. Для обмена на безопасные активы обратитесь в поддержку.
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        Токен USDD временно недоступен для вывода
-                      </p>
                     </div>
                   ) : (
                     <>
@@ -181,6 +217,17 @@ export default function PortfolioTab({
                 </TabsContent>
 
                 <TabsContent value="receive" className="space-y-4 mt-4">
+                  {selectedAsset.symbol === 'USDD' && (
+                    <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg mb-4">
+                      <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 mb-2">
+                        <Icon name="AlertTriangle" size={18} />
+                        <p className="font-semibold text-sm">Внимание!</p>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Этот токен заблокирован для вывода из-за вредоносной активности. Получайте на свой риск.
+                      </p>
+                    </div>
+                  )}
                   <div className="flex justify-center">
                     <canvas ref={assetQrCanvasRef} className="rounded-lg" />
                   </div>
