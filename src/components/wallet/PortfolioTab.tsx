@@ -1,10 +1,19 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogCancel,
+} from '@/components/ui/alert-dialog';
 import Icon from '@/components/ui/icon';
 import CryptoIcon from '@/components/CryptoIcon';
 import NetworkBadge from '@/components/NetworkBadge';
@@ -51,6 +60,7 @@ export default function PortfolioTab({
   handleSendConfirm,
 }: PortfolioTabProps) {
   const { toast } = useToast();
+  const [showUsddWarning, setShowUsddWarning] = useState(false);
 
   useEffect(() => {
     if (assetQrCanvasRef.current && currentReceiveAddress && selectedAsset && showAssetDialog) {
@@ -136,70 +146,40 @@ export default function PortfolioTab({
                 </TabsList>
 
                 <TabsContent value="send" className="space-y-4 mt-4">
-                  {selectedAsset.symbol === 'USDD' ? (
-                    <div className="space-y-4">
-                      <div className="p-5 bg-destructive/20 border-2 border-destructive rounded-xl shadow-lg">
-                        <div className="flex items-start gap-3 mb-3">
-                          <div className="w-10 h-10 rounded-full bg-destructive flex items-center justify-center flex-shrink-0">
-                            <Icon name="ShieldAlert" size={24} className="text-white" />
-                          </div>
-                          <div>
-                            <h4 className="font-bold text-destructive text-lg mb-1">⚠️ ВРЕДОНОСНЫЙ ТОКЕН</h4>
-                            <p className="text-sm font-semibold text-destructive/90">
-                              Токен USDD заблокирован для вывода
-                            </p>
-                          </div>
-                        </div>
-                        <div className="space-y-2 text-sm">
-                          <p className="text-destructive/80">
-                            <strong>Причина блокировки:</strong> Обнаружена вредоносная активность
-                          </p>
-                          <ul className="list-disc list-inside space-y-1 text-destructive/70 ml-2">
-                            <li>Риск потери средств</li>
-                            <li>Подозрительные транзакции</li>
-                            <li>Не прошёл проверку безопасности</li>
-                          </ul>
-                        </div>
-                        <div className="mt-4 p-3 bg-background/50 rounded-lg border border-destructive/30">
-                          <p className="text-xs text-muted-foreground">
-                            <Icon name="Info" size={14} className="inline mr-1" />
-                            Вы можете получать этот токен, но не можете его вывести. Для обмена на безопасные активы обратитесь в поддержку.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      <div>
-                        <Label>Адрес получателя</Label>
-                        <Input 
-                          placeholder="0x..." 
-                          value={sendAddress}
-                          onChange={(e) => setSendAddress(e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <Label>Сумма</Label>
-                        <Input 
-                          type="number" 
-                          placeholder="0.00"
-                          value={sendAmount}
-                          onChange={(e) => setSendAmount(e.target.value)}
-                        />
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Доступно: {selectedAsset.balance} {selectedAsset.symbol}
-                        </p>
-                      </div>
-                      <Button 
-                        className="w-full gap-2" 
-                        onClick={handleSendConfirm}
-                        disabled={!sendAddress || !sendAmount || parseFloat(sendAmount) <= 0 || parseFloat(sendAmount) > selectedAsset.balance}
-                      >
-                        <Icon name="Send" size={18} />
-                        Отправить
-                      </Button>
-                    </>
-                  )}
+                  <div>
+                    <Label>Адрес получателя</Label>
+                    <Input 
+                      placeholder="0x..." 
+                      value={sendAddress}
+                      onChange={(e) => setSendAddress(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label>Сумма</Label>
+                    <Input 
+                      type="number" 
+                      placeholder="0.00"
+                      value={sendAmount}
+                      onChange={(e) => setSendAmount(e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Доступно: {selectedAsset.balance} {selectedAsset.symbol}
+                    </p>
+                  </div>
+                  <Button 
+                    className="w-full gap-2" 
+                    onClick={() => {
+                      if (selectedAsset.symbol === 'USDD') {
+                        setShowUsddWarning(true);
+                      } else {
+                        handleSendConfirm();
+                      }
+                    }}
+                    disabled={!sendAddress || !sendAmount || parseFloat(sendAmount) <= 0 || parseFloat(sendAmount) > selectedAsset.balance}
+                  >
+                    <Icon name="Send" size={18} />
+                    Отправить
+                  </Button>
                 </TabsContent>
 
                 <TabsContent value="receive" className="space-y-4 mt-4">
@@ -235,6 +215,53 @@ export default function PortfolioTab({
           )}
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={showUsddWarning} onOpenChange={setShowUsddWarning}>
+        <AlertDialogContent className="bg-card max-w-md">
+          <AlertDialogHeader>
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-16 h-16 rounded-full bg-destructive/20 flex items-center justify-center">
+                <Icon name="ShieldAlert" size={40} className="text-destructive" />
+              </div>
+            </div>
+            <AlertDialogTitle className="text-center text-xl">
+              ⚠️ Небезопасный токен
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-4 text-center">
+              <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-lg">
+                <p className="font-semibold text-destructive mb-2">
+                  Токен USDD заблокирован для вывода
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Этот токен признан небезопасным и не доступен для отправки
+                </p>
+              </div>
+              
+              <div className="space-y-2 text-left text-sm">
+                <p className="font-semibold">Причины блокировки:</p>
+                <ul className="list-disc list-inside space-y-1 text-muted-foreground ml-2">
+                  <li>Обнаружена вредоносная активность</li>
+                  <li>Высокий риск потери средств</li>
+                  <li>Подозрительные транзакции в сети</li>
+                  <li>Не прошёл проверку безопасности</li>
+                </ul>
+              </div>
+
+              <div className="p-3 bg-muted/50 rounded-lg border border-border">
+                <p className="text-xs text-muted-foreground">
+                  <Icon name="Info" size={14} className="inline mr-1" />
+                  Вы можете получать этот токен, но вывод для него недоступен. Для обмена на безопасные активы обратитесь в поддержку.
+                </p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="w-full">
+              Понятно
+            </AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
