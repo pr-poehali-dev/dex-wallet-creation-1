@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
+import CryptoIcon from '@/components/CryptoIcon';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { api, User } from '@/lib/api';
@@ -26,13 +27,30 @@ export default function Admin() {
   const [adjustAmount, setAdjustAmount] = useState('');
 
   const cryptoOptions = [
-    { symbol: 'BTC', name: 'Bitcoin', icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png', network: null },
-    { symbol: 'ETH', name: 'Ethereum', icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png', network: null },
-    { symbol: 'BNB', name: 'Binance Coin', icon: 'https://cryptologos.cc/logos/bnb-bnb-logo.png', network: null },
-    { symbol: 'USDT', name: 'Tether (ETH)', icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'ETH' },
-    { symbol: 'USDT', name: 'Tether (TRX)', icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'TRX' },
-    { symbol: 'USDT', name: 'Tether (BSC)', icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png', network: 'BSC' },
-    { symbol: 'USDC', name: 'USD Coin (ETH)', icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png', network: 'ETH' },
+    { symbol: 'BTC', name: 'Bitcoin', network: null },
+    { symbol: 'ETH', name: 'Ethereum', network: null },
+    { symbol: 'BNB', name: 'Binance Coin', network: null },
+    { symbol: 'USDT', name: 'Tether (ETH)', network: 'ETH' },
+    { symbol: 'USDT', name: 'Tether (TRX)', network: 'TRX' },
+    { symbol: 'USDT', name: 'Tether (BSC)', network: 'BSC' },
+    { symbol: 'USDT', name: 'Tether (MATIC)', network: 'MATIC' },
+    { symbol: 'USDT', name: 'Tether (ARB)', network: 'ARB' },
+    { symbol: 'USDT', name: 'Tether (OP)', network: 'OP' },
+    { symbol: 'USDC', name: 'USD Coin (ETH)', network: 'ETH' },
+    { symbol: 'USDC', name: 'USD Coin (BSC)', network: 'BSC' },
+    { symbol: 'USDC', name: 'USD Coin (MATIC)', network: 'MATIC' },
+    { symbol: 'USDC', name: 'USD Coin (ARB)', network: 'ARB' },
+    { symbol: 'USDC', name: 'USD Coin (OP)', network: 'OP' },
+    { symbol: 'BUSD', name: 'Binance USD (BSC)', network: 'BSC' },
+    { symbol: 'DAI', name: 'Dai (ETH)', network: 'ETH' },
+    { symbol: 'DAI', name: 'Dai (MATIC)', network: 'MATIC' },
+    { symbol: 'DAI', name: 'Dai (ARB)', network: 'ARB' },
+    { symbol: 'TUSD', name: 'TrueUSD (ETH)', network: 'ETH' },
+    { symbol: 'TUSD', name: 'TrueUSD (BSC)', network: 'BSC' },
+    { symbol: 'USDP', name: 'Pax Dollar (ETH)', network: 'ETH' },
+    { symbol: 'FRAX', name: 'Frax (ETH)', network: 'ETH' },
+    { symbol: 'FRAX', name: 'Frax (MATIC)', network: 'MATIC' },
+    { symbol: 'USDD', name: 'USDD (TRX)', network: 'TRX' },
   ];
 
   useEffect(() => {
@@ -368,7 +386,7 @@ export default function Admin() {
                                   return (
                                     <SelectItem key={uniqueValue} value={uniqueValue}>
                                       <div className="flex items-center gap-2">
-                                        <img src={crypto.icon} alt={crypto.symbol} className="w-4 h-4 object-contain" />
+                                        <CryptoIcon symbol={crypto.symbol} size={20} />
                                         {crypto.name}
                                       </div>
                                     </SelectItem>
