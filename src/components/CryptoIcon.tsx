@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 
 interface CryptoIconProps {
   symbol: string;
@@ -7,6 +7,22 @@ interface CryptoIconProps {
 }
 
 const CryptoIcon: FC<CryptoIconProps> = ({ symbol, size = 40, className = '' }) => {
+  const [error, setError] = useState(false);
+
+  const emojiMap: { [key: string]: string } = {
+    BTC: '₿',
+    ETH: 'Ξ',
+    BNB: '🔶',
+    USDT: '₮',
+    USDC: '🔵',
+    BUSD: '🟡',
+    DAI: '◈',
+    TUSD: '🔷',
+    USDP: '🔸',
+    FRAX: '🔺',
+    USDD: '💵',
+  };
+
   const iconUrls: { [key: string]: string } = {
     BTC: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png',
     ETH: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
@@ -22,6 +38,18 @@ const CryptoIcon: FC<CryptoIconProps> = ({ symbol, size = 40, className = '' }) 
   };
 
   const iconUrl = iconUrls[symbol] || iconUrls['BTC'];
+  const emoji = emojiMap[symbol] || '🪙';
+
+  if (error) {
+    return (
+      <div 
+        className={`rounded-full bg-primary/20 flex items-center justify-center font-bold ${className}`}
+        style={{ width: size, height: size, fontSize: size * 0.5 }}
+      >
+        {emoji}
+      </div>
+    );
+  }
 
   return (
     <img 
@@ -31,6 +59,8 @@ const CryptoIcon: FC<CryptoIconProps> = ({ symbol, size = 40, className = '' }) 
       height={size} 
       className={`rounded-full ${className}`}
       style={{ width: size, height: size }}
+      onError={() => setError(true)}
+      loading="lazy"
     />
   );
 };
