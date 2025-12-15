@@ -72,9 +72,7 @@ export default function PortfolioTab({
           return (
             <Card 
               key={`${asset.symbol}-${asset.network}-${index}`} 
-              className={`p-5 cursor-pointer transition-all duration-300 hover:shadow-xl active:scale-[0.97] touch-manipulation rounded-2xl shadow-md ${
-                asset.symbol === 'USDD' ? 'border-2 border-destructive/40 hover:border-destructive/60' : 'hover:border-primary/60'
-              }`}
+              className="p-5 cursor-pointer transition-all duration-300 hover:border-primary/60 hover:shadow-xl active:scale-[0.97] touch-manipulation rounded-2xl shadow-md"
               onClick={() => {
                 setSelectedAsset(asset);
                 setShowAssetDialog(true);
@@ -84,11 +82,6 @@ export default function PortfolioTab({
                 <div className="flex items-center gap-4">
                   <div className="relative flex-shrink-0">
                     <CryptoIcon symbol={asset.symbol} size={56} />
-                    {asset.symbol === 'USDD' && (
-                      <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-destructive flex items-center justify-center">
-                        <Icon name="AlertCircle" size={14} className="text-white" />
-                      </div>
-                    )}
                     {asset.network && (
                       <div className="absolute -bottom-1.5 -right-1.5">
                         <NetworkBadge network={asset.network} size="md" />
@@ -96,14 +89,7 @@ export default function PortfolioTab({
                     )}
                   </div>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-semibold text-base">{asset.name}</h4>
-                      {asset.symbol === 'USDD' && (
-                        <span className="text-xs bg-destructive/20 text-destructive px-2 py-0.5 rounded-full font-semibold">
-                          Заблокирован
-                        </span>
-                      )}
-                    </div>
+                    <h4 className="font-semibold text-base">{asset.name}</h4>
                     <p className="text-sm text-muted-foreground">{asset.symbol}</p>
                   </div>
                 </div>
@@ -217,17 +203,6 @@ export default function PortfolioTab({
                 </TabsContent>
 
                 <TabsContent value="receive" className="space-y-4 mt-4">
-                  {selectedAsset.symbol === 'USDD' && (
-                    <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg mb-4">
-                      <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 mb-2">
-                        <Icon name="AlertTriangle" size={18} />
-                        <p className="font-semibold text-sm">Внимание!</p>
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Этот токен заблокирован для вывода из-за вредоносной активности. Получайте на свой риск.
-                      </p>
-                    </div>
-                  )}
                   <div className="flex justify-center">
                     <canvas ref={assetQrCanvasRef} className="rounded-lg" />
                   </div>
